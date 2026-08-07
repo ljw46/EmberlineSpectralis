@@ -6,12 +6,14 @@ EmberlineProcessor::EmberlineProcessor()
     : AudioProcessor (BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
       apvts (*this, nullptr, "STATE", ember::params::createLayout())
 {
-    morphParam  = apvts.getRawParameterValue (ember::params::oscMorph);
     cutoffParam = apvts.getRawParameterValue (ember::params::filterCutoff);
     volumeParam = apvts.getRawParameterValue (ember::params::masterVolume);
 
+    std::array<ember::params::OscParamPtrs, ember::params::numOscs> oscPtrs {
+        ember::params::lookupOsc (apvts, 0), ember::params::lookupOsc (apvts, 1), ember::params::lookupOsc (apvts, 2) };
+
     for (int i = 0; i < numVoices; ++i)
-        synth.addVoice (new ember::SynthVoice (*morphParam));
+        synth.addVoice (new ember::SynthVoice (bank, oscPtrs));
     synth.addSound (new ember::SynthSound());
 }
 

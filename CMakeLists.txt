@@ -42,6 +42,8 @@ target_sources(EmberlineSpectralis PRIVATE
     Source/PluginEditor.h
     Source/Parameters.h
     Source/SynthVoice.h
+    Source/WavetableBank.h
+    Source/WavetableOscillator.h
     Source/EmberLookAndFeel.h
 )
 
