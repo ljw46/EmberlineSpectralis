@@ -1,7 +1,6 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
-#include <juce_dsp/juce_dsp.h>
 #include "Parameters.h"
 #include "WavetableBank.h"
 
@@ -38,13 +37,11 @@ public:
     juce::AudioProcessorValueTreeState apvts;
 
 private:
-    std::atomic<float>* cutoffParam = nullptr;
     std::atomic<float>* volumeParam = nullptr;
 
     ember::WavetableBank bank;   // immutable after construction; shared by all voices
     juce::Synthesiser synth;
-    juce::dsp::StateVariableTPTFilter<float> filter;
-    juce::SmoothedValue<float> gain, cutoff;
+    juce::SmoothedValue<float> gain;
 
     static constexpr int numVoices = 8;
 
