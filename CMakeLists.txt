@@ -42,11 +42,17 @@ target_sources(EmberlineSpectralis PRIVATE
     Source/PluginEditor.h
     Source/Parameters.h
     Source/SynthVoice.h
+    Source/Curve.h
+    Source/Envelope.h
+    Source/LfoShape.h
+    Source/Modulation.h
     Source/SubNoise.h
     Source/VoiceFilter.h
     Source/WavetableBank.h
     Source/WavetableOscillator.h
     Source/EmberLookAndFeel.h
+    Source/EditorWidgets.h
+    Source/LfoEditor.h
 )
 
 target_compile_definitions(EmberlineSpectralis PUBLIC

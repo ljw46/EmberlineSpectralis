@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Modulation.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
 namespace ember::colours
@@ -9,6 +10,18 @@ namespace ember::colours
     inline const juce::Colour cyan     { 0xff00f2fe };
     inline const juce::Colour coral    { 0xffff5e36 };
     inline const juce::Colour magenta  { 0xffa100ff };
+
+    // Colour code for modulation sources: LFO = magenta, envelope = coral, macro = cyan
+    inline juce::Colour sourceColour (int src)
+    {
+        switch (mod::sourceKind (src))
+        {
+            case mod::SourceKind::lfo:   return magenta.brighter (0.35f);
+            case mod::SourceKind::env:   return coral;
+            case mod::SourceKind::macro: return cyan;
+        }
+        return cyan;
+    }
 }
 
 class EmberLookAndFeel final : public juce::LookAndFeel_V4
@@ -27,6 +40,10 @@ public:
         setColour (juce::ComboBox::outlineColourId, cyan.withAlpha (0.35f));
         setColour (juce::ComboBox::textColourId, juce::Colours::white.withAlpha (0.9f));
         setColour (juce::ComboBox::arrowColourId, cyan);
+        setColour (juce::TextButton::buttonColourId, bgPanel);
+        setColour (juce::TextButton::buttonOnColourId, cyan.withAlpha (0.28f));
+        setColour (juce::TextButton::textColourOffId, juce::Colours::white.withAlpha (0.6f));
+        setColour (juce::TextButton::textColourOnId, cyan);
         setColour (juce::PopupMenu::backgroundColourId, bgPanel);
         setColour (juce::PopupMenu::textColourId, juce::Colours::white.withAlpha (0.9f));
         setColour (juce::PopupMenu::highlightedBackgroundColourId, cyan.withAlpha (0.25f));
@@ -43,7 +60,7 @@ public:
         const auto accent = s.findColour (juce::Slider::rotarySliderFillColourId);
 
         g.setColour (ember::colours::bgPanel);
-        g.fillEllipse (bounds.reduced (8.0f));
+        g.fillEllipse (juce::Rectangle<float> (2.0f * (radius - 8.0f), 2.0f * (radius - 8.0f)).withCentre (centre));
 
         juce::Path track;
         track.addCentredArc (centre.x, centre.y, arcR, arcR, 0.0f, startAngle, endAngle, true);

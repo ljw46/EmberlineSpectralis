@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Modulation.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <array>
 #include <atomic>
@@ -17,6 +18,7 @@ namespace ember::params
     inline juce::String filt (int index, const char* name) { return "filt" + juce::String (index + 1) + "_" + name; }
 
     inline constexpr int numOscs = 3;
+    static_assert (numOscs == mod::oscCount);
 
     inline juce::String osc (int index, const char* name) { return "osc" + juce::String (index + 1) + "_" + name; }
 
@@ -35,6 +37,7 @@ namespace ember::params
         std::atomic<float> *subLevel, *subWave, *subOct, *noiseLevel, *noiseType;
         std::array<FilterParamPtrs, 2> filter;
         std::atomic<float>* routing;
+        mod::ModPtrs mod;
     };
 
     inline OscParamPtrs lookupOsc (juce::AudioProcessorValueTreeState& apvts, int i)
@@ -54,7 +57,7 @@ namespace ember::params
 
         return { { lookupOsc (apvts, 0), lookupOsc (apvts, 1), lookupOsc (apvts, 2) },
                  get ("sub_level"), get ("sub_wave"), get ("sub_oct"), get ("noise_level"), get ("noise_type"),
-                 { filterPtrs (0), filterPtrs (1) }, get ("filt_routing") };
+                 { filterPtrs (0), filterPtrs (1) }, get ("filt_routing"), mod::lookup (apvts) };
     }
 
     inline juce::AudioProcessorValueTreeState::ParameterLayout createLayout()
@@ -117,6 +120,8 @@ namespace ember::params
             p.push_back (std::make_unique<AudioParameterInt> (ParameterID { osc (i, "semi"), 1 }, n + "Semitones", -24, 24, 0));
             addFloat ("fine",     "Fine Tune",   { -100.0f, 100.0f, 0.1f }, 0.0f, "ct");
         }
+
+        mod::addParameters (p);
 
         return { p.begin(), p.end() };
     }

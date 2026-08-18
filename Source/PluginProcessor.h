@@ -2,6 +2,8 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "Parameters.h"
+#include "LfoShape.h"
+#include "Modulation.h"
 #include "WavetableBank.h"
 
 class EmberlineProcessor final : public juce::AudioProcessor
@@ -34,10 +36,20 @@ public:
     void getStateInformation (juce::MemoryBlock&) override;
     void setStateInformation (const void*, int) override;
 
+    // Maps a modulation source onto a destination (index into mod::destinations()) using the first
+    // free matrix slot. Message thread only. Returns false if the matrix is full.
+    bool assignModulation (int source, int destination);
+
     juce::AudioProcessorValueTreeState apvts;
+    ember::mod::ModPtrs modPtrs {};   // cached raw parameter pointers for the editor's mod displays
+    ember::mod::LfoShapes lfoShapes;
+    ember::mod::ModContext modCtx { lfoShapes };
 
 private:
     std::atomic<float>* volumeParam = nullptr;
+
+    double currentSampleRate = 44100.0;
+    std::array<std::atomic<float>*, ember::mod::numLfos> lfoRate {}, lfoMode {};
 
     ember::WavetableBank bank;   // immutable after construction; shared by all voices
     juce::Synthesiser synth;

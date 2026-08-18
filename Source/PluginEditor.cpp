@@ -3,99 +3,119 @@
 using namespace ember;
 
 EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+    : AudioProcessorEditor (&p), processor (p), matrix (p)
 {
     setLookAndFeel (&lnf);
+    addAndMakeVisible (soundPage);
+    addChildComponent (modPage);
 
+    // ---- SOUND page
     const juce::Colour accents[] { colours::cyan, colours::coral, colours::magenta };
     const char* ids[]   { "frame", "warp_amt", "level", "unison", "detune", "spread", "semi", "fine" };
     const char* names[] { "FRAME", "WARP", "LEVEL", "UNISON", "DETUNE", "SPREAD", "SEMI", "FINE" };
 
     for (int o = 0; o < params::numOscs; ++o)
     {
-        auto& panel = addPanel ("OSC " + juce::String (o + 1), accents[o], 3);
-        addOnSwitch (panel, params::osc (o, "on"));
-        addCombo (panel, params::osc (o, "warp_mode"), params::warpModeNames);
+        auto& panel = addPanel (soundPage, "OSC " + juce::String (o + 1), accents[o], 3);
+        panel.addOnSwitch (params::osc (o, "on"));
+        panel.addCombo (params::osc (o, "warp_mode"), params::warpModeNames);
         for (size_t k = 0; k < std::size (ids); ++k)
-            addKnob (panel, params::osc (o, ids[k]), names[k]);
+            panel.addKnob (params::osc (o, ids[k]), names[k]);
         oscRow.push_back (&panel);
     }
 
-    auto& sub = addPanel ("SUB / NOISE", colours::coral);
-    addCombo (sub, "sub_wave", params::subWaveNames);
-    addCombo (sub, "sub_oct", params::subOctNames);
-    addCombo (sub, "noise_type", params::noiseTypeNames);
-    addKnob (sub, "sub_level", "SUB");
-    addKnob (sub, "noise_level", "NOISE");
+    auto& sub = addPanel (soundPage, "SUB / NOISE", colours::coral);
+    sub.addCombo ("sub_wave", params::subWaveNames);
+    sub.addCombo ("sub_oct", params::subOctNames);
+    sub.addCombo ("noise_type", params::noiseTypeNames);
+    sub.addKnob ("sub_level", "SUB");
+    sub.addKnob ("noise_level", "NOISE");
     lowerRow.push_back (&sub);
 
     for (int f = 0; f < 2; ++f)
     {
-        auto& panel = addPanel ("FILTER " + juce::String (f + 1), f == 0 ? colours::cyan : colours::magenta);
-        addCombo (panel, params::filt (f, "type"), params::filterTypeNames);
-        addKnob (panel, params::filt (f, "cutoff"), "CUTOFF");
-        addKnob (panel, params::filt (f, "res"), "RES");
-        addKnob (panel, params::filt (f, "drive"), "DRIVE");
+        auto& panel = addPanel (soundPage, "FILTER " + juce::String (f + 1), f == 0 ? colours::cyan : colours::magenta);
+        panel.addCombo (params::filt (f, "type"), params::filterTypeNames);
+        panel.addKnob (params::filt (f, "cutoff"), "CUTOFF");
+        panel.addKnob (params::filt (f, "res"), "RES");
+        panel.addKnob (params::filt (f, "drive"), "DRIVE");
         lowerRow.push_back (&panel);
     }
 
-    auto& master = addPanel ("MASTER", colours::cyan);
-    addCombo (master, "filt_routing", params::routingNames);
-    addKnob (master, params::masterVolume, "VOLUME");
+    auto& master = addPanel (soundPage, "MASTER", colours::cyan);
+    master.addCombo ("filt_routing", params::routingNames);
+    master.addKnob (params::masterVolume, "VOLUME");
     lowerRow.push_back (&master);
 
-    setSize (960, 640);
+    // ---- MOD page
+    for (int i = 0; i < mod::numLfos; ++i)
+    {
+        const auto colour = colours::sourceColour (mod::srcLfo + i);
+        auto& editor = lfoEditors.emplace_back (processor, i, colour);
+        auto& panel = addPanel (modPage, "LFO " + juce::String (i + 1), colour);
+        panel.setWidget (editor, 0, true, 0.64f);
+        panel.addCombo ("lfo" + juce::String (i + 1) + "_mode", mod::lfoModeNames);
+        panel.addKnob ("lfo" + juce::String (i + 1) + "_rate", "RATE");
+        lfoRow.push_back (&panel);
+    }
+
+    const char* envIds[]   { "attack", "decay", "sustain", "release", "acurve", "dcurve" };
+    const char* envNames[] { "ATTACK", "DECAY", "SUSTAIN", "RELEASE", "A CURVE", "D CURVE" };
+    for (int i = 0; i < mod::numEnvs; ++i)
+    {
+        const auto colour = colours::sourceColour (mod::srcEnv + i);
+        auto& display = envDisplays.emplace_back (processor, i, colour);
+        auto& panel = addPanel (modPage, i == 0 ? "ENV 1  (AMP)" : "ENV " + juce::String (i + 1), colour, 3);
+        panel.setWidget (display, 50);
+        for (size_t k = 0; k < std::size (envIds); ++k)
+            panel.addKnob ("env" + juce::String (i + 1) + "_" + envIds[k], envNames[k]);
+        envRow.push_back (&panel);
+    }
+
+    macroPanel = &addPanel (modPage, "MACROS", colours::cyan, 2);
+    for (int i = 0; i < mod::numMacros; ++i)
+        macroPanel->addKnob ("macro" + juce::String (i + 1), "MACRO " + juce::String (i + 1));
+    modPage.addAndMakeVisible (matrix);
+
+    // ---- header: tabs + draggable sources
+    for (auto* b : { &soundTab, &modTab })
+    {
+        b->setClickingTogglesState (true);
+        b->setRadioGroupId (1);
+        addAndMakeVisible (b);
+    }
+    soundTab.setToggleState (true, juce::dontSendNotification);
+    soundTab.onClick = [this] { showPage (false); };
+    modTab.onClick   = [this] { showPage (true); };
+
+    sourcesLabel.setText ("DRAG TO MODULATE", juce::dontSendNotification);
+    sourcesLabel.setFont (juce::FontOptions (11.0f, juce::Font::bold));
+    sourcesLabel.setColour (juce::Label::textColourId, juce::Colours::white.withAlpha (0.45f));
+    addAndMakeVisible (sourcesLabel);
+
+    const auto srcNames = mod::sourceNames();
+    for (int s = 1; s < mod::numSources; ++s)
+    {
+        chips.push_back (std::make_unique<SourceChip> (s, srcNames[s].toUpperCase(), colours::sourceColour (s)));
+        addAndMakeVisible (*chips.back());
+    }
+
+    setSize (1000, 800);
 }
 
 EmberlineEditor::~EmberlineEditor() { setLookAndFeel (nullptr); }
 
-EmberlineEditor::Panel& EmberlineEditor::addPanel (const juce::String& title, juce::Colour accent, int columns)
+Panel& EmberlineEditor::addPanel (juce::Component& page, const juce::String& title, juce::Colour accent, int columns)
 {
-    auto& panel = panels.emplace_back();
-    panel.accent = accent;
-    panel.columns = columns;
-    panel.title.setText (title, juce::dontSendNotification);
-    panel.title.setColour (juce::Label::textColourId, accent);
-    panel.title.setFont (juce::FontOptions (13.0f, juce::Font::bold));
-    addAndMakeVisible (panel.title);
+    auto& panel = panels.emplace_back (processor, title, accent, columns);
+    page.addAndMakeVisible (panel);
     return panel;
 }
 
-void EmberlineEditor::addKnob (Panel& panel, const juce::String& id, const juce::String& name)
+void EmberlineEditor::showPage (bool mod)
 {
-    auto& k = knobStore.emplace_back();
-
-    k.slider.setColour (juce::Slider::rotarySliderFillColourId, panel.accent);
-    k.slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 70, 18);
-    addAndMakeVisible (k.slider);
-
-    k.label.setText (name, juce::dontSendNotification);
-    k.label.setJustificationType (juce::Justification::centred);
-    k.label.setFont (juce::FontOptions (11.0f, juce::Font::bold));
-    addAndMakeVisible (k.label);
-
-    k.attachment = std::make_unique<SliderAttachment> (processor.apvts, id, k.slider);
-    panel.knobs.push_back (&k);
-}
-
-void EmberlineEditor::addOnSwitch (Panel& panel, const juce::String& id)
-{
-    panel.onButton.setButtonText ("ON");
-    panel.onButton.setColour (juce::ToggleButton::tickColourId, panel.accent);
-    panel.onButton.setColour (juce::ToggleButton::tickDisabledColourId, panel.accent.withAlpha (0.3f));
-    panel.onButton.setColour (juce::ToggleButton::textColourId, panel.accent);
-    addAndMakeVisible (panel.onButton);
-    panel.onAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (processor.apvts, id, panel.onButton);
-    hasOnSwitch.push_back (&panel);
-}
-
-void EmberlineEditor::addCombo (Panel& panel, const juce::String& id, const juce::StringArray& items)
-{
-    auto& c = comboStore.emplace_back();
-    c.box.addItemList (items, 1);
-    addAndMakeVisible (c.box);
-    c.attachment = std::make_unique<ComboAttachment> (processor.apvts, id, c.box);
-    panel.combos.push_back (&c);
+    soundPage.setVisible (! mod);
+    modPage.setVisible (mod);
 }
 
 void EmberlineEditor::paint (juce::Graphics& g)
@@ -105,75 +125,64 @@ void EmberlineEditor::paint (juce::Graphics& g)
 
     g.setColour (colours::cyan);
     g.setFont (juce::FontOptions (22.0f, juce::Font::bold));
-    g.drawText ("EMBERLINE SPECTRALIS", getLocalBounds().removeFromTop (50).reduced (20, 0), juce::Justification::centredLeft);
-
-    for (auto& panel : panels)
-    {
-        const auto b = panel.bounds.toFloat();
-        g.setColour (colours::bgDeep.withAlpha (0.55f));
-        g.fillRoundedRectangle (b, 8.0f);
-        g.setColour (panel.accent.withAlpha (0.35f));
-        g.drawRoundedRectangle (b.reduced (0.5f), 8.0f, 1.0f);
-    }
-}
-
-void EmberlineEditor::layoutPanel (Panel& panel)
-{
-    auto inner = panel.bounds.reduced (10, 8);
-    auto head = inner.removeFromTop (20);
-    if (std::find (hasOnSwitch.begin(), hasOnSwitch.end(), &panel) != hasOnSwitch.end())
-        panel.onButton.setBounds (head.removeFromRight (56));
-    panel.title.setBounds (head);
-
-    if (! panel.combos.empty())
-    {
-        auto row = inner.removeFromTop (24);
-        const int w = row.getWidth() / (int) panel.combos.size();
-        for (auto* c : panel.combos)
-            c->box.setBounds (row.removeFromLeft (w).reduced (2, 0));
-        inner.removeFromTop (4);
-    }
-
-    const int n = (int) panel.knobs.size();
-    const int cols = panel.columns > 0 ? panel.columns : juce::jmax (1, n);
-    const int rows = (n + cols - 1) / cols;
-    const int rowH = inner.getHeight() / juce::jmax (1, rows);
-
-    for (int r = 0; r < rows; ++r)
-    {
-        auto row = inner.removeFromTop (rowH);
-        const int cellW = row.getWidth() / cols;
-        for (int c = 0; c < cols && r * cols + c < n; ++c)
-        {
-            auto cell = row.removeFromLeft (cellW);
-            auto& k = *panel.knobs[(size_t) (r * cols + c)];
-            k.label.setBounds (cell.removeFromTop (16));
-            k.slider.setBounds (cell);
-        }
-    }
+    g.drawText ("EMBERLINE SPECTRALIS", getLocalBounds().removeFromTop (46).reduced (20, 0), juce::Justification::centredLeft);
 }
 
 void EmberlineEditor::resized()
 {
-    auto area = getLocalBounds().withTrimmedTop (55).reduced (16, 8);
-    auto top = area.removeFromTop (area.getHeight() * 62 / 100);
-    area.removeFromTop (8);
+    auto area = getLocalBounds().reduced (16, 0);
 
-    const int w = top.getWidth() / (int) oscRow.size();
-    for (auto* p : oscRow)
+    auto top = area.removeFromTop (46);
+    modTab.setBounds (top.removeFromRight (90).reduced (2, 9));
+    soundTab.setBounds (top.removeFromRight (90).reduced (2, 9));
+
+    auto chipRow = area.removeFromTop (30);
+    sourcesLabel.setBounds (chipRow.removeFromLeft (120));
+    const int chipW = juce::jmin (84, chipRow.getWidth() / (int) chips.size());
+    for (auto& c : chips)
+        c->setBounds (chipRow.removeFromLeft (chipW).reduced (3, 2));
+
+    area.removeFromTop (6);
+    area.removeFromBottom (12);
+    soundPage.setBounds (area);
+    modPage.setBounds (area);
+
+    // SOUND page
     {
-        p->bounds = top.removeFromLeft (w).reduced (4, 0);
-        layoutPanel (*p);
+        auto page = soundPage.getLocalBounds();
+        auto oscArea = page.removeFromTop (page.getHeight() * 62 / 100);
+        page.removeFromTop (8);
+
+        const int w = oscArea.getWidth() / (int) oscRow.size();
+        for (auto* p : oscRow)
+            p->setBounds (oscArea.removeFromLeft (w).reduced (4, 0));
+
+        const float weights[] { 1.5f, 1.3f, 1.3f, 0.9f };
+        float total = 0.0f;
+        for (auto v : weights) total += v;
+        const int fullW = page.getWidth();
+        for (size_t i = 0; i < lowerRow.size(); ++i)
+            lowerRow[i]->setBounds (page.removeFromLeft ((int) ((float) fullW * weights[i] / total)).reduced (4, 0));
     }
 
-    const float weights[] { 1.15f, 1.35f, 1.35f, 0.9f };
-    float total = 0.0f;
-    for (auto v : weights) total += v;
-
-    const int fullW = area.getWidth();
-    for (size_t i = 0; i < lowerRow.size(); ++i)
+    // MOD page
     {
-        lowerRow[i]->bounds = area.removeFromLeft ((int) ((float) fullW * weights[i] / total)).reduced (4, 0);
-        layoutPanel (*lowerRow[i]);
+        auto page = modPage.getLocalBounds();
+        auto lfoArea = page.removeFromTop (200);
+        page.removeFromTop (8);
+        auto envArea = page.removeFromTop (285);
+        page.removeFromTop (8);
+
+        auto splitRow = [] (juce::Rectangle<int> row, const std::vector<Panel*>& row_panels)
+        {
+            const int cellW = row.getWidth() / (int) row_panels.size();
+            for (auto* p : row_panels)
+                p->setBounds (row.removeFromLeft (cellW).reduced (4, 0));
+        };
+        splitRow (lfoArea, lfoRow);
+        splitRow (envArea, envRow);
+
+        macroPanel->setBounds (page.removeFromLeft (page.getWidth() * 27 / 100).reduced (4, 0));
+        matrix.setBounds (page.reduced (4, 0));
     }
 }

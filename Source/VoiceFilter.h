@@ -17,9 +17,9 @@ namespace ember
         void prepare (double sr)
         {
             sampleRate = sr;
-            cutoffSm.reset (sr, 0.02);
-            resSm.reset (sr, 0.02);
-            driveSm.reset (sr, 0.02);
+            cutoffSm.reset (sr, 0.003);   // short: modulation arrives as control-rate steps
+            resSm.reset (sr, 0.003);
+            driveSm.reset (sr, 0.003);
         }
 
         void reset() noexcept { for (auto& c : cores) c = {}; }
