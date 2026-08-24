@@ -3,7 +3,7 @@
 using namespace ember;
 
 EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), matrix (p)
+    : AudioProcessorEditor (&p), processor (p), chaosDisplay (p), matrix (p)
 {
     setLookAndFeel (&lnf);
     addAndMakeVisible (soundPage);
@@ -11,8 +11,8 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
 
     // ---- SOUND page
     const juce::Colour accents[] { colours::cyan, colours::coral, colours::magenta };
-    const char* ids[]   { "frame", "warp_amt", "level", "unison", "detune", "spread", "semi", "fine" };
-    const char* names[] { "FRAME", "WARP", "LEVEL", "UNISON", "DETUNE", "SPREAD", "SEMI", "FINE" };
+    const char* ids[]   { "frame", "warp_amt", "level", "unison", "detune", "spread", "semi", "fine", "pan" };
+    const char* names[] { "FRAME", "WARP", "LEVEL", "UNISON", "DETUNE", "SPREAD", "SEMI", "FINE", "PAN" };
 
     for (int o = 0; o < params::numOscs; ++o)
     {
@@ -75,6 +75,13 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     macroPanel = &addPanel (modPage, "MACROS", colours::cyan, 2);
     for (int i = 0; i < mod::numMacros; ++i)
         macroPanel->addKnob ("macro" + juce::String (i + 1), "MACRO " + juce::String (i + 1));
+    envRow.push_back (macroPanel);
+
+    chaosPanel = &addPanel (modPage, "CHAOS", colours::gold);
+    chaosPanel->setWidget (chaosDisplay, 84);
+    chaosPanel->addKnob ("chaos_rate", "LORENZ");
+    chaosPanel->addKnob ("fractal_rate", "FRACTAL");
+    lfoRow.push_back (chaosPanel);
     modPage.addAndMakeVisible (matrix);
 
     // ---- header: tabs + draggable sources
@@ -88,7 +95,7 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     soundTab.onClick = [this] { showPage (false); };
     modTab.onClick   = [this] { showPage (true); };
 
-    sourcesLabel.setText ("DRAG TO MODULATE", juce::dontSendNotification);
+    sourcesLabel.setText ("MOD SOURCES", juce::dontSendNotification);
     sourcesLabel.setFont (juce::FontOptions (11.0f, juce::Font::bold));
     sourcesLabel.setColour (juce::Label::textColourId, juce::Colours::white.withAlpha (0.45f));
     addAndMakeVisible (sourcesLabel);
@@ -100,7 +107,7 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
         addAndMakeVisible (*chips.back());
     }
 
-    setSize (1000, 800);
+    setSize (1040, 800);
 }
 
 EmberlineEditor::~EmberlineEditor() { setLookAndFeel (nullptr); }
@@ -137,7 +144,7 @@ void EmberlineEditor::resized()
     soundTab.setBounds (top.removeFromRight (90).reduced (2, 9));
 
     auto chipRow = area.removeFromTop (30);
-    sourcesLabel.setBounds (chipRow.removeFromLeft (120));
+    sourcesLabel.setBounds (chipRow.removeFromLeft (100));
     const int chipW = juce::jmin (84, chipRow.getWidth() / (int) chips.size());
     for (auto& c : chips)
         c->setBounds (chipRow.removeFromLeft (chipW).reduced (3, 2));
@@ -182,7 +189,6 @@ void EmberlineEditor::resized()
         splitRow (lfoArea, lfoRow);
         splitRow (envArea, envRow);
 
-        macroPanel->setBounds (page.removeFromLeft (page.getWidth() * 27 / 100).reduced (4, 0));
         matrix.setBounds (page.reduced (4, 0));
     }
 }

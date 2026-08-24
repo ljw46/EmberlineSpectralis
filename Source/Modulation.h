@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Chaos.h"
 #include "LfoShape.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <array>
@@ -12,19 +13,23 @@ namespace ember::mod
     inline constexpr int numEnvs = 3, numMacros = 4, numSlots = 12, oscCount = 3;
 
     // Source indices (0 = none). The matrix stores these as choice indices.
-    inline constexpr int srcNone = 0, srcLfo = 1, srcEnv = 4, srcMacro = 7, numSources = 11;
+    inline constexpr int srcNone = 0, srcLfo = 1, srcEnv = 4, srcMacro = 7, srcChaos = 11, numChaos = ChaosEngine::numOutputs, numSources = srcChaos + numChaos;
 
     inline juce::StringArray sourceNames()
     {
-        return { "None", "LFO 1", "LFO 2", "LFO 3", "ENV 1", "ENV 2", "ENV 3", "Macro 1", "Macro 2", "Macro 3", "Macro 4" };
+        return { "None", "LFO 1", "LFO 2", "LFO 3", "ENV 1", "ENV 2", "ENV 3", "Macro 1", "Macro 2", "Macro 3", "Macro 4",
+                 "Chaos X", "Chaos Y", "Chaos Z", "Perlin", "S&H" };
     }
 
-    enum class SourceKind { lfo, env, macro };
-    inline SourceKind sourceKind (int src) { return src < srcEnv ? SourceKind::lfo : src < srcMacro ? SourceKind::env : SourceKind::macro; }
-    inline bool isBipolar (int src) { return sourceKind (src) == SourceKind::lfo; }
+    enum class SourceKind { lfo, env, macro, chaos };
+    inline SourceKind sourceKind (int src)
+    {
+        return src < srcEnv ? SourceKind::lfo : src < srcMacro ? SourceKind::env : src < srcChaos ? SourceKind::macro : SourceKind::chaos;
+    }
+    inline bool isBipolar (int src) { return sourceKind (src) == SourceKind::lfo || sourceKind (src) == SourceKind::chaos; }
 
     // Destination indices (matrix choice index = dest + 1; 0 = none).
-    inline constexpr int oscDestStride = 6;   // frame, warp_amt, level, detune, spread, fine
+    inline constexpr int oscDestStride = 7;   // frame, warp_amt, level, detune, spread, fine, pan
     inline constexpr int filterDestBase = oscCount * oscDestStride;
     inline constexpr int subDest = filterDestBase + 6, noiseDest = subDest + 1, numDests = noiseDest + 1;
 
@@ -38,8 +43,8 @@ namespace ember::mod
         static const auto list = []
         {
             std::vector<DestInfo> d;
-            const char* oscIds[]    { "frame", "warp_amt", "level", "detune", "spread", "fine" };
-            const char* oscLabels[] { "Frame", "Warp", "Level", "Detune", "Spread", "Fine" };
+            const char* oscIds[]    { "frame", "warp_amt", "level", "detune", "spread", "fine", "pan" };
+            const char* oscLabels[] { "Frame", "Warp", "Level", "Detune", "Spread", "Fine", "Pan" };
             for (int o = 0; o < oscCount; ++o)
                 for (int k = 0; k < oscDestStride; ++k)
                     d.push_back ({ "osc" + juce::String (o + 1) + "_" + oscIds[k], "Osc" + juce::String (o + 1) + " " + oscLabels[k] });
@@ -86,6 +91,7 @@ namespace ember::mod
         std::array<LfoPtrs, numLfos> lfo;
         std::array<EnvPtrs, numEnvs> env;
         std::array<std::atomic<float>*, numMacros> macro;
+        std::atomic<float> *chaosRate, *fractalRate;
         std::array<std::atomic<float>*, numDests> destBase;
         std::array<juce::NormalisableRange<float>, numDests> destRange;
     };
@@ -125,6 +131,11 @@ namespace ember::mod
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "macro" + String (i + 1), 1 }, "Macro " + String (i + 1),
                 NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.0f));
 
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "chaos_rate", 1 }, "Chaos Rate",
+            NormalisableRange<float> (0.02f, 10.0f, 0.001f, 0.4f), 1.0f));
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "fractal_rate", 1 }, "Fractal Rate",
+            NormalisableRange<float> (0.02f, 20.0f, 0.001f, 0.4f), 1.0f, AudioParameterFloatAttributes().withLabel ("Hz")));
+
         const auto srcs = sourceNames();
         const auto dsts = destChoiceNames();
         for (int s = 0; s < numSlots; ++s)
@@ -161,6 +172,9 @@ namespace ember::mod
         for (int i = 0; i < numMacros; ++i)
             m.macro[(size_t) i] = get ("macro" + juce::String (i + 1));
 
+        m.chaosRate = get ("chaos_rate");
+        m.fractalRate = get ("fractal_rate");
+
         const auto& d = destinations();
         for (size_t i = 0; i < d.size(); ++i)
         {
@@ -179,6 +193,11 @@ namespace ember::mod
         std::array<double, numLfos> blockPhase {};                     // free-running LFO phase at the start of the current block (audio thread)
         std::array<std::atomic<float>, numLfos> displayPhase {};       // for the editor playhead
         std::array<std::atomic<float>, numDests> liveOffset {};        // newest voice's modulation, for the knob arcs
+        ChaosEngine::Frame chaosPrev {}, chaosNext {};                 // chaos outputs at the start / end of the current block
+        int blockLength = 512;
+        static constexpr int trailSize = 192;                          // lorenz x/z history for the display
+        std::array<std::atomic<float>, trailSize> trailX {}, trailZ {};
+        std::atomic<int> trailHead { 0 };
         std::atomic<std::uint64_t> stampCounter { 0 }, newestStamp { 0 };
     };
 }

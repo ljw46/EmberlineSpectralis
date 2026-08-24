@@ -26,7 +26,7 @@ namespace ember::params
 
     struct OscParamPtrs
     {
-        std::atomic<float> *on, *level, *frame, *warpMode, *warpAmt, *unison, *detune, *spread, *semi, *fine;
+        std::atomic<float> *on, *level, *frame, *warpMode, *warpAmt, *unison, *detune, *spread, *semi, *fine, *pan;
     };
 
     struct FilterParamPtrs { std::atomic<float> *type, *cutoff, *res, *drive; };
@@ -44,7 +44,7 @@ namespace ember::params
     {
         auto get = [&] (const char* n) { return apvts.getRawParameterValue (osc (i, n)); };
         return { get ("on"), get ("level"), get ("frame"), get ("warp_mode"), get ("warp_amt"),
-                 get ("unison"), get ("detune"), get ("spread"), get ("semi"), get ("fine") };
+                 get ("unison"), get ("detune"), get ("spread"), get ("semi"), get ("fine"), get ("pan") };
     }
 
     inline SynthParamPtrs lookupAll (juce::AudioProcessorValueTreeState& apvts)
@@ -119,6 +119,7 @@ namespace ember::params
             addFloat ("spread",   "Unison Spread", { 0.0f, 1.0f, 0.001f }, 0.5f);
             p.push_back (std::make_unique<AudioParameterInt> (ParameterID { osc (i, "semi"), 1 }, n + "Semitones", -24, 24, 0));
             addFloat ("fine",     "Fine Tune",   { -100.0f, 100.0f, 0.1f }, 0.0f, "ct");
+            addFloat ("pan",      "Pan",         { -1.0f, 1.0f, 0.001f }, 0.0f);
         }
 
         mod::addParameters (p);

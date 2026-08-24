@@ -29,9 +29,11 @@ private:
     std::deque<Panel> panels;
     std::deque<LfoEditor> lfoEditors;
     std::deque<EnvDisplay> envDisplays;
+    ChaosDisplay chaosDisplay;
     MatrixPanel matrix;
     std::vector<Panel*> oscRow, lowerRow, lfoRow, envRow;
     Panel* macroPanel = nullptr;
+    Panel* chaosPanel = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EmberlineEditor)
 };

@@ -38,7 +38,7 @@ namespace ember
             for (auto& e : envs)
                 e.setSampleRate (sr);
             for (auto& s : smooth)
-                for (auto* sm : { &s.level, &s.frame, &s.warp })
+                for (auto* sm : { &s.level, &s.frame, &s.warp, &s.pan })
                     sm->reset (sr, 0.002);
             for (auto* sm : { &subLevelSm, &noiseLevelSm })
                 sm->reset (sr, 0.002);
@@ -125,8 +125,9 @@ namespace ember
                         oscs[(size_t) o].process (frame, s.warp.getNextValue(), ol, orr);
 
                         const auto g = s.level.getNextValue();
-                        l += ol * g;
-                        r += orr * g;
+                        const auto pan = s.pan.getNextValue();   // linear balance: unity at centre
+                        l += ol * g * (pan > 0.0f ? 1.0f - pan : 1.0f);
+                        r += orr * g * (pan < 0.0f ? 1.0f + pan : 1.0f);
                     }
 
                     const auto nl = noiseLevelSm.getNextValue();
@@ -186,7 +187,7 @@ namespace ember
         static constexpr float voiceGain = 0.3f;
         static constexpr float subGain = 1.0f;
 
-        struct OscSmoothing { juce::SmoothedValue<float> level, frame, warp; };
+        struct OscSmoothing { juce::SmoothedValue<float> level, frame, warp, pan; };
 
         void finish()
         {
@@ -264,6 +265,10 @@ namespace ember
             for (int i = 0; i < mod::numMacros; ++i)
                 src[(size_t) (mod::srcMacro + i)] = P.mod.macro[(size_t) i]->load();
 
+            const float blockPos = juce::jlimit (0.0f, 1.0f, (float) absoluteStart / (float) juce::jmax (1, ctx.blockLength));
+            for (size_t i = 0; i < ctx.chaosPrev.size(); ++i)
+                src[(size_t) mod::srcChaos + i] = ctx.chaosPrev[i] + (ctx.chaosNext[i] - ctx.chaosPrev[i]) * blockPos;
+
             offsets.fill (0.0f);
             for (int s = 0; s < numActiveSlots; ++s)
                 offsets[(size_t) slotDst[(size_t) s]] += slotDepth[(size_t) s] * src[(size_t) slotSrc[(size_t) s]];
@@ -288,6 +293,7 @@ namespace ember
                 aim (s.level, level, snap);
                 aim (s.frame, eff (mod::oscDest (o, 0), p.frame->load()), snap);
                 aim (s.warp, warp, snap);
+                aim (s.pan, eff (mod::oscDest (o, 6), p.pan->load()), snap);
 
                 if (level > 0.0f || s.level.isSmoothing())
                 {

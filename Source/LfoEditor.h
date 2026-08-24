@@ -377,3 +377,47 @@ private:
     juce::Label title;
     std::deque<Row> rows;
 };
+
+// Lorenz butterfly: fading trail of the attractor's x/z position.
+class ChaosDisplay final : public juce::Component, private juce::Timer
+{
+public:
+    explicit ChaosDisplay (EmberlineProcessor& p) : proc (p) { startTimerHz (30); }
+
+    void paint (juce::Graphics& g) override
+    {
+        const auto area = getLocalBounds().toFloat();
+        g.setColour (ember::colours::bgDeep);
+        g.fillRoundedRectangle (area, 5.0f);
+
+        const auto plot = area.reduced (8.0f);
+        constexpr int n = ember::mod::ModContext::trailSize;
+        const int head = proc.modCtx.trailHead.load (std::memory_order_relaxed);
+
+        auto point = [&] (int age)   // age 0 = newest
+        {
+            const size_t idx = (size_t) ((head - 1 - age + 2 * n) % n);
+            const float x = proc.modCtx.trailX[idx].load (std::memory_order_relaxed);
+            const float z = proc.modCtx.trailZ[idx].load (std::memory_order_relaxed);
+            return juce::Point<float> (plot.getCentreX() + x * 0.5f * plot.getWidth(), plot.getCentreY() - z * 0.5f * plot.getHeight());
+        };
+
+        for (int age = n - 2; age >= 0; --age)
+        {
+            const float fade = 1.0f - (float) age / (float) n;
+            g.setColour (ember::colours::gold.withAlpha (0.08f + 0.8f * fade * fade));
+            g.drawLine ({ point (age + 1), point (age) }, 1.0f + 1.2f * fade);
+        }
+
+        const auto head2 = point (0);
+        g.setColour (ember::colours::gold.withAlpha (0.35f));
+        g.fillEllipse (head2.x - 6.0f, head2.y - 6.0f, 12.0f, 12.0f);
+        g.setColour (juce::Colours::white);
+        g.fillEllipse (head2.x - 2.5f, head2.y - 2.5f, 5.0f, 5.0f);
+    }
+
+private:
+    void timerCallback() override { repaint(); }
+
+    EmberlineProcessor& proc;
+};

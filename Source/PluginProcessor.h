@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "Parameters.h"
+#include "Chaos.h"
 #include "LfoShape.h"
 #include "Modulation.h"
 #include "WavetableBank.h"
@@ -51,6 +52,7 @@ private:
     double currentSampleRate = 44100.0;
     std::array<std::atomic<float>*, ember::mod::numLfos> lfoRate {}, lfoMode {};
 
+    ember::ChaosEngine chaos;
     ember::WavetableBank bank;   // immutable after construction; shared by all voices
     juce::Synthesiser synth;
     juce::SmoothedValue<float> gain;

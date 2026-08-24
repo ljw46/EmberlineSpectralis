@@ -10,8 +10,9 @@ namespace ember::colours
     inline const juce::Colour cyan     { 0xff00f2fe };
     inline const juce::Colour coral    { 0xffff5e36 };
     inline const juce::Colour magenta  { 0xffa100ff };
+    inline const juce::Colour gold     { 0xffffc933 };
 
-    // Colour code for modulation sources: LFO = magenta, envelope = coral, macro = cyan
+    // Colour code for modulation sources: LFO = magenta, envelope = coral, macro = cyan, chaos = gold
     inline juce::Colour sourceColour (int src)
     {
         switch (mod::sourceKind (src))
@@ -19,6 +20,7 @@ namespace ember::colours
             case mod::SourceKind::lfo:   return magenta.brighter (0.35f);
             case mod::SourceKind::env:   return coral;
             case mod::SourceKind::macro: return cyan;
+            case mod::SourceKind::chaos: return gold;
         }
         return cyan;
     }

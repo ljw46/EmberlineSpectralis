@@ -27,6 +27,7 @@ void EmberlineProcessor::prepareToPlay (double sampleRate, int)
     currentSampleRate = sampleRate;
     synth.setCurrentPlaybackSampleRate (sampleRate);
     modCtx.blockPhase.fill (0.0);
+    chaos.prepare (sampleRate);
 
     gain.reset (sampleRate, 0.02);
     gain.setCurrentAndTargetValue (juce::Decibels::decibelsToGain (volumeParam->load()));
@@ -42,6 +43,16 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
     juce::ScopedNoDenormals noDenormals;
 
     buffer.clear();
+
+    modCtx.blockLength = buffer.getNumSamples();
+    chaos.process (buffer.getNumSamples(), modPtrs.chaosRate->load(), modPtrs.fractalRate->load(), modCtx.chaosPrev, modCtx.chaosNext);
+    {
+        const int head = modCtx.trailHead.load (std::memory_order_relaxed);
+        modCtx.trailX[(size_t) head].store (chaos.displayX(), std::memory_order_relaxed);
+        modCtx.trailZ[(size_t) head].store (chaos.displayZ(), std::memory_order_relaxed);
+        modCtx.trailHead.store ((head + 1) % ember::mod::ModContext::trailSize, std::memory_order_relaxed);
+    }
+
     synth.renderNextBlock (buffer, midi, 0, buffer.getNumSamples());
 
     // advance the free-running LFO clocks for the next block

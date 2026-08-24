@@ -117,7 +117,7 @@ public:
         g.setColour (colour.withAlpha (0.8f));
         g.drawRoundedRectangle (b, 6.0f, 1.2f);
         g.setColour (colour);
-        g.setFont (juce::FontOptions (11.5f, juce::Font::bold));
+        g.setFont (juce::FontOptions (10.5f, juce::Font::bold));
         g.drawText (label, getLocalBounds(), juce::Justification::centred);
     }
 

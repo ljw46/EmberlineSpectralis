@@ -42,6 +42,7 @@ target_sources(EmberlineSpectralis PRIVATE
     Source/PluginEditor.h
     Source/Parameters.h
     Source/SynthVoice.h
+    Source/Chaos.h
     Source/Curve.h
     Source/Envelope.h
     Source/LfoShape.h
