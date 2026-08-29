@@ -10,6 +10,7 @@ EmberlineProcessor::EmberlineProcessor()
 
     const auto ptrs = ember::params::lookupAll (apvts);
     modPtrs = ptrs.mod;
+    fxPtrs = ember::fx::lookup (apvts);
 
     for (size_t i = 0; i < lfoRate.size(); ++i)
     {
@@ -22,12 +23,14 @@ EmberlineProcessor::EmberlineProcessor()
     synth.addSound (new ember::SynthSound());
 }
 
-void EmberlineProcessor::prepareToPlay (double sampleRate, int)
+void EmberlineProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     currentSampleRate = sampleRate;
     synth.setCurrentPlaybackSampleRate (sampleRate);
     modCtx.blockPhase.fill (0.0);
     chaos.prepare (sampleRate);
+    fxChain.prepare (sampleRate, samplesPerBlock);
+    setLatencySamples (fxChain.getLatency());
 
     gain.reset (sampleRate, 0.02);
     gain.setCurrentAndTargetValue (juce::Decibels::decibelsToGain (volumeParam->load()));
@@ -64,6 +67,8 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
         if (lfoMode[i]->load() > 0.5f)
             modCtx.displayPhase[i].store ((float) ph, std::memory_order_relaxed);
     }
+
+    fxChain.process (buffer, fxPtrs);
 
     gain.setTargetValue (juce::Decibels::decibelsToGain (volumeParam->load()));
 

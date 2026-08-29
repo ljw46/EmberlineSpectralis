@@ -3,6 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "Parameters.h"
 #include "Chaos.h"
+#include "Fx.h"
 #include "LfoShape.h"
 #include "Modulation.h"
 #include "WavetableBank.h"
@@ -53,6 +54,8 @@ private:
     std::array<std::atomic<float>*, ember::mod::numLfos> lfoRate {}, lfoMode {};
 
     ember::ChaosEngine chaos;
+    ember::fx::Chain fxChain;
+    ember::fx::Ptrs fxPtrs {};
     ember::WavetableBank bank;   // immutable after construction; shared by all voices
     juce::Synthesiser synth;
     juce::SmoothedValue<float> gain;

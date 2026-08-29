@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Fx.h"
 #include "Modulation.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <array>
@@ -123,6 +124,7 @@ namespace ember::params
         }
 
         mod::addParameters (p);
+        fx::addParameters (p);
 
         return { p.begin(), p.end() };
     }

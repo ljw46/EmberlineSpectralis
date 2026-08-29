@@ -16,13 +16,13 @@ public:
 
 private:
     Panel& addPanel (juce::Component& page, const juce::String& title, juce::Colour accent, int columns = 0);
-    void showPage (bool mod);
+    void showPage (int page);
 
     EmberlineProcessor& processor;
     EmberLookAndFeel lnf;
 
-    juce::Component soundPage, modPage;
-    juce::TextButton soundTab { "SOUND" }, modTab { "MOD" };
+    juce::Component soundPage, modPage, fxPage;
+    juce::TextButton soundTab { "SOUND" }, modTab { "MOD" }, fxTab { "FX" };
     juce::Label sourcesLabel;
     std::vector<std::unique_ptr<SourceChip>> chips;
 
@@ -31,7 +31,7 @@ private:
     std::deque<EnvDisplay> envDisplays;
     ChaosDisplay chaosDisplay;
     MatrixPanel matrix;
-    std::vector<Panel*> oscRow, lowerRow, lfoRow, envRow;
+    std::vector<Panel*> oscRow, lowerRow, lfoRow, envRow, fxPanels;
     Panel* macroPanel = nullptr;
     Panel* chaosPanel = nullptr;
 

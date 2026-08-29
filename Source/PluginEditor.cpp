@@ -8,6 +8,7 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     setLookAndFeel (&lnf);
     addAndMakeVisible (soundPage);
     addChildComponent (modPage);
+    addChildComponent (fxPage);
 
     // ---- SOUND page
     const juce::Colour accents[] { colours::cyan, colours::coral, colours::magenta };
@@ -78,22 +79,46 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     envRow.push_back (macroPanel);
 
     chaosPanel = &addPanel (modPage, "CHAOS", colours::gold);
-    chaosPanel->setWidget (chaosDisplay, 84);
+    chaosPanel->setWidget (chaosDisplay, 70);
     chaosPanel->addKnob ("chaos_rate", "LORENZ");
     chaosPanel->addKnob ("fractal_rate", "FRACTAL");
     lfoRow.push_back (chaosPanel);
     modPage.addAndMakeVisible (matrix);
 
+    // ---- FX page
+    struct FxKnob { const char* id; const char* name; };
+    auto addFx = [&] (const juce::String& title, juce::Colour colour, const char* onId, const char* comboId,
+                      const juce::StringArray* items, std::initializer_list<FxKnob> knobs)
+    {
+        auto& panel = addPanel (fxPage, title, colour);
+        panel.addOnSwitch (onId);
+        if (comboId != nullptr)
+            panel.addCombo (comboId, *items);
+        for (auto& k : knobs)
+            panel.addKnob (k.id, k.name);
+        fxPanels.push_back (&panel);
+    };
+
+    addFx ("DISTORTION", colours::coral, "fx_dist_on", "fx_dist_type", &fx::distTypeNames,
+           { { "fx_dist_drive", "DRIVE" }, { "fx_dist_tone", "TONE" }, { "fx_dist_mix", "MIX" } });
+    addFx ("CHORUS / FLANGER", colours::cyan, "fx_chorus_on", "fx_chorus_mode", &fx::chorusModeNames,
+           { { "fx_chorus_rate", "RATE" }, { "fx_chorus_depth", "DEPTH" }, { "fx_chorus_feedback", "FEEDBACK" }, { "fx_chorus_mix", "MIX" } });
+    addFx ("PING-PONG DELAY", colours::magenta, "fx_delay_on", nullptr, nullptr,
+           { { "fx_delay_time", "TIME" }, { "fx_delay_feedback", "FEEDBACK" }, { "fx_delay_tone", "TONE" }, { "fx_delay_mix", "MIX" } });
+    addFx ("REVERB", colours::gold, "fx_reverb_on", nullptr, nullptr,
+           { { "fx_reverb_size", "SIZE" }, { "fx_reverb_decay", "DECAY" }, { "fx_reverb_damp", "DAMPING" }, { "fx_reverb_mix", "MIX" } });
+
     // ---- header: tabs + draggable sources
-    for (auto* b : { &soundTab, &modTab })
+    for (auto* b : { &soundTab, &modTab, &fxTab })
     {
         b->setClickingTogglesState (true);
         b->setRadioGroupId (1);
         addAndMakeVisible (b);
     }
     soundTab.setToggleState (true, juce::dontSendNotification);
-    soundTab.onClick = [this] { showPage (false); };
-    modTab.onClick   = [this] { showPage (true); };
+    soundTab.onClick = [this] { showPage (0); };
+    modTab.onClick   = [this] { showPage (1); };
+    fxTab.onClick    = [this] { showPage (2); };
 
     sourcesLabel.setText ("MOD SOURCES", juce::dontSendNotification);
     sourcesLabel.setFont (juce::FontOptions (11.0f, juce::Font::bold));
@@ -119,10 +144,11 @@ Panel& EmberlineEditor::addPanel (juce::Component& page, const juce::String& tit
     return panel;
 }
 
-void EmberlineEditor::showPage (bool mod)
+void EmberlineEditor::showPage (int page)
 {
-    soundPage.setVisible (! mod);
-    modPage.setVisible (mod);
+    soundPage.setVisible (page == 0);
+    modPage.setVisible (page == 1);
+    fxPage.setVisible (page == 2);
 }
 
 void EmberlineEditor::paint (juce::Graphics& g)
@@ -140,6 +166,7 @@ void EmberlineEditor::resized()
     auto area = getLocalBounds().reduced (16, 0);
 
     auto top = area.removeFromTop (46);
+    fxTab.setBounds (top.removeFromRight (70).reduced (2, 9));
     modTab.setBounds (top.removeFromRight (90).reduced (2, 9));
     soundTab.setBounds (top.removeFromRight (90).reduced (2, 9));
 
@@ -153,6 +180,7 @@ void EmberlineEditor::resized()
     area.removeFromBottom (12);
     soundPage.setBounds (area);
     modPage.setBounds (area);
+    fxPage.setBounds (area);
 
     // SOUND page
     {
@@ -170,6 +198,18 @@ void EmberlineEditor::resized()
         const int fullW = page.getWidth();
         for (size_t i = 0; i < lowerRow.size(); ++i)
             lowerRow[i]->setBounds (page.removeFromLeft ((int) ((float) fullW * weights[i] / total)).reduced (4, 0));
+    }
+
+    // FX page: 2 x 2 grid, in signal order
+    {
+        auto page = fxPage.getLocalBounds();
+        auto topRow = page.removeFromTop ((page.getHeight() - 8) / 2);
+        page.removeFromTop (8);
+        for (size_t i = 0; i < fxPanels.size(); ++i)
+        {
+            auto& row = i < 2 ? topRow : page;
+            fxPanels[i]->setBounds (row.removeFromLeft (row.getWidth() / (i % 2 == 0 ? 2 : 1)).reduced (4, 0));
+        }
     }
 
     // MOD page

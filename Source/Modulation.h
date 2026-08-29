@@ -96,7 +96,7 @@ namespace ember::mod
         std::array<juce::NormalisableRange<float>, numDests> destRange;
     };
 
-    inline const juce::StringArray lfoModeNames { "Retrigger", "Free" };
+    inline const juce::StringArray lfoModeNames { "Retrig", "Free" };
 
     inline void addParameters (std::vector<std::unique_ptr<juce::RangedAudioParameter>>& p)
     {
