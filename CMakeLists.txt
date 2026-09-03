@@ -54,6 +54,7 @@ target_sources(EmberlineSpectralis PRIVATE
     Source/EmberLookAndFeel.h
     Source/EditorWidgets.h
     Source/LfoEditor.h
+    Source/WavetableDisplay.h
 )
 
 target_compile_definitions(EmberlineSpectralis PUBLIC

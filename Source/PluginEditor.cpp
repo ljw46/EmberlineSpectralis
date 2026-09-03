@@ -18,6 +18,7 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     for (int o = 0; o < params::numOscs; ++o)
     {
         auto& panel = addPanel (soundPage, "OSC " + juce::String (o + 1), accents[o], 3);
+        panel.setWidget (wavetableDisplays.emplace_back (processor, o, accents[o]), 96);
         panel.addOnSwitch (params::osc (o, "on"));
         panel.addCombo (params::osc (o, "warp_mode"), params::warpModeNames);
         for (size_t k = 0; k < std::size (ids); ++k)

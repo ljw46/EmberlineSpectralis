@@ -3,6 +3,7 @@
 #include "EditorWidgets.h"
 #include "LfoEditor.h"
 #include "PluginProcessor.h"
+#include "WavetableDisplay.h"
 
 class EmberlineEditor final : public juce::AudioProcessorEditor,
                               public juce::DragAndDropContainer
@@ -30,6 +31,7 @@ private:
     std::deque<LfoEditor> lfoEditors;
     std::deque<EnvDisplay> envDisplays;
     ChaosDisplay chaosDisplay;
+    std::deque<WavetableDisplay> wavetableDisplays;
     MatrixPanel matrix;
     std::vector<Panel*> oscRow, lowerRow, lfoRow, envRow, fxPanels;
     Panel* macroPanel = nullptr;

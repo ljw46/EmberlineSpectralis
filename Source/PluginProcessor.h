@@ -42,6 +42,8 @@ public:
     // free matrix slot. Message thread only. Returns false if the matrix is full.
     bool assignModulation (int source, int destination);
 
+    const ember::WavetableBank& getWavetableBank() const noexcept { return bank; }
+
     juce::AudioProcessorValueTreeState apvts;
     ember::mod::ModPtrs modPtrs {};   // cached raw parameter pointers for the editor's mod displays
     ember::mod::LfoShapes lfoShapes;
