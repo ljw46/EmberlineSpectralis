@@ -284,101 +284,66 @@ private:
     juce::Colour accent;
 };
 
-// Lists every matrix slot so routings can be re-pointed, rescaled (bipolar depth) or cleared.
-class MatrixPanel final : public juce::Component
+// Read-only live LFO preview with a moving playhead.
+class LfoPreview final : public juce::Component, private juce::Timer
 {
 public:
-    explicit MatrixPanel (EmberlineProcessor& p)
-    {
-        title.setText ("MOD MATRIX", juce::dontSendNotification);
-        title.setColour (juce::Label::textColourId, ember::colours::cyan);
-        title.setFont (juce::FontOptions (13.0f, juce::Font::bold));
-        addAndMakeVisible (title);
-
-        for (int s = 0; s < ember::mod::numSlots; ++s)
-        {
-            auto& row = rows.emplace_back (p, s);
-            addAndMakeVisible (row);
-        }
-    }
+    LfoPreview (EmberlineProcessor& p, int lfoIndex, juce::Colour c) : proc (p), index (lfoIndex), accent (c) { startTimerHz (30); }
 
     void paint (juce::Graphics& g) override
     {
-        const auto b = getLocalBounds().toFloat();
-        g.setColour (ember::colours::bgDeep.withAlpha (0.55f));
-        g.fillRoundedRectangle (b, 8.0f);
-        g.setColour (ember::colours::cyan.withAlpha (0.3f));
-        g.drawRoundedRectangle (b.reduced (0.5f), 8.0f, 1.0f);
-    }
+        const auto area = getLocalBounds().toFloat();
+        g.setColour (juce::Colour (0xff080b10));
+        g.fillRoundedRectangle (area, 6.0f);
 
-    void resized() override
-    {
-        auto inner = getLocalBounds().reduced (10, 8);
-        title.setBounds (inner.removeFromTop (20));
-        inner.removeFromTop (2);
+        const auto plot = area.reduced (8.0f, 14.0f);
+        g.setColour (accent.withAlpha (0.12f));
+        for (int i = 1; i < 8; ++i)
+            g.drawVerticalLine ((int) (plot.getX() + plot.getWidth() * (float) i / 8.0f), area.getY() + 4.0f, area.getBottom() - 4.0f);
+        g.setColour (accent.withAlpha (0.3f));
+        g.drawHorizontalLine ((int) plot.getCentreY(), plot.getX(), plot.getRight());
 
-        const int perCol = ember::mod::numSlots / 2;
-        const int rowH = inner.getHeight() / perCol;
-        auto left = inner.removeFromLeft (inner.getWidth() / 2 - 6);
-        inner.removeFromLeft (12);
+        auto toPx = [&] (float x, float y) { return juce::Point<float> (plot.getX() + x * plot.getWidth(), plot.getCentreY() - y * 0.5f * plot.getHeight()); };
 
-        for (int i = 0; i < ember::mod::numSlots; ++i)
-            rows[(size_t) i].setBounds ((i < perCol ? left : inner).removeFromTop (rowH).reduced (0, 2));
+        juce::Path curve, fill;
+        const int steps = juce::jmax (16, (int) plot.getWidth() / 2);
+        for (int i = 0; i <= steps; ++i)
+        {
+            const float x = (float) i / (float) steps;
+            const auto pt = toPx (x, proc.lfoShapes.read (index, (double) x));
+            if (i == 0) { curve.startNewSubPath (pt); fill.startNewSubPath (pt.x, plot.getCentreY()); fill.lineTo (pt); }
+            else        { curve.lineTo (pt); fill.lineTo (pt); }
+        }
+        fill.lineTo (plot.getRight(), plot.getCentreY());
+        fill.closeSubPath();
+        g.setColour (accent.withAlpha (0.14f));
+        g.fillPath (fill);
+        g.setColour (accent.withAlpha (0.3f));
+        g.strokePath (curve, juce::PathStrokeType (5.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        g.setColour (accent);
+        g.strokePath (curve, juce::PathStrokeType (1.8f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+
+        const float phase = proc.modCtx.displayPhase[(size_t) index].load (std::memory_order_relaxed);
+        const auto head = toPx (phase, proc.lfoShapes.read (index, (double) phase));
+        g.setColour (juce::Colours::white.withAlpha (0.25f));
+        g.drawVerticalLine ((int) head.x, area.getY() + 4.0f, area.getBottom() - 4.0f);
+        g.setColour (juce::Colours::white);
+        g.fillEllipse (head.x - 3.5f, head.y - 3.5f, 7.0f, 7.0f);
+
+        g.setColour (accent.withAlpha (0.8f));
+        g.setFont (juce::FontOptions (10.5f, juce::Font::bold));
+        g.drawText ("LFO " + juce::String (index + 1), getLocalBounds().reduced (8, 3), juce::Justification::topLeft);
     }
 
 private:
-    struct Row final : juce::Component
-    {
-        Row (EmberlineProcessor& p, int slot) : proc (p), slotIndex (slot)
-        {
-            src.addItemList (ember::mod::sourceNames(), 1);
-            dst.addItemList (ember::mod::destChoiceNames(), 1);
-            depth.setSliderStyle (juce::Slider::LinearHorizontal);
-            depth.setTextBoxStyle (juce::Slider::TextBoxRight, false, 44, 18);
-            depth.setColour (juce::Slider::thumbColourId, ember::colours::cyan);
-            depth.setColour (juce::Slider::trackColourId, ember::colours::cyan.withAlpha (0.6f));
-            clear.setButtonText ("x");
-            clear.onClick = [this]
-            {
-                for (const char* what : { "src", "dst" })
-                    if (auto* prm = proc.apvts.getParameter (ember::mod::slotId (slotIndex, what)))
-                        prm->setValueNotifyingHost (0.0f);
-            };
+    void timerCallback() override { repaint(); }
 
-            for (auto* c : std::initializer_list<juce::Component*> { &src, &dst, &depth, &clear })
-                addAndMakeVisible (c);
-
-            srcAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.apvts, ember::mod::slotId (slot, "src"), src);
-            dstAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.apvts, ember::mod::slotId (slot, "dst"), dst);
-            depthAtt = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (proc.apvts, ember::mod::slotId (slot, "depth"), depth);
-        }
-
-        void resized() override
-        {
-            auto r = getLocalBounds();
-            clear.setBounds (r.removeFromRight (22));
-            r.removeFromRight (4);
-            src.setBounds (r.removeFromLeft (r.getWidth() * 29 / 100));
-            r.removeFromLeft (4);
-            dst.setBounds (r.removeFromLeft (r.getWidth() * 46 / 100));
-            r.removeFromLeft (4);
-            depth.setBounds (r);
-        }
-
-        EmberlineProcessor& proc;
-        int slotIndex;
-        juce::ComboBox src, dst;
-        juce::Slider depth;
-        juce::TextButton clear;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> srcAtt, dstAtt;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> depthAtt;
-    };
-
-    juce::Label title;
-    std::deque<Row> rows;
+    EmberlineProcessor& proc;
+    int index;
+    juce::Colour accent;
 };
 
-// Lorenz butterfly: fading trail of the attractor's x/z position.
+// Lorenz attractor as a slowly rotating cloud of dots in (x, y, z); newest dot is bright.
 class ChaosDisplay final : public juce::Component, private juce::Timer
 {
 public:
@@ -387,33 +352,65 @@ public:
     void paint (juce::Graphics& g) override
     {
         const auto area = getLocalBounds().toFloat();
-        g.setColour (ember::colours::bgDeep);
-        g.fillRoundedRectangle (area, 5.0f);
+        g.setColour (juce::Colour (0xff080b10));
+        g.fillRoundedRectangle (area, 6.0f);
 
-        const auto plot = area.reduced (8.0f);
+        const auto plot = area.reduced (10.0f);
         constexpr int n = ember::mod::ModContext::trailSize;
         const int head = proc.modCtx.trailHead.load (std::memory_order_relaxed);
+        const float theta = (float) (juce::Time::getMillisecondCounter() % 24000u) / 24000.0f * juce::MathConstants<float>::twoPi;
+        const float cs = std::cos (theta), sn = std::sin (theta);
 
-        auto point = [&] (int age)   // age 0 = newest
+        struct Pt { float x, y, depth; };
+        auto point = [&] (int age) -> Pt
         {
             const size_t idx = (size_t) ((head - 1 - age + 2 * n) % n);
             const float x = proc.modCtx.trailX[idx].load (std::memory_order_relaxed);
+            const float y = proc.modCtx.trailY[idx].load (std::memory_order_relaxed);
             const float z = proc.modCtx.trailZ[idx].load (std::memory_order_relaxed);
-            return juce::Point<float> (plot.getCentreX() + x * 0.5f * plot.getWidth(), plot.getCentreY() - z * 0.5f * plot.getHeight());
+            const float rx = x * cs - y * sn, depth = x * sn + y * cs;   // rotate about the vertical axis
+            return { plot.getCentreX() + rx * 0.5f * plot.getWidth(),
+                     plot.getCentreY() - z * 0.5f * plot.getHeight() + depth * 0.12f * plot.getHeight(), depth };
         };
 
         for (int age = n - 2; age >= 0; --age)
         {
             const float fade = 1.0f - (float) age / (float) n;
-            g.setColour (ember::colours::gold.withAlpha (0.08f + 0.8f * fade * fade));
-            g.drawLine ({ point (age + 1), point (age) }, 1.0f + 1.2f * fade);
+            const auto a = point (age + 1), b = point (age);
+            const auto colour = ember::colours::magenta.interpolatedWith (ember::colours::gold, fade);
+
+            g.setColour (colour.withAlpha (0.05f + 0.25f * fade));
+            g.drawLine (a.x, a.y, b.x, b.y, 1.0f);
+
+            const float size = (1.5f + 2.2f * fade) * (0.75f + 0.25f * (b.depth + 1.0f));   // nearer dots read bigger
+            g.setColour (colour.withAlpha (0.2f + 0.7f * fade * fade));
+            g.fillEllipse (b.x - size * 0.5f, b.y - size * 0.5f, size, size);
         }
 
-        const auto head2 = point (0);
+        const auto h = point (0);
         g.setColour (ember::colours::gold.withAlpha (0.35f));
-        g.fillEllipse (head2.x - 6.0f, head2.y - 6.0f, 12.0f, 12.0f);
+        g.fillEllipse (h.x - 7.0f, h.y - 7.0f, 14.0f, 14.0f);
         g.setColour (juce::Colours::white);
-        g.fillEllipse (head2.x - 2.5f, head2.y - 2.5f, 5.0f, 5.0f);
+        g.fillEllipse (h.x - 3.0f, h.y - 3.0f, 6.0f, 6.0f);
+
+        // current x / y / z readouts
+        const auto latest = (size_t) ((head - 1 + n) % n);
+        const float vals[] { proc.modCtx.trailX[latest].load (std::memory_order_relaxed),
+                             proc.modCtx.trailY[latest].load (std::memory_order_relaxed),
+                             proc.modCtx.trailZ[latest].load (std::memory_order_relaxed) };
+        const char* names[] { "X", "Y", "Z" };
+        for (int i = 0; i < 3; ++i)
+        {
+            const float bx = area.getX() + 8.0f, by = area.getBottom() - 12.0f - (float) (2 - i) * 11.0f;
+            g.setColour (juce::Colours::white.withAlpha (0.1f));
+            g.fillRect (bx + 10.0f, by, 46.0f, 4.0f);
+            g.setColour (ember::colours::gold);
+            const float w = 23.0f * vals[i];
+            g.fillRect (bx + 33.0f + juce::jmin (0.0f, w), by, std::abs (w), 4.0f);
+            g.setColour (juce::Colours::white.withAlpha (0.6f));
+            g.setFont (juce::FontOptions (9.0f, juce::Font::bold));
+            g.drawText (names[i], (int) bx, (int) by - 3, 10, 10, juce::Justification::centred);
+        }
     }
 
 private:

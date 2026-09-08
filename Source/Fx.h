@@ -13,6 +13,8 @@ namespace ember::fx
 {
     inline const juce::StringArray distTypeNames   { "Soft", "Hard", "Fold", "Tube" };
     inline const juce::StringArray chorusModeNames { "Chorus", "Flanger" };
+    inline const juce::StringArray effectNames     { "Distortion", "Chorus/Flanger", "Delay", "Reverb" };
+    inline constexpr int numEffects = 4;
 
     struct Ptrs
     {
@@ -20,6 +22,7 @@ namespace ember::fx
         std::atomic<float> *chOn, *chMode, *chRate, *chDepth, *chFeedback, *chMix;
         std::atomic<float> *dlOn, *dlTime, *dlFeedback, *dlTone, *dlMix;
         std::atomic<float> *rvOn, *rvSize, *rvDecay, *rvDamp, *rvMix;
+        std::array<std::atomic<float>*, numEffects> slot;   // which effect sits in each chain position
     };
 
     inline void addParameters (std::vector<std::unique_ptr<juce::RangedAudioParameter>>& p)
@@ -58,6 +61,10 @@ namespace ember::fx
         knob ("fx_reverb_decay", "Reverb Decay", { 0.2f, 20.0f, 0.01f, 0.4f }, 3.0f, "s");
         knob ("fx_reverb_damp", "Reverb Damping", { 0.0f, 1.0f, 0.001f }, 0.4f);
         knob ("fx_reverb_mix", "Reverb Mix", { 0.0f, 1.0f, 0.001f }, 0.3f);
+
+        for (int i = 0; i < numEffects; ++i)
+            p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { "fx_slot" + String (i + 1), 1 },
+                                                                  "FX Slot " + String (i + 1), effectNames, i));
     }
 
     inline Ptrs lookup (juce::AudioProcessorValueTreeState& a)
@@ -66,7 +73,8 @@ namespace ember::fx
         return { g ("fx_dist_on"), g ("fx_dist_type"), g ("fx_dist_drive"), g ("fx_dist_tone"), g ("fx_dist_mix"),
                  g ("fx_chorus_on"), g ("fx_chorus_mode"), g ("fx_chorus_rate"), g ("fx_chorus_depth"), g ("fx_chorus_feedback"), g ("fx_chorus_mix"),
                  g ("fx_delay_on"), g ("fx_delay_time"), g ("fx_delay_feedback"), g ("fx_delay_tone"), g ("fx_delay_mix"),
-                 g ("fx_reverb_on"), g ("fx_reverb_size"), g ("fx_reverb_decay"), g ("fx_reverb_damp"), g ("fx_reverb_mix") };
+                 g ("fx_reverb_on"), g ("fx_reverb_size"), g ("fx_reverb_decay"), g ("fx_reverb_damp"), g ("fx_reverb_mix"),
+                 { g ("fx_slot1"), g ("fx_slot2"), g ("fx_slot3"), g ("fx_slot4") } };
     }
 
     namespace detail
@@ -484,10 +492,29 @@ namespace ember::fx
 
         void process (juce::AudioBuffer<float>& b, const Ptrs& p)
         {
-            dist.process (b, p);
-            chorus.process (b, p);
-            delay.process (b, p);
-            reverb.process (b, p);
+            // chain order comes from the slot params; a duplicate (mid-swap) just runs once and any
+            // missing effect is appended, so the order is always a valid permutation
+            std::array<bool, numEffects> used {};
+            std::array<int, numEffects> order {};
+            int count = 0;
+            for (auto* slot : p.slot)
+            {
+                const int e = juce::jlimit (0, numEffects - 1, juce::roundToInt (slot->load()));
+                if (! used[(size_t) e]) { used[(size_t) e] = true; order[(size_t) count++] = e; }
+            }
+            for (int e = 0; e < numEffects; ++e)
+                if (! used[(size_t) e]) order[(size_t) count++] = e;
+
+            for (int e : order)
+            {
+                switch (e)
+                {
+                    case 0:  dist.process (b, p); break;
+                    case 1:  chorus.process (b, p); break;
+                    case 2:  delay.process (b, p); break;
+                    default: reverb.process (b, p); break;
+                }
+            }
         }
 
     private:

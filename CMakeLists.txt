@@ -40,6 +40,8 @@ target_sources(EmberlineSpectralis PRIVATE
     Source/PluginProcessor.h
     Source/PluginEditor.cpp
     Source/PluginEditor.h
+    Source/EmberLookAndFeel.cpp
+    Source/PhoenixLogo.h
     Source/Parameters.h
     Source/SynthVoice.h
     Source/Chaos.h
@@ -54,7 +56,8 @@ target_sources(EmberlineSpectralis PRIVATE
     Source/EmberLookAndFeel.h
     Source/EditorWidgets.h
     Source/LfoEditor.h
-    Source/WavetableDisplay.h
+    Source/MeshDisplay.h
+    Source/MatrixPanel.h
 )
 
 target_compile_definitions(EmberlineSpectralis PUBLIC

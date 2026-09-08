@@ -26,6 +26,7 @@ namespace ember::mod
     {
         return src < srcEnv ? SourceKind::lfo : src < srcMacro ? SourceKind::env : src < srcChaos ? SourceKind::macro : SourceKind::chaos;
     }
+    // A source's native polarity; a matrix slot can override it with its Bipolar switch.
     inline bool isBipolar (int src) { return sourceKind (src) == SourceKind::lfo || sourceKind (src) == SourceKind::chaos; }
 
     // Destination indices (matrix choice index = dest + 1; 0 = none).
@@ -81,7 +82,7 @@ namespace ember::mod
 
     inline juce::String slotId (int slot, const char* what) { return "mod" + juce::String (slot + 1) + "_" + what; }
 
-    struct SlotPtrs { std::atomic<float> *src, *dst, *depth; };
+    struct SlotPtrs { std::atomic<float> *src, *dst, *depth, *curve, *bipolar; };
     struct LfoPtrs  { std::atomic<float> *rate, *mode; };
     struct EnvPtrs  { std::atomic<float> *attack, *decay, *sustain, *release, *aCurve, *dCurve; };
 
@@ -145,6 +146,9 @@ namespace ember::mod
             p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { slotId (s, "dst"), 1 }, n + "Destination", dsts, 0));
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { slotId (s, "depth"), 1 }, n + "Depth",
                 NormalisableRange<float> (-1.0f, 1.0f, 0.001f), 0.5f));
+            p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { slotId (s, "curve"), 1 }, n + "Curve",
+                NormalisableRange<float> (-1.0f, 1.0f, 0.001f), 0.0f));
+            p.push_back (std::make_unique<AudioParameterBool> (ParameterID { slotId (s, "bipolar"), 1 }, n + "Bipolar", true));
         }
     }
 
@@ -154,7 +158,8 @@ namespace ember::mod
         ModPtrs m {};
 
         for (int s = 0; s < numSlots; ++s)
-            m.slots[(size_t) s] = { get (slotId (s, "src")), get (slotId (s, "dst")), get (slotId (s, "depth")) };
+            m.slots[(size_t) s] = { get (slotId (s, "src")), get (slotId (s, "dst")), get (slotId (s, "depth")),
+                                    get (slotId (s, "curve")), get (slotId (s, "bipolar")) };
 
         for (int i = 0; i < numLfos; ++i)
         {
@@ -196,7 +201,7 @@ namespace ember::mod
         ChaosEngine::Frame chaosPrev {}, chaosNext {};                 // chaos outputs at the start / end of the current block
         int blockLength = 512;
         static constexpr int trailSize = 192;                          // lorenz x/z history for the display
-        std::array<std::atomic<float>, trailSize> trailX {}, trailZ {};
+        std::array<std::atomic<float>, trailSize> trailX {}, trailY {}, trailZ {};
         std::atomic<int> trailHead { 0 };
         std::atomic<std::uint64_t> stampCounter { 0 }, newestStamp { 0 };
     };

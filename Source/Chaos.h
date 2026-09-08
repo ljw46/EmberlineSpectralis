@@ -59,6 +59,7 @@ namespace ember
 
         // normalised Lorenz position for the display (x, z in -1..1)
         float displayX() const noexcept { return current[0]; }
+        float displayY() const noexcept { return current[1]; }
         float displayZ() const noexcept { return current[2]; }
 
     private:

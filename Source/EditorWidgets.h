@@ -3,6 +3,7 @@
 #include "EmberLookAndFeel.h"
 #include "PluginProcessor.h"
 #include <deque>
+#include <functional>
 
 // Rotary knob that accepts modulation drops and paints the routed modulation ranges around itself.
 class ModKnob final : public juce::Slider,
@@ -37,20 +38,21 @@ public:
         if (dest < 0)
             return;
 
-        const auto b = getLookAndFeel().getSliderLayout (*this).sliderBounds.toFloat().reduced (8.0f);
-        const float radius = juce::jmin (b.getWidth(), b.getHeight()) * 0.5f + 2.0f;
-        const auto c = b.getCentre();
+        const auto geo = ember::knobGeometry (getLookAndFeel().getSliderLayout (*this).sliderBounds);
+        const auto c = geo.centre;
+        const float radius = geo.radius + 2.5f;
         const auto rp = getRotaryParameters();
         auto angleOf = [&] (double prop) { return rp.startAngleRadians + (float) prop * (rp.endAngleRadians - rp.startAngleRadians); };
 
         if (hover)
         {
-            g.setColour (juce::Colours::white.withAlpha (0.35f));
-            g.drawEllipse (b.expanded (4.0f), 1.5f);
+            g.setColour (juce::Colours::white.withAlpha (0.4f));
+            g.drawEllipse (c.x - geo.radius - 3.0f, c.y - geo.radius - 3.0f, 2 * geo.radius + 6.0f, 2 * geo.radius + 6.0f, 1.5f);
         }
 
         const double base = valueToProportionOfLength (getValue());
         const float live = proc.modCtx.liveOffset[(size_t) dest].load (std::memory_order_relaxed);
+        bool any = false;
 
         for (const auto& slot : proc.modPtrs.slots)
         {
@@ -58,8 +60,9 @@ public:
             if (src <= 0 || juce::roundToInt (slot.dst->load()) - 1 != dest)
                 continue;
 
+            any = true;
             const double depth = slot.depth->load();
-            const bool bipolar = ember::mod::isBipolar (src);
+            const bool bipolar = slot.bipolar->load() > 0.5f;
             const double lo = bipolar ? juce::jlimit (0.0, 1.0, base - std::abs (depth)) : juce::jlimit (0.0, 1.0, juce::jmin (base, base + depth));
             const double hi = bipolar ? juce::jlimit (0.0, 1.0, base + std::abs (depth)) : juce::jlimit (0.0, 1.0, juce::jmax (base, base + depth));
             const auto colour = ember::colours::sourceColour (src);
@@ -69,16 +72,14 @@ public:
             g.setColour (colour.withAlpha (0.25f));
             g.strokePath (arc, juce::PathStrokeType (6.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
             g.setColour (colour);
-            g.strokePath (arc, juce::PathStrokeType (2.5f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+            g.strokePath (arc, juce::PathStrokeType (2.2f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        }
 
-            if (juce::approximatelyEqual (live, 0.0f) == false || juce::roundToInt (slot.src->load()) > 0)
-            {
-                const double pos = juce::jlimit (0.0, 1.0, base + (double) live);
-                const float a = angleOf (pos);
-                g.setColour (juce::Colours::white);
-                g.fillEllipse (c.x + std::sin (a) * radius - 2.5f, c.y - std::cos (a) * radius - 2.5f, 5.0f, 5.0f);
-                break;   // one live marker (it shows the summed offset)
-            }
+        if (any)   // one live marker showing the summed offset
+        {
+            const float a = angleOf (juce::jlimit (0.0, 1.0, base + (double) live));
+            g.setColour (juce::Colours::white);
+            g.fillEllipse (c.x + std::sin (a) * radius - 2.5f, c.y - std::cos (a) * radius - 2.5f, 5.0f, 5.0f);
         }
     }
 
@@ -112,7 +113,7 @@ public:
     void paint (juce::Graphics& g) override
     {
         auto b = getLocalBounds().toFloat().reduced (1.0f);
-        g.setColour (colour.withAlpha (0.16f));
+        g.setColour (colour.withAlpha (0.14f));
         g.fillRoundedRectangle (b, 6.0f);
         g.setColour (colour.withAlpha (0.8f));
         g.drawRoundedRectangle (b, 6.0f, 1.2f);
@@ -140,29 +141,43 @@ private:
     bool dragging = false;
 };
 
-// A titled, outlined group of controls.
+// A titled container: #0E131D fill, 8px corners, soft glowing border in the accent colour.
 class Panel final : public juce::Component
 {
 public:
     Panel (EmberlineProcessor& p, const juce::String& titleText, juce::Colour accentColour, int knobColumns = 0)
-        : proc (p), accent (accentColour), columns (knobColumns)
+        : proc (p), accent (accentColour), knobColour (accentColour), columns (knobColumns)
     {
-        title.setText (titleText, juce::dontSendNotification);
         title.setColour (juce::Label::textColourId, accent);
-        title.setFont (juce::FontOptions (13.0f, juce::Font::bold));
+        title.setFont (juce::FontOptions (13.0f, juce::Font::bold).withKerningFactor (0.06f));
+        title.setInterceptsMouseClicks (false, false);
+        setTitle (titleText);
         addAndMakeVisible (title);
     }
+
+    // appearance
+    void setTitle (const juce::String& t) { title.setText (t, juce::dontSendNotification); }
+    void setCentredTitle (bool c)         { centredTitle = c; title.setJustificationType (c ? juce::Justification::centred : juce::Justification::centredLeft); }
+    void setTinted (bool t)               { tinted = t; }
+    void setKnobColour (juce::Colour c)   { knobColour = c; }
+    void setCompactKnobs (bool c)         { compact = c; }   // value readout to the right, label above
+
+    // header drag (used to reorder FX slots)
+    std::function<void (Panel&, const juce::MouseEvent&)> onHeaderDrag;
+    std::function<void (Panel&)> onHeaderDragEnd;
 
     void addKnob (const juce::String& paramId, const juce::String& name)
     {
         auto& k = knobs.emplace_back (proc, ember::mod::destForParam (paramId));
-        k.slider.setColour (juce::Slider::rotarySliderFillColourId, accent);
-        k.slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 70, 18);
+        k.compact = compact;
+        k.slider.setColour (juce::Slider::rotarySliderFillColourId, knobColour);
+        k.slider.setColour (juce::Slider::textBoxOutlineColourId, knobColour.withAlpha (0.45f));
+        k.slider.setTextBoxStyle (compact ? juce::Slider::TextBoxRight : juce::Slider::TextBoxBelow, false, compact ? 58 : 64, 16);
         addAndMakeVisible (k.slider);
 
         k.label.setText (name, juce::dontSendNotification);
-        k.label.setJustificationType (juce::Justification::centred);
-        k.label.setFont (juce::FontOptions (11.0f, juce::Font::bold));
+        k.label.setJustificationType (compact ? juce::Justification::centredLeft : juce::Justification::centred);
+        k.label.setFont (juce::FontOptions (10.5f, juce::Font::bold).withKerningFactor (0.05f));
         addAndMakeVisible (k.label);
 
         k.attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (proc.apvts, paramId, k.slider);
@@ -172,6 +187,7 @@ public:
     {
         auto& c = combos.emplace_back();
         c.box.addItemList (items, 1);
+        c.box.setColour (juce::ComboBox::outlineColourId, accent.withAlpha (0.45f));
         addAndMakeVisible (c.box);
         c.attachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.apvts, paramId, c.box);
     }
@@ -199,11 +215,26 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        const auto b = getLocalBounds().toFloat();
-        g.setColour (ember::colours::bgDeep.withAlpha (0.55f));
+        const auto b = getLocalBounds().toFloat().reduced (1.5f);
+        g.setColour (ember::colours::panelFill);
         g.fillRoundedRectangle (b, 8.0f);
-        g.setColour (accent.withAlpha (0.35f));
-        g.drawRoundedRectangle (b.reduced (0.5f), 8.0f, 1.0f);
+        if (tinted)
+        {
+            g.setColour (accent.withAlpha (0.06f));
+            g.fillRoundedRectangle (b, 8.0f);
+        }
+        g.setColour (accent.withAlpha (0.1f));
+        g.drawRoundedRectangle (b.expanded (1.5f), 9.0f, 3.0f);
+        g.setColour (accent.withAlpha (0.8f));
+        g.drawRoundedRectangle (b, 8.0f, 1.3f);
+
+        if (onHeaderDrag)   // grip dots
+        {
+            g.setColour (accent.withAlpha (0.55f));
+            for (int r = 0; r < 2; ++r)
+                for (int c = 0; c < 3; ++c)
+                    g.fillEllipse (10.0f + (float) c * 5.0f, 11.0f + (float) r * 5.0f, 2.2f, 2.2f);
+        }
     }
 
     void resized() override
@@ -212,6 +243,8 @@ public:
         auto head = inner.removeFromTop (20);
         if (hasOn)
             onButton.setBounds (head.removeFromRight (56));
+        if (onHeaderDrag)
+            head.removeFromLeft (22);
         title.setBounds (head);
 
         if (widget != nullptr)
@@ -253,10 +286,30 @@ public:
             {
                 auto cell = row.removeFromLeft (cellW);
                 auto& k = knobs[(size_t) (r * cols + c)];
-                k.label.setBounds (cell.removeFromTop (16));
-                k.slider.setBounds (cell);
+                if (k.compact)
+                {
+                    k.label.setBounds (cell.removeFromTop (13));
+                    k.slider.setBounds (cell);
+                }
+                else
+                {
+                    k.label.setBounds (cell.removeFromBottom (14));
+                    k.slider.setBounds (cell);
+                }
             }
         }
+    }
+
+    void mouseDrag (const juce::MouseEvent& e) override
+    {
+        if (onHeaderDrag && e.getMouseDownY() < 30)
+            onHeaderDrag (*this, e);
+    }
+
+    void mouseUp (const juce::MouseEvent& e) override
+    {
+        if (onHeaderDragEnd && e.getMouseDownY() < 30)
+            onHeaderDragEnd (*this);
     }
 
 private:
@@ -266,6 +319,7 @@ private:
         ModKnob slider;
         juce::Label label;
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
+        bool compact = false;
     };
 
     struct Combo
@@ -275,8 +329,9 @@ private:
     };
 
     EmberlineProcessor& proc;
-    juce::Colour accent;
+    juce::Colour accent, knobColour;
     int columns;
+    bool tinted = false, compact = false, centredTitle = false;
     juce::Label title;
     juce::ToggleButton onButton;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> onAttachment;

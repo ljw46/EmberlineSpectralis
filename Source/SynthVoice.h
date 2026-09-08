@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Curve.h"
 #include "Envelope.h"
 #include "Parameters.h"
 #include "SubNoise.h"
@@ -35,6 +36,10 @@ namespace ember
         void setCurrentPlaybackSampleRate (double sr) override
         {
             juce::SynthesiserVoice::setCurrentPlaybackSampleRate (sr);
+
+            if (sr <= 0.0)   // Synthesiser::addVoice calls this with 0 before prepareToPlay
+                return;
+
             for (auto& e : envs)
                 e.setSampleRate (sr);
             for (auto& s : smooth)
@@ -220,6 +225,8 @@ namespace ember
                     slotSrc[(size_t) numActiveSlots] = src;
                     slotDst[(size_t) numActiveSlots] = dst;
                     slotDepth[(size_t) numActiveSlots] = depth;
+                    slotCurve[(size_t) numActiveSlots] = s.curve->load();
+                    slotBipolar[(size_t) numActiveSlots] = s.bipolar->load() > 0.5f;
                     ++numActiveSlots;
                 }
             }
@@ -271,7 +278,17 @@ namespace ember
 
             offsets.fill (0.0f);
             for (int s = 0; s < numActiveSlots; ++s)
-                offsets[(size_t) slotDst[(size_t) s]] += slotDepth[(size_t) s] * src[(size_t) slotSrc[(size_t) s]];
+            {
+                const auto si = (size_t) s;
+                float v = src[(size_t) slotSrc[si]];
+
+                const bool native = mod::isBipolar (slotSrc[si]);
+                if (slotBipolar[si] && ! native)       v = 2.0f * v - 1.0f;
+                else if (! slotBipolar[si] && native)  v = 0.5f * (v + 1.0f);
+
+                v = std::copysign (curveShape (std::abs (v), slotCurve[si]), v);
+                offsets[(size_t) slotDst[si]] += slotDepth[si] * v;
+            }
 
             if (stamp == ctx.newestStamp.load())
             {
@@ -334,7 +351,8 @@ namespace ember
 
         std::array<float, mod::numDests> offsets {};
         std::array<int, mod::numSlots> slotSrc {}, slotDst {};
-        std::array<float, mod::numSlots> slotDepth {};
+        std::array<float, mod::numSlots> slotDepth {}, slotCurve {};
+        std::array<bool, mod::numSlots> slotBipolar {};
         int numActiveSlots = 0;
 
         std::array<double, mod::numLfos> lfoPhase {}, lfoInc {};

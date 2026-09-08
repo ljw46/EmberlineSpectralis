@@ -52,6 +52,7 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
     {
         const int head = modCtx.trailHead.load (std::memory_order_relaxed);
         modCtx.trailX[(size_t) head].store (chaos.displayX(), std::memory_order_relaxed);
+        modCtx.trailY[(size_t) head].store (chaos.displayY(), std::memory_order_relaxed);
         modCtx.trailZ[(size_t) head].store (chaos.displayZ(), std::memory_order_relaxed);
         modCtx.trailHead.store ((head + 1) % ember::mod::ModContext::trailSize, std::memory_order_relaxed);
     }
@@ -133,6 +134,8 @@ bool EmberlineProcessor::assignModulation (int source, int destination)
     };
 
     set (ember::mod::slotId (freeSlot, "depth"), 0.5f);
+    set (ember::mod::slotId (freeSlot, "curve"), 0.0f);
+    set (ember::mod::slotId (freeSlot, "bipolar"), ember::mod::isBipolar (source) ? 1.0f : 0.0f);
     set (ember::mod::slotId (freeSlot, "dst"), (float) (destination + 1));
     set (ember::mod::slotId (freeSlot, "src"), (float) source);
     return true;
