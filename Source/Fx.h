@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Tempo.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
 #include <array>
@@ -20,7 +21,7 @@ namespace ember::fx
     {
         std::atomic<float> *distOn, *distType, *distDrive, *distTone, *distMix;
         std::atomic<float> *chOn, *chMode, *chRate, *chDepth, *chFeedback, *chMix;
-        std::atomic<float> *dlOn, *dlTime, *dlFeedback, *dlTone, *dlMix;
+        std::atomic<float> *dlOn, *dlSync, *dlTime, *dlFeedback, *dlTone, *dlMix;
         std::atomic<float> *rvOn, *rvSize, *rvDecay, *rvDamp, *rvMix;
         std::array<std::atomic<float>*, numEffects> slot;   // which effect sits in each chain position
     };
@@ -51,6 +52,7 @@ namespace ember::fx
         knob ("fx_chorus_mix", "Chorus Mix", { 0.0f, 1.0f, 0.001f }, 0.5f);
 
         toggle ("fx_delay_on", "Delay On");
+        choice ("fx_delay_sync", "Delay Tempo Sync", tempo::names());
         knob ("fx_delay_time", "Delay Time", { 10.0f, 2000.0f, 0.1f, 0.4f }, 375.0f, "ms");
         knob ("fx_delay_feedback", "Delay Feedback", { 0.0f, 0.95f, 0.001f }, 0.4f);
         knob ("fx_delay_tone", "Delay Tone", { 300.0f, 16000.0f, 1.0f, 0.4f }, 5000.0f, "Hz");
@@ -72,7 +74,7 @@ namespace ember::fx
         auto g = [&] (const char* id) { return a.getRawParameterValue (id); };
         return { g ("fx_dist_on"), g ("fx_dist_type"), g ("fx_dist_drive"), g ("fx_dist_tone"), g ("fx_dist_mix"),
                  g ("fx_chorus_on"), g ("fx_chorus_mode"), g ("fx_chorus_rate"), g ("fx_chorus_depth"), g ("fx_chorus_feedback"), g ("fx_chorus_mix"),
-                 g ("fx_delay_on"), g ("fx_delay_time"), g ("fx_delay_feedback"), g ("fx_delay_tone"), g ("fx_delay_mix"),
+                 g ("fx_delay_on"), g ("fx_delay_sync"), g ("fx_delay_time"), g ("fx_delay_feedback"), g ("fx_delay_tone"), g ("fx_delay_mix"),
                  g ("fx_reverb_on"), g ("fx_reverb_size"), g ("fx_reverb_decay"), g ("fx_reverb_damp"), g ("fx_reverb_mix"),
                  { g ("fx_slot1"), g ("fx_slot2"), g ("fx_slot3"), g ("fx_slot4") } };
     }
@@ -342,14 +344,15 @@ namespace ember::fx
 
         void reset() { for (auto& d : line) d.clear(); lp = 0.0f; time.setCurrentAndTargetValue (time.getTargetValue()); }
 
-        void process (juce::AudioBuffer<float>& b, const Ptrs& p)
+        void process (juce::AudioBuffer<float>& b, const Ptrs& p, double bpm)
         {
             const bool run = gate.update (p.dlOn->load() > 0.5f, p.dlMix->load());
             if (! run) { if (gate.needsReset) reset(); return; }
 
+            const float timeMs = juce::jlimit (10.0f, 2000.0f, tempo::timeMs (juce::roundToInt (p.dlSync->load()), p.dlTime->load(), bpm));
             if (gate.justWoke)
-                time.setCurrentAndTargetValue (p.dlTime->load());
-            time.setTargetValue (p.dlTime->load());
+                time.setCurrentAndTargetValue (timeMs);
+            time.setTargetValue (timeMs);
             feedback.setTargetValue (p.dlFeedback->load());
             const float a = 1.0f - std::exp (-juce::MathConstants<float>::twoPi * p.dlTone->load() / (float) sampleRate);
 
@@ -490,7 +493,7 @@ namespace ember::fx
 
         int getLatency() const noexcept { return dist.getLatency(); }
 
-        void process (juce::AudioBuffer<float>& b, const Ptrs& p)
+        void process (juce::AudioBuffer<float>& b, const Ptrs& p, double bpm)
         {
             // chain order comes from the slot params; a duplicate (mid-swap) just runs once and any
             // missing effect is appended, so the order is always a valid permutation
@@ -511,7 +514,7 @@ namespace ember::fx
                 {
                     case 0:  dist.process (b, p); break;
                     case 1:  chorus.process (b, p); break;
-                    case 2:  delay.process (b, p); break;
+                    case 2:  delay.process (b, p, bpm); break;
                     default: reverb.process (b, p); break;
                 }
             }

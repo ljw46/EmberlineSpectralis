@@ -1,0 +1,38 @@
+{
+    "name": "Wobble Deep",
+    "category": "Bass",
+    "description": "Slow tempo-synced wobble on a resonant lowpass. Half-note sine movement, deep and hypnotic.",
+    "tags": ["bass", "wobble", "synced", "deep"],
+    "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
+    "parameters": {
+        "master_volume": -2.1,
+        "osc1_on": true,
+        "osc1_frame": 0.5,
+        "osc1_level": 0.75,
+        "sub_level": 0.4,
+        "sub_wave": "Sine",
+        "sub_oct": "-1 Oct",
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 450,
+        "filt1_res": 0.45,
+        "env1_attack": 0.002,
+        "env1_decay": 0.3,
+        "env1_sustain": 0.9,
+        "env1_release": 0.15,
+        "lfo1_sync": "1/4",
+        "lfo1_mode": "Free",
+        "fx_dist_on": true,
+        "fx_dist_type": "Soft",
+        "fx_dist_drive": 0.25,
+        "fx_dist_tone": 0.5,
+        "fx_dist_mix": 0.4
+    },
+    "modulation": [
+        {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.2},
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.3},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.3},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ],
+    "lfo_shapes": {"lfo1": "sine"}
+}

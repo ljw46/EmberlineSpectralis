@@ -6,6 +6,7 @@
 #include "Fx.h"
 #include "LfoShape.h"
 #include "Modulation.h"
+#include "Presets.h"
 #include "WavetableBank.h"
 
 class EmberlineProcessor final : public juce::AudioProcessor
@@ -29,10 +30,14 @@ public:
     bool isMidiEffect() const override { return false; }
     double getTailLengthSeconds() const override { return 0.0; }
 
-    int getNumPrograms() override { return 1; }
-    int getCurrentProgram() override { return 0; }
-    void setCurrentProgram (int) override {}
-    const juce::String getProgramName (int) override { return {}; }
+    // the host's program list = the factory presets
+    int getNumPrograms() override { return juce::jmax (1, presetLibrary.numFactory()); }
+    int getCurrentProgram() override { return currentProgram; }
+    void setCurrentProgram (int index) override { loadPreset (index); }
+    const juce::String getProgramName (int index) override
+    {
+        return juce::isPositiveAndBelow (index, presetLibrary.numFactory()) ? presetLibrary.all()[(size_t) index].name : juce::String();
+    }
     void changeProgramName (int, const juce::String&) override {}
 
     void getStateInformation (juce::MemoryBlock&) override;
@@ -42,18 +47,28 @@ public:
     // free matrix slot. Message thread only. Returns false if the matrix is full.
     bool assignModulation (int source, int destination);
 
+    // Presets (JSON, see docs/PRESETS.md). Message thread only.
+    bool loadPreset (int libraryIndex);
+    bool loadPresetByName (const juce::String& name);
+    bool saveUserPreset (const juce::String& name, const juce::String& category, const juce::String& description = {});
+    juce::String getCurrentPresetName() const { return apvts.state["presetName"].toString(); }
+    juce::String getMacroNames() const { return apvts.state["macroNames"].toString(); }   // "a|b|c|d", from the preset's macro_names
+    ember::presets::Library presetLibrary;
+    ember::presets::Result lastPresetResult;
+
     const ember::WavetableBank& getWavetableBank() const noexcept { return bank; }
 
     juce::AudioProcessorValueTreeState apvts;
     ember::mod::ModPtrs modPtrs {};   // cached raw parameter pointers for the editor's mod displays
     ember::mod::LfoShapes lfoShapes;
     ember::mod::ModContext modCtx { lfoShapes };
+    int currentProgram = 0;
 
 private:
     std::atomic<float>* volumeParam = nullptr;
 
     double currentSampleRate = 44100.0;
-    std::array<std::atomic<float>*, ember::mod::numLfos> lfoRate {}, lfoMode {};
+    std::array<std::atomic<float>*, ember::mod::numLfos> lfoRate {}, lfoMode {}, lfoSync {};
 
     ember::ChaosEngine chaos;
     ember::fx::Chain fxChain;

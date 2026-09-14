@@ -66,8 +66,9 @@ namespace ember
             }
 
             const int mode = type == FilterType::lowpass ? 0 : type == FilterType::highpass ? 2 : 1;
-            l = tick (cores[0], 0, inL, mode) * postGain;
-            r = tick (cores[0], 1, inR, mode) * postGain;
+            const float makeup = mode == 1 ? bandpassMakeup : 1.0f;
+            l = tick (cores[0], 0, inL, mode) * postGain * makeup;
+            r = tick (cores[0], 1, inR, mode) * postGain * makeup;
         }
 
     private:
@@ -78,7 +79,8 @@ namespace ember
         };
 
         static constexpr int updateInterval = 8;
-        static constexpr float formantMakeup = 1.6f;
+        static constexpr float formantMakeup = 3.2f;     // narrow bands carry far less energy than a lowpass
+        static constexpr float bandpassMakeup = 2.0f;
 
         static float fastTanh (float x) noexcept
         {

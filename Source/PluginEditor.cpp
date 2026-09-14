@@ -5,12 +5,12 @@ using namespace ember;
 
 namespace
 {
-    constexpr int headerH = 54, chipH = 28, topH = 322, tabH = 34;
+    constexpr int headerH = 54, chipH = 28, topH = 336, tabH = 34;
     const char* tabNames[] { "[ VISUALIZERS ]", "[ LFOs & CHAOS ]", "[ MOD MATRIX ]", "[ FX CHAIN ]", "[ FILTERS & ENVS ]" };
 }
 
 EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), mesh (p), matrix (p)
+    : AudioProcessorEditor (&p), processor (p), phoenix (ember::loadPhoenix()), mesh (p), presetBar (p), matrix (p)
 {
     setLookAndFeel (&lnf);
 
@@ -27,6 +27,7 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     for (int i = 0; i < ember::fx::numEffects; ++i)
         fxSlot[(size_t) i] = processor.apvts.getRawParameterValue ("fx_slot" + juce::String (i + 1));
 
+    addAndMakeVisible (presetBar);
     buildTop();
     buildVisualizers();
     buildLfosAndChaos();
@@ -44,7 +45,8 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
 
     tabs[visualizers].setToggleState (true, juce::dontSendNotification);
     showPage (visualizers);
-    setSize (1040, 860);
+    setSize (1040, 874);
+    timerCallback();   // macro labels etc. are right from the first frame
     startTimerHz (10);
 }
 
@@ -135,6 +137,7 @@ void EmberlineEditor::buildLfosAndChaos()
         auto& panel = addPanel (page, "LFO " + juce::String (i + 1), colours::magenta);
         panel.setWidget (editor, 0, true, 0.64f);
         panel.addCombo ("lfo" + juce::String (i + 1) + "_mode", mod::lfoModeNames);
+        panel.addCombo ("lfo" + juce::String (i + 1) + "_sync", tempo::names());
         panel.setCompactKnobs (true);
         panel.addKnob ("lfo" + juce::String (i + 1) + "_rate", "RATE");
         lfoPanels.push_back (&panel);
@@ -173,7 +176,7 @@ void EmberlineEditor::buildFx()
           { { "fx_dist_drive", "DRIVE" }, { "fx_dist_tone", "TONE" }, { "fx_dist_mix", "MIX" } } },
         { "CHORUS", colours::cyan, "fx_chorus_on", "fx_chorus_mode", &fx::chorusModeNames,
           { { "fx_chorus_rate", "RATE" }, { "fx_chorus_depth", "DEPTH" }, { "fx_chorus_feedback", "FEEDBACK" }, { "fx_chorus_mix", "MIX" } } },
-        { "PING-PONG DELAY", colours::purple, "fx_delay_on", nullptr, nullptr,
+        { "PING-PONG DELAY", colours::purple, "fx_delay_on", "fx_delay_sync", &tempo::names(),
           { { "fx_delay_time", "TIME" }, { "fx_delay_feedback", "FEEDBACK" }, { "fx_delay_tone", "TONE" }, { "fx_delay_mix", "MIX" } } },
         { "REVERB", colours::gold, "fx_reverb_on", nullptr, nullptr,
           { { "fx_reverb_size", "SIZE" }, { "fx_reverb_decay", "DECAY" }, { "fx_reverb_damp", "DAMPING" }, { "fx_reverb_mix", "MIX" } } },
@@ -284,8 +287,9 @@ void EmberlineEditor::buildFiltersAndEnvs()
         filterRow.push_back (&panel);
     }
 
-    auto& routing = addPanel (page, "ROUTING", colours::steel);
+    auto& routing = addPanel (page, "ROUTING / TEMPO", colours::steel);
     routing.addCombo ("filt_routing", params::routingNames);
+    routing.addKnob ("global_tempo", "TEMPO (NO HOST)");
     filterRow.push_back (&routing);
 
     const char* envIds[]   { "attack", "decay", "sustain", "release", "acurve", "dcurve" };
@@ -321,6 +325,15 @@ void EmberlineEditor::layoutFiltersAndEnvs()
 
 void EmberlineEditor::timerCallback()
 {
+    const auto names = processor.getMacroNames();
+    if (names != shownMacroNames)
+    {
+        shownMacroNames = names;
+        const auto parts = juce::StringArray::fromTokens (names, "|", "");
+        for (int i = 0; i < mod::numMacros; ++i)
+            macroPanel->setKnobLabel (i, i < parts.size() && parts[i].isNotEmpty() ? parts[i].toUpperCase() : "M" + juce::String (i + 1));
+    }
+
     if (readFxOrder() != lastFxOrder)
         layoutFx();
 }
@@ -361,13 +374,13 @@ void EmberlineEditor::paint (juce::Graphics& g)
     g.setGradientFill (grad);
     g.fillPath (text);
 
-    ember::drawPhoenix (g, juce::Rectangle<float> (16.0f, 6.0f, 42.0f, 42.0f), 0.55f);
-    ember::drawPhoenix (g, juce::Rectangle<float> ((float) getWidth() - 58.0f, 6.0f, 42.0f, 42.0f), 0.55f);
+    ember::drawPhoenix (g, phoenix, juce::Rectangle<float> (16.0f, 6.0f, 42.0f, 42.0f), 0.55f);
+    ember::drawPhoenix (g, phoenix, juce::Rectangle<float> ((float) getWidth() - 58.0f, 6.0f, 42.0f, 42.0f), 0.55f);
 
     // small marks flanking the tab bar
     const auto tabRow = tabs[0].getBounds().getUnion (tabs[numPages - 1].getBounds());
-    ember::drawPhoenix (g, juce::Rectangle<float> (16.0f, (float) tabRow.getY() - 2.0f, 34.0f, 34.0f), 0.4f);
-    ember::drawPhoenix (g, juce::Rectangle<float> ((float) getWidth() - 50.0f, (float) tabRow.getY() - 2.0f, 34.0f, 34.0f), 0.4f);
+    ember::drawPhoenix (g, phoenix, juce::Rectangle<float> (16.0f, (float) tabRow.getY() - 2.0f, 34.0f, 34.0f), 0.4f);
+    ember::drawPhoenix (g, phoenix, juce::Rectangle<float> ((float) getWidth() - 50.0f, (float) tabRow.getY() - 2.0f, 34.0f, 34.0f), 0.4f);
 
     // tab stage frame: cyan -> purple gradient outline
     const auto f = contentFrame.toFloat().reduced (1.0f);
@@ -384,6 +397,8 @@ void EmberlineEditor::paint (juce::Graphics& g)
 
 void EmberlineEditor::resized()
 {
+    presetBar.setBounds (66, 13, 222, 28);
+
     auto area = getLocalBounds().reduced (14, 0);
     area.removeFromTop (headerH);
 
@@ -401,7 +416,7 @@ void EmberlineEditor::resized()
         p->setBounds (top.removeFromLeft (oscW).reduced (3, 0));
 
     auto right = top.reduced (3, 0);
-    masterPanel->setBounds (right.removeFromTop (128));
+    masterPanel->setBounds (right.removeFromTop (124));
     right.removeFromTop (6);
     macroPanel->setBounds (right);
 

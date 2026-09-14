@@ -1,0 +1,33 @@
+{
+    "name": "Noise Bed",
+    "category": "Texture",
+    "description": "A neutral wide pink-noise bed with gentle filtering. Layer under any sound to add air and glue.",
+    "tags": ["texture", "noise", "bed", "air"],
+    "macro_names": ["Brightness", "-", "-", "-"],
+    "parameters": {
+        "master_volume": 2.0,
+        "osc1_on": false,
+        "osc1_frame": 0.0,
+        "osc1_level": 0.0,
+        "noise_level": 1.0,
+        "noise_type": "Pink",
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 3500,
+        "filt1_res": 0.1,
+        "env1_attack": 0.5,
+        "env1_decay": 1.0,
+        "env1_sustain": 1.0,
+        "env1_release": 1.0,
+        "fx_reverb_on": true,
+        "fx_reverb_mix": 0.2,
+        "fx_reverb_size": 0.6,
+        "fx_reverb_decay": 2.5,
+        "fx_reverb_damp": 0.4
+    },
+    "modulation": [
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.5},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.0},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.1},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ]
+}

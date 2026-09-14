@@ -55,44 +55,11 @@ namespace ember
         // frame: 0..numFrames-1, warpAmount: 0..1. Accumulates into l/r.
         void process (float frame, float warpAmount, float& l, float& r) noexcept
         {
-            const float ratio = 1.0f + 7.0f * warpAmount;
-
             for (int u = 0; u < count; ++u)
             {
                 float ph = phases[(size_t) u];
-                float q = ph, window = 1.0f;
-
-                switch (mode)
-                {
-                    case WarpMode::off: break;
-
-                    case WarpMode::formant:
-                        q = ph * ratio;
-                        q -= std::floor (q);
-                        window = 0.5f - 0.5f * std::cos (juce::MathConstants<float>::twoPi * ph);
-                        break;
-
-                    case WarpMode::sync:
-                        q = ph * ratio;
-                        q -= std::floor (q);
-                        break;
-
-                    case WarpMode::bend:
-                    {
-                        float bent;
-                        if (ph < 0.5f) { const float x = 2.0f * ph;        bent = 0.5f * x * x * x; }
-                        else           { const float y = 2.0f - 2.0f * ph; bent = 1.0f - 0.5f * y * y * y; }
-                        q = ph + warpAmount * (bent - ph);
-                        break;
-                    }
-
-                    case WarpMode::phaseDist:
-                    {
-                        const float b = 0.5f - 0.49f * warpAmount;   // break point moves toward 0
-                        q = ph < b ? 0.5f * ph / b : 0.5f + 0.5f * (ph - b) / (1.0f - b);
-                        break;
-                    }
-                }
+                float window = 1.0f;
+                const float q = warpPhase (mode, ph, warpAmount, window);
 
                 const float s = bank.sample (mip[(size_t) u], frame, q) * window;
                 l += s * gainL[(size_t) u];
@@ -101,6 +68,48 @@ namespace ember
                 ph += inc[(size_t) u];
                 phases[(size_t) u] = ph >= 1.0f ? ph - 1.0f : ph;
             }
+        }
+
+        // Maps the oscillator's phase through the warp mode. `window` is a gain the formant mode applies.
+        // Static so the editor can draw exactly what the oscillator plays.
+        static float warpPhase (WarpMode mode, float ph, float amount, float& window) noexcept
+        {
+            window = 1.0f;
+            const float ratio = 1.0f + 7.0f * amount;
+
+            switch (mode)
+            {
+                case WarpMode::off:
+                    return ph;
+
+                case WarpMode::formant:
+                {
+                    const float q = ph * ratio;
+                    window = 0.5f - 0.5f * std::cos (juce::MathConstants<float>::twoPi * ph);
+                    return q - std::floor (q);
+                }
+
+                case WarpMode::sync:
+                {
+                    const float q = ph * ratio;
+                    return q - std::floor (q);
+                }
+
+                case WarpMode::bend:
+                {
+                    float bent;
+                    if (ph < 0.5f) { const float x = 2.0f * ph;        bent = 0.5f * x * x * x; }
+                    else           { const float y = 2.0f - 2.0f * ph; bent = 1.0f - 0.5f * y * y * y; }
+                    return ph + amount * (bent - ph);
+                }
+
+                case WarpMode::phaseDist:
+                {
+                    const float b = 0.5f - 0.49f * amount;   // break point moves toward 0
+                    return ph < b ? 0.5f * ph / b : 0.5f + 0.5f * (ph - b) / (1.0f - b);
+                }
+            }
+            return ph;
         }
 
     private:

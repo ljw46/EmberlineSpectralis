@@ -183,6 +183,12 @@ public:
         k.attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (proc.apvts, paramId, k.slider);
     }
 
+    void setKnobLabel (int index, const juce::String& text)
+    {
+        if (juce::isPositiveAndBelow (index, (int) knobs.size()))
+            knobs[(size_t) index].label.setText (text, juce::dontSendNotification);
+    }
+
     void addCombo (const juce::String& paramId, const juce::StringArray& items)
     {
         auto& c = combos.emplace_back();

@@ -234,7 +234,7 @@ namespace ember
             const double sr = getSampleRate();
             for (size_t i = 0; i < lfoInc.size(); ++i)
             {
-                lfoInc[i] = (double) P.mod.lfo[i].rate->load() / sr;
+                lfoInc[i] = (double) tempo::rateHz (juce::roundToInt (P.mod.lfo[i].sync->load()), P.mod.lfo[i].rate->load(), ctx.bpm) / sr;
                 lfoFree[i] = P.mod.lfo[i].mode->load() > 0.5f;
             }
         }

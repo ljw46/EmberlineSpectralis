@@ -1,0 +1,34 @@
+{
+    "name": "Filtered Offbeat",
+    "category": "Bass",
+    "description": "Tempo-synced triangle LFO opens and closes the filter on 1/8 notes for a hypnotic offbeat groove.",
+    "tags": ["bass", "groove", "synced", "filter"],
+    "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
+    "parameters": {
+        "master_volume": 0.9,
+        "osc1_on": true,
+        "osc1_frame": 0.5,
+        "osc1_level": 0.8,
+        "osc2_on": true,
+        "osc2_frame": 0.1,
+        "osc2_level": 0.4,
+        "osc2_semi": -12,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 600,
+        "filt1_res": 0.35,
+        "env1_attack": 0.003,
+        "env1_decay": 0.3,
+        "env1_sustain": 0.85,
+        "env1_release": 0.15,
+        "lfo1_sync": "1/8",
+        "lfo1_mode": "Free"
+    },
+    "modulation": [
+        {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.16},
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.4},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.3},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ],
+    "lfo_shapes": {"lfo1": "triangle"}
+}

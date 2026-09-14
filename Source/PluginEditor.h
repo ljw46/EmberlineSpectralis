@@ -5,6 +5,7 @@
 #include "MatrixPanel.h"
 #include "MeshDisplay.h"
 #include "PluginProcessor.h"
+#include "PresetBar.h"
 
 class EmberlineEditor final : public juce::AudioProcessorEditor,
                               public juce::DragAndDropContainer,
@@ -38,6 +39,7 @@ private:
 
     EmberlineProcessor& processor;
     EmberLookAndFeel lnf;
+    juce::Image phoenix;
 
     // fixed header + top region
     std::vector<std::unique_ptr<SourceChip>> chips;
@@ -55,6 +57,7 @@ private:
     std::deque<ChaosDisplay> chaosDisplays;
     std::deque<EnvDisplay> envDisplays;
     WavetableMesh mesh;
+    PresetBar presetBar;
     MatrixPage matrix;
 
     std::vector<Panel*> lfoPanels, envPanels, filterRow;
@@ -63,6 +66,7 @@ private:
     std::array<std::atomic<float>*, ember::fx::numEffects> fxSlot {};
     std::array<int, ember::fx::numEffects> lastFxOrder { 0, 1, 2, 3 };
     juce::Label fxHint;
+    juce::String shownMacroNames { "?" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EmberlineEditor)
 };

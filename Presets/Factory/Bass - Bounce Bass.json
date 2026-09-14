@@ -1,0 +1,35 @@
+{
+    "name": "Bounce Bass",
+    "category": "Bass",
+    "description": "A tempo-synced downward LFO makes the level bounce on every eighth note. Playful and elastic.",
+    "tags": ["bass", "bounce", "synced", "groovy"],
+    "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
+    "parameters": {
+        "master_volume": -1.4,
+        "osc1_on": true,
+        "osc1_frame": 0.4,
+        "osc1_level": 0.8,
+        "osc2_on": true,
+        "osc2_frame": 0.1,
+        "osc2_level": 0.4,
+        "osc2_semi": -12,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 900,
+        "filt1_res": 0.3,
+        "env1_attack": 0.002,
+        "env1_decay": 0.3,
+        "env1_sustain": 0.9,
+        "env1_release": 0.12,
+        "lfo3_sync": "1/8",
+        "lfo3_mode": "Free"
+    },
+    "modulation": [
+        {"source": "LFO 3", "destination": "Osc1 Level", "depth": 0.45},
+        {"source": "LFO 3", "destination": "Osc2 Level", "depth": 0.45},
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.4},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.3},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ],
+    "lfo_shapes": {"lfo3": "saw_down"}
+}

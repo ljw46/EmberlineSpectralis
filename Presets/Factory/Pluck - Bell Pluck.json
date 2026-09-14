@@ -1,0 +1,40 @@
+{
+    "name": "Bell Pluck",
+    "category": "Pluck",
+    "description": "Pluck with a bright metallic partial an octave and a twelfth above. Sparkly and bell-like.",
+    "tags": ["pluck", "bell", "metallic", "bright"],
+    "macro_names": ["Brightness", "Tone", "-", "Shimmer"],
+    "parameters": {
+        "master_volume": -1.8,
+        "osc1_on": true,
+        "osc1_frame": 0.2,
+        "osc1_level": 0.7,
+        "osc2_on": true,
+        "osc2_frame": 0.0,
+        "osc2_level": 0.3,
+        "osc2_semi": 19,
+        "osc3_on": true,
+        "osc3_frame": 0.0,
+        "osc3_level": 0.2,
+        "osc3_semi": 24,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 6000,
+        "filt1_res": 0.1,
+        "env1_attack": 0.001,
+        "env1_decay": 0.9,
+        "env1_sustain": 0.0,
+        "env1_release": 0.8,
+        "env1_dcurve": 0.3,
+        "fx_reverb_on": true,
+        "fx_reverb_mix": 0.3,
+        "fx_reverb_size": 0.7,
+        "fx_reverb_decay": 4.0,
+        "fx_reverb_damp": 0.3
+    },
+    "modulation": [
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.3},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.3},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.2},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.3}
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "name": "Organic Round",
+    "category": "Bass",
+    "description": "Soft, wooden bass with a gentle bloom. A little pink noise adds breath, small room for air.",
+    "tags": ["bass", "organic", "soft", "wood"],
+    "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
+    "parameters": {
+        "master_volume": 3.0,
+        "osc1_on": true,
+        "osc1_frame": 0.15,
+        "osc1_level": 0.75,
+        "osc2_on": true,
+        "osc2_frame": 0.0,
+        "osc2_level": 0.35,
+        "osc2_semi": 12,
+        "noise_level": 0.03,
+        "noise_type": "Pink",
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 750,
+        "filt1_res": 0.1,
+        "env1_attack": 0.006,
+        "env1_decay": 0.5,
+        "env1_sustain": 0.3,
+        "env1_release": 0.2,
+        "fx_reverb_on": true,
+        "fx_reverb_mix": 0.1,
+        "fx_reverb_size": 0.3,
+        "fx_reverb_decay": 1.2,
+        "fx_reverb_damp": 0.6
+    },
+    "modulation": [
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.5},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.2},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.3}
+    ]
+}

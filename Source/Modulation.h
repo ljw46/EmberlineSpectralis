@@ -2,6 +2,7 @@
 
 #include "Chaos.h"
 #include "LfoShape.h"
+#include "Tempo.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <array>
 #include <atomic>
@@ -83,7 +84,7 @@ namespace ember::mod
     inline juce::String slotId (int slot, const char* what) { return "mod" + juce::String (slot + 1) + "_" + what; }
 
     struct SlotPtrs { std::atomic<float> *src, *dst, *depth, *curve, *bipolar; };
-    struct LfoPtrs  { std::atomic<float> *rate, *mode; };
+    struct LfoPtrs  { std::atomic<float> *rate, *mode, *sync; };
     struct EnvPtrs  { std::atomic<float> *attack, *decay, *sustain, *release, *aCurve, *dCurve; };
 
     struct ModPtrs
@@ -92,7 +93,7 @@ namespace ember::mod
         std::array<LfoPtrs, numLfos> lfo;
         std::array<EnvPtrs, numEnvs> env;
         std::array<std::atomic<float>*, numMacros> macro;
-        std::atomic<float> *chaosRate, *fractalRate;
+        std::atomic<float> *chaosRate, *fractalRate, *tempo;
         std::array<std::atomic<float>*, numDests> destBase;
         std::array<juce::NormalisableRange<float>, numDests> destRange;
     };
@@ -110,6 +111,7 @@ namespace ember::mod
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { id + "rate", 1 }, n + "Rate",
                 NormalisableRange<float> (0.01f, 30.0f, 0.001f, 0.35f), 2.0f, AudioParameterFloatAttributes().withLabel ("Hz")));
             p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { id + "mode", 1 }, n + "Mode", lfoModeNames, 0));
+            p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { id + "sync", 1 }, n + "Tempo Sync", tempo::names(), 0));
         }
 
         for (int i = 0; i < numEnvs; ++i)
@@ -132,6 +134,8 @@ namespace ember::mod
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "macro" + String (i + 1), 1 }, "Macro " + String (i + 1),
                 NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.0f));
 
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "global_tempo", 1 }, "Tempo (no host)",
+            NormalisableRange<float> (40.0f, 240.0f, 0.1f), 120.0f, AudioParameterFloatAttributes().withLabel ("BPM")));
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "chaos_rate", 1 }, "Chaos Rate",
             NormalisableRange<float> (0.02f, 10.0f, 0.001f, 0.4f), 1.0f));
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "fractal_rate", 1 }, "Fractal Rate",
@@ -164,7 +168,7 @@ namespace ember::mod
         for (int i = 0; i < numLfos; ++i)
         {
             const auto id = "lfo" + juce::String (i + 1) + "_";
-            m.lfo[(size_t) i] = { get (id + "rate"), get (id + "mode") };
+            m.lfo[(size_t) i] = { get (id + "rate"), get (id + "mode"), get (id + "sync") };
         }
 
         for (int i = 0; i < numEnvs; ++i)
@@ -179,6 +183,7 @@ namespace ember::mod
 
         m.chaosRate = get ("chaos_rate");
         m.fractalRate = get ("fractal_rate");
+        m.tempo = get ("global_tempo");
 
         const auto& d = destinations();
         for (size_t i = 0; i < d.size(); ++i)
@@ -200,6 +205,8 @@ namespace ember::mod
         std::array<std::atomic<float>, numDests> liveOffset {};        // newest voice's modulation, for the knob arcs
         ChaosEngine::Frame chaosPrev {}, chaosNext {};                 // chaos outputs at the start / end of the current block
         int blockLength = 512;
+        double bpm = 120.0;                                            // host tempo (or the standalone tempo knob)
+        double hostPpq = -1.0;                                         // host position in quarter notes while playing, else -1
         static constexpr int trailSize = 192;                          // lorenz x/z history for the display
         std::array<std::atomic<float>, trailSize> trailX {}, trailY {}, trailZ {};
         std::atomic<int> trailHead { 0 };

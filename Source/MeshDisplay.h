@@ -2,6 +2,7 @@
 
 #include "EmberLookAndFeel.h"
 #include "PluginProcessor.h"
+#include "WavetableOscillator.h"
 #include <array>
 
 // Isometric wireframe of the whole wavetable (phase across, frame in depth, waveform as height).
@@ -21,6 +22,8 @@ public:
         {
             on[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "on"));
             level[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "level"));
+            warpMode[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "warp_mode"));
+            warpAmt[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "warp_amt"));
         }
 
         startTimerHz (30);
@@ -112,11 +115,21 @@ public:
             const int f0 = juce::jmin ((int) fp, frames - 2);
             const float fr = fp - (float) f0;
 
+            // the trace is one cycle of what the oscillator really plays, i.e. with its warp applied
+            const auto wd = (size_t) ember::mod::oscDest (o, 1);
+            const float amount = juce::jlimit (0.0f, 1.0f, warpAmt[(size_t) o]->load() + proc.modCtx.liveOffset[wd].load (std::memory_order_relaxed));
+            const auto mode = (ember::WarpMode) juce::roundToInt (warpMode[(size_t) o]->load());
+
             juce::Path trace;
             for (int i = 0; i <= points; ++i)
             {
-                const size_t k = (size_t) (i % points);
-                const float h = stack[(size_t) f0][k] * (1.0f - fr) + stack[(size_t) f0 + 1][k] * fr;
+                float window = 1.0f;
+                const float q = ember::WavetableOscillator::warpPhase (mode, (float) i / (float) points, amount, window);
+                const float pos = q * (float) points;
+                const int k0 = (int) pos % points, k1 = (k0 + 1) % points;
+                const float kf = pos - std::floor (pos);
+                auto at = [&] (size_t f) { return stack[f][(size_t) k0] * (1.0f - kf) + stack[f][(size_t) k1] * kf; };
+                const float h = (at ((size_t) f0) * (1.0f - fr) + at ((size_t) f0 + 1) * fr) * window;
                 const auto pt = project ((float) i / (float) points, z, h);
                 if (i == 0) trace.startNewSubPath (pt); else trace.lineTo (pt);
             }
@@ -135,6 +148,6 @@ private:
     void timerCallback() override { repaint(); }
 
     EmberlineProcessor& proc;
-    std::array<std::atomic<float>*, ember::params::numOscs> on {}, level {};
+    std::array<std::atomic<float>*, ember::params::numOscs> on {}, level {}, warpMode {}, warpAmt {};
     std::array<std::array<float, (size_t) points>, (size_t) frames> stack {};
 };

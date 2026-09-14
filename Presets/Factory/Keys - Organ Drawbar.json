@@ -1,0 +1,43 @@
+{
+    "name": "Organ Drawbar",
+    "category": "Keys",
+    "description": "Sustained organ tone built from stacked octaves and a rotary-style chorus. Never decays while held.",
+    "tags": ["keys", "organ", "drawbar", "sustained"],
+    "macro_names": ["Brightness", "Tone", "-", "-"],
+    "parameters": {
+        "master_volume": -3.1,
+        "osc1_on": true,
+        "osc1_frame": 0.0,
+        "osc1_level": 0.7,
+        "osc2_on": true,
+        "osc2_frame": 0.75,
+        "osc2_level": 0.4,
+        "osc2_semi": 12,
+        "osc3_on": true,
+        "osc3_frame": 0.0,
+        "osc3_level": 0.35,
+        "osc3_semi": 19,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 6000,
+        "filt1_res": 0.1,
+        "env1_attack": 0.006,
+        "env1_decay": 0.1,
+        "env1_sustain": 1.0,
+        "env1_release": 0.08,
+        "fx_chorus_on": true,
+        "fx_chorus_mix": 0.5,
+        "fx_chorus_rate": 4.5,
+        "fx_chorus_depth": 0.25,
+        "fx_reverb_on": true,
+        "fx_reverb_mix": 0.2,
+        "fx_reverb_size": 0.5,
+        "fx_reverb_decay": 2.0,
+        "fx_reverb_damp": 0.4
+    },
+    "modulation": [
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.4},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.1},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ]
+}

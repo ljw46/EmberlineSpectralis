@@ -1,0 +1,40 @@
+{
+    "name": "Noise Riser",
+    "category": "FX",
+    "description": "A classic noise riser: white noise swells while a bandpass opens. Hold for 4-8 seconds into the drop.",
+    "tags": ["fx", "riser", "build", "noise"],
+    "macro_names": ["Brightness", "-", "Focus", "-"],
+    "parameters": {
+        "master_volume": 3.7,
+        "osc1_on": false,
+        "osc1_frame": 0.0,
+        "osc1_level": 0.0,
+        "noise_level": 1.0,
+        "noise_type": "White",
+        "filt1_type": "Bandpass",
+        "filt1_cutoff": 400,
+        "filt1_res": 0.5,
+        "env1_attack": 6.0,
+        "env1_decay": 1.0,
+        "env1_sustain": 1.0,
+        "env1_release": 0.5,
+        "env1_acurve": -0.5,
+        "env2_attack": 6.0,
+        "env2_decay": 1.0,
+        "env2_sustain": 1.0,
+        "env2_release": 0.5,
+        "env2_acurve": -0.5,
+        "fx_reverb_on": true,
+        "fx_reverb_mix": 0.25,
+        "fx_reverb_size": 0.6,
+        "fx_reverb_decay": 2.5,
+        "fx_reverb_damp": 0.4
+    },
+    "modulation": [
+        {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.543},
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.5},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.0},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.3},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ]
+}

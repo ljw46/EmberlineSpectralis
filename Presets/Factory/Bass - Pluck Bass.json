@@ -1,0 +1,37 @@
+{
+    "name": "Pluck Bass",
+    "category": "Bass",
+    "description": "Short, punchy plucked bass for staccato lines. Fast filter snap, no sustain.",
+    "tags": ["bass", "pluck", "staccato"],
+    "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
+    "parameters": {
+        "master_volume": 6.0,
+        "osc1_on": true,
+        "osc1_frame": 0.5,
+        "osc1_level": 0.8,
+        "osc2_on": true,
+        "osc2_frame": 0.25,
+        "osc2_level": 0.4,
+        "osc2_semi": -12,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 500,
+        "filt1_res": 0.3,
+        "env1_attack": 0.001,
+        "env1_decay": 0.28,
+        "env1_sustain": 0.0,
+        "env1_release": 0.1,
+        "env1_dcurve": 0.5,
+        "env2_attack": 0.001,
+        "env2_decay": 0.2,
+        "env2_sustain": 0.0,
+        "env2_release": 0.15,
+        "env2_dcurve": 0.6
+    },
+    "modulation": [
+        {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.228},
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.4},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.3},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ]
+}

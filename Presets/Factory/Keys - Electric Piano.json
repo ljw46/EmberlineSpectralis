@@ -1,0 +1,43 @@
+{
+    "name": "Electric Piano",
+    "category": "Keys",
+    "description": "Tine-style electric piano: soft body with a bell-like attack partial that fades quickly.",
+    "tags": ["keys", "electric piano", "tine", "soulful"],
+    "macro_names": ["Brightness", "Tone", "-", "Shimmer"],
+    "parameters": {
+        "master_volume": -1.2,
+        "osc1_on": true,
+        "osc1_frame": 0.2,
+        "osc1_level": 0.8,
+        "osc2_on": true,
+        "osc2_frame": 0.0,
+        "osc2_level": 0.3,
+        "osc2_semi": 19,
+        "osc3_on": true,
+        "osc3_frame": 0.0,
+        "osc3_level": 0.2,
+        "osc3_semi": 24,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 5000,
+        "filt1_res": 0.1,
+        "env1_attack": 0.002,
+        "env1_decay": 1.2,
+        "env1_sustain": 0.15,
+        "env1_release": 0.6,
+        "fx_chorus_on": true,
+        "fx_chorus_mix": 0.35,
+        "fx_chorus_rate": 0.5,
+        "fx_chorus_depth": 0.4,
+        "fx_reverb_on": true,
+        "fx_reverb_mix": 0.2,
+        "fx_reverb_size": 0.5,
+        "fx_reverb_decay": 2.5,
+        "fx_reverb_damp": 0.4
+    },
+    "modulation": [
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.3},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.2},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.3}
+    ]
+}

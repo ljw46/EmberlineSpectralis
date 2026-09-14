@@ -1,0 +1,2211 @@
+{
+  "parameters": [
+    {
+      "id": "master_volume",
+      "name": "Master Volume",
+      "type": "float",
+      "min": -60.0,
+      "max": 6.0,
+      "default": -6.0,
+      "unit": "dB",
+      "skew": 2.5
+    },
+    {
+      "id": "sub_level",
+      "name": "Sub Level",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "sub_wave",
+      "name": "Sub Wave",
+      "type": "choice",
+      "choices": [
+        "Sine",
+        "Triangle"
+      ],
+      "default": "Sine"
+    },
+    {
+      "id": "sub_oct",
+      "name": "Sub Octave",
+      "type": "choice",
+      "choices": [
+        "-1 Oct",
+        "-2 Oct"
+      ],
+      "default": "-1 Oct"
+    },
+    {
+      "id": "noise_level",
+      "name": "Noise Level",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "noise_type",
+      "name": "Noise Type",
+      "type": "choice",
+      "choices": [
+        "White",
+        "Pink",
+        "Crackle"
+      ],
+      "default": "White"
+    },
+    {
+      "id": "filt_routing",
+      "name": "Filter Routing",
+      "type": "choice",
+      "choices": [
+        "Serial",
+        "Parallel"
+      ],
+      "default": "Serial"
+    },
+    {
+      "id": "filt1_type",
+      "name": "Filter 1 Type",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "Lowpass",
+        "Highpass",
+        "Bandpass",
+        "Formant"
+      ],
+      "default": "Lowpass"
+    },
+    {
+      "id": "filt1_cutoff",
+      "name": "Filter 1 Cutoff",
+      "type": "float",
+      "min": 20.0,
+      "max": 20000.0,
+      "default": 8000.0,
+      "unit": "Hz",
+      "skew": 0.25
+    },
+    {
+      "id": "filt1_res",
+      "name": "Filter 1 Resonance",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.15
+    },
+    {
+      "id": "filt1_drive",
+      "name": "Filter 1 Drive",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "filt2_type",
+      "name": "Filter 2 Type",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "Lowpass",
+        "Highpass",
+        "Bandpass",
+        "Formant"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "filt2_cutoff",
+      "name": "Filter 2 Cutoff",
+      "type": "float",
+      "min": 20.0,
+      "max": 20000.0,
+      "default": 300.0,
+      "unit": "Hz",
+      "skew": 0.25
+    },
+    {
+      "id": "filt2_res",
+      "name": "Filter 2 Resonance",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.15
+    },
+    {
+      "id": "filt2_drive",
+      "name": "Filter 2 Drive",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc1_on",
+      "name": "Osc 1 On",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "osc1_level",
+      "name": "Osc 1 Level",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8
+    },
+    {
+      "id": "osc1_frame",
+      "name": "Osc 1 Wave Frame",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "osc1_warp_mode",
+      "name": "Osc 1 Warp Mode",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "Formant",
+        "Sync",
+        "Bend",
+        "Phase Dist"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "osc1_warp_amt",
+      "name": "Osc 1 Warp Amount",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc1_unison",
+      "name": "Osc 1 Unison Voices",
+      "type": "int",
+      "min": 1.0,
+      "max": 16.0,
+      "default": 1.0
+    },
+    {
+      "id": "osc1_detune",
+      "name": "Osc 1 Unison Detune",
+      "type": "float",
+      "min": 0.0,
+      "max": 100.0,
+      "default": 15.0,
+      "unit": "ct",
+      "skew": 0.5
+    },
+    {
+      "id": "osc1_spread",
+      "name": "Osc 1 Unison Spread",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "osc1_semi",
+      "name": "Osc 1 Semitones",
+      "type": "int",
+      "min": -24.0,
+      "max": 24.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc1_fine",
+      "name": "Osc 1 Fine Tune",
+      "type": "float",
+      "min": -100.0,
+      "max": 100.0,
+      "default": 0.0,
+      "unit": "ct"
+    },
+    {
+      "id": "osc1_pan",
+      "name": "Osc 1 Pan",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc2_on",
+      "name": "Osc 2 On",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "osc2_level",
+      "name": "Osc 2 Level",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8
+    },
+    {
+      "id": "osc2_frame",
+      "name": "Osc 2 Wave Frame",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc2_warp_mode",
+      "name": "Osc 2 Warp Mode",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "Formant",
+        "Sync",
+        "Bend",
+        "Phase Dist"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "osc2_warp_amt",
+      "name": "Osc 2 Warp Amount",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc2_unison",
+      "name": "Osc 2 Unison Voices",
+      "type": "int",
+      "min": 1.0,
+      "max": 16.0,
+      "default": 1.0
+    },
+    {
+      "id": "osc2_detune",
+      "name": "Osc 2 Unison Detune",
+      "type": "float",
+      "min": 0.0,
+      "max": 100.0,
+      "default": 15.0,
+      "unit": "ct",
+      "skew": 0.5
+    },
+    {
+      "id": "osc2_spread",
+      "name": "Osc 2 Unison Spread",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "osc2_semi",
+      "name": "Osc 2 Semitones",
+      "type": "int",
+      "min": -24.0,
+      "max": 24.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc2_fine",
+      "name": "Osc 2 Fine Tune",
+      "type": "float",
+      "min": -100.0,
+      "max": 100.0,
+      "default": 0.0,
+      "unit": "ct"
+    },
+    {
+      "id": "osc2_pan",
+      "name": "Osc 2 Pan",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc3_on",
+      "name": "Osc 3 On",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "osc3_level",
+      "name": "Osc 3 Level",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8
+    },
+    {
+      "id": "osc3_frame",
+      "name": "Osc 3 Wave Frame",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc3_warp_mode",
+      "name": "Osc 3 Warp Mode",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "Formant",
+        "Sync",
+        "Bend",
+        "Phase Dist"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "osc3_warp_amt",
+      "name": "Osc 3 Warp Amount",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc3_unison",
+      "name": "Osc 3 Unison Voices",
+      "type": "int",
+      "min": 1.0,
+      "max": 16.0,
+      "default": 1.0
+    },
+    {
+      "id": "osc3_detune",
+      "name": "Osc 3 Unison Detune",
+      "type": "float",
+      "min": 0.0,
+      "max": 100.0,
+      "default": 15.0,
+      "unit": "ct",
+      "skew": 0.5
+    },
+    {
+      "id": "osc3_spread",
+      "name": "Osc 3 Unison Spread",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "osc3_semi",
+      "name": "Osc 3 Semitones",
+      "type": "int",
+      "min": -24.0,
+      "max": 24.0,
+      "default": 0.0
+    },
+    {
+      "id": "osc3_fine",
+      "name": "Osc 3 Fine Tune",
+      "type": "float",
+      "min": -100.0,
+      "max": 100.0,
+      "default": 0.0,
+      "unit": "ct"
+    },
+    {
+      "id": "osc3_pan",
+      "name": "Osc 3 Pan",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "lfo1_rate",
+      "name": "LFO 1 Rate",
+      "type": "float",
+      "min": 0.01,
+      "max": 30.0,
+      "default": 2.0,
+      "unit": "Hz",
+      "skew": 0.35
+    },
+    {
+      "id": "lfo1_mode",
+      "name": "LFO 1 Mode",
+      "type": "choice",
+      "choices": [
+        "Retrig",
+        "Free"
+      ],
+      "default": "Retrig"
+    },
+    {
+      "id": "lfo1_sync",
+      "name": "LFO 1 Tempo Sync",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "1/16T",
+        "1/16",
+        "1/16.",
+        "1/8T",
+        "1/8",
+        "1/8.",
+        "1/4T",
+        "1/4",
+        "1/4.",
+        "1/2",
+        "1 bar",
+        "2 bars",
+        "4 bars"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "lfo2_rate",
+      "name": "LFO 2 Rate",
+      "type": "float",
+      "min": 0.01,
+      "max": 30.0,
+      "default": 2.0,
+      "unit": "Hz",
+      "skew": 0.35
+    },
+    {
+      "id": "lfo2_mode",
+      "name": "LFO 2 Mode",
+      "type": "choice",
+      "choices": [
+        "Retrig",
+        "Free"
+      ],
+      "default": "Retrig"
+    },
+    {
+      "id": "lfo2_sync",
+      "name": "LFO 2 Tempo Sync",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "1/16T",
+        "1/16",
+        "1/16.",
+        "1/8T",
+        "1/8",
+        "1/8.",
+        "1/4T",
+        "1/4",
+        "1/4.",
+        "1/2",
+        "1 bar",
+        "2 bars",
+        "4 bars"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "lfo3_rate",
+      "name": "LFO 3 Rate",
+      "type": "float",
+      "min": 0.01,
+      "max": 30.0,
+      "default": 2.0,
+      "unit": "Hz",
+      "skew": 0.35
+    },
+    {
+      "id": "lfo3_mode",
+      "name": "LFO 3 Mode",
+      "type": "choice",
+      "choices": [
+        "Retrig",
+        "Free"
+      ],
+      "default": "Retrig"
+    },
+    {
+      "id": "lfo3_sync",
+      "name": "LFO 3 Tempo Sync",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "1/16T",
+        "1/16",
+        "1/16.",
+        "1/8T",
+        "1/8",
+        "1/8.",
+        "1/4T",
+        "1/4",
+        "1/4.",
+        "1/2",
+        "1 bar",
+        "2 bars",
+        "4 bars"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "env1_attack",
+      "name": "Env 1 Attack",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.005,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env1_decay",
+      "name": "Env 1 Decay",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.3,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env1_sustain",
+      "name": "Env 1 Sustain",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.7
+    },
+    {
+      "id": "env1_release",
+      "name": "Env 1 Release",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.25,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env1_acurve",
+      "name": "Env 1 Attack Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "env1_dcurve",
+      "name": "Env 1 Decay Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.4
+    },
+    {
+      "id": "env2_attack",
+      "name": "Env 2 Attack",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.01,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env2_decay",
+      "name": "Env 2 Decay",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.4,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env2_sustain",
+      "name": "Env 2 Sustain",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "env2_release",
+      "name": "Env 2 Release",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.3,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env2_acurve",
+      "name": "Env 2 Attack Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "env2_dcurve",
+      "name": "Env 2 Decay Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.4
+    },
+    {
+      "id": "env3_attack",
+      "name": "Env 3 Attack",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.01,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env3_decay",
+      "name": "Env 3 Decay",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.4,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env3_sustain",
+      "name": "Env 3 Sustain",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "env3_release",
+      "name": "Env 3 Release",
+      "type": "float",
+      "min": 0.001,
+      "max": 10.0,
+      "default": 0.3,
+      "unit": "s",
+      "skew": 0.3
+    },
+    {
+      "id": "env3_acurve",
+      "name": "Env 3 Attack Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "env3_dcurve",
+      "name": "Env 3 Decay Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.4
+    },
+    {
+      "id": "macro1",
+      "name": "Macro 1",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "macro2",
+      "name": "Macro 2",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "macro3",
+      "name": "Macro 3",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "macro4",
+      "name": "Macro 4",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "global_tempo",
+      "name": "Tempo (no host)",
+      "type": "float",
+      "min": 40.0,
+      "max": 240.0,
+      "default": 120.0,
+      "unit": "BPM"
+    },
+    {
+      "id": "chaos_rate",
+      "name": "Chaos Rate",
+      "type": "float",
+      "min": 0.02,
+      "max": 10.0,
+      "default": 1.0,
+      "skew": 0.4
+    },
+    {
+      "id": "fractal_rate",
+      "name": "Fractal Rate",
+      "type": "float",
+      "min": 0.02,
+      "max": 20.0,
+      "default": 1.0,
+      "unit": "Hz",
+      "skew": 0.4
+    },
+    {
+      "id": "mod1_src",
+      "name": "Mod 1 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod1_dst",
+      "name": "Mod 1 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod1_depth",
+      "name": "Mod 1 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod1_curve",
+      "name": "Mod 1 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod1_bipolar",
+      "name": "Mod 1 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod2_src",
+      "name": "Mod 2 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod2_dst",
+      "name": "Mod 2 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod2_depth",
+      "name": "Mod 2 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod2_curve",
+      "name": "Mod 2 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod2_bipolar",
+      "name": "Mod 2 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod3_src",
+      "name": "Mod 3 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod3_dst",
+      "name": "Mod 3 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod3_depth",
+      "name": "Mod 3 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod3_curve",
+      "name": "Mod 3 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod3_bipolar",
+      "name": "Mod 3 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod4_src",
+      "name": "Mod 4 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod4_dst",
+      "name": "Mod 4 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod4_depth",
+      "name": "Mod 4 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod4_curve",
+      "name": "Mod 4 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod4_bipolar",
+      "name": "Mod 4 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod5_src",
+      "name": "Mod 5 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod5_dst",
+      "name": "Mod 5 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod5_depth",
+      "name": "Mod 5 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod5_curve",
+      "name": "Mod 5 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod5_bipolar",
+      "name": "Mod 5 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod6_src",
+      "name": "Mod 6 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod6_dst",
+      "name": "Mod 6 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod6_depth",
+      "name": "Mod 6 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod6_curve",
+      "name": "Mod 6 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod6_bipolar",
+      "name": "Mod 6 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod7_src",
+      "name": "Mod 7 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod7_dst",
+      "name": "Mod 7 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod7_depth",
+      "name": "Mod 7 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod7_curve",
+      "name": "Mod 7 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod7_bipolar",
+      "name": "Mod 7 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod8_src",
+      "name": "Mod 8 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod8_dst",
+      "name": "Mod 8 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod8_depth",
+      "name": "Mod 8 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod8_curve",
+      "name": "Mod 8 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod8_bipolar",
+      "name": "Mod 8 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod9_src",
+      "name": "Mod 9 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod9_dst",
+      "name": "Mod 9 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod9_depth",
+      "name": "Mod 9 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod9_curve",
+      "name": "Mod 9 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod9_bipolar",
+      "name": "Mod 9 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod10_src",
+      "name": "Mod 10 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod10_dst",
+      "name": "Mod 10 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod10_depth",
+      "name": "Mod 10 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod10_curve",
+      "name": "Mod 10 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod10_bipolar",
+      "name": "Mod 10 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod11_src",
+      "name": "Mod 11 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod11_dst",
+      "name": "Mod 11 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod11_depth",
+      "name": "Mod 11 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod11_curve",
+      "name": "Mod 11 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod11_bipolar",
+      "name": "Mod 11 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "mod12_src",
+      "name": "Mod 12 Source",
+      "type": "choice",
+      "choices": [
+        "None",
+        "LFO 1",
+        "LFO 2",
+        "LFO 3",
+        "ENV 1",
+        "ENV 2",
+        "ENV 3",
+        "Macro 1",
+        "Macro 2",
+        "Macro 3",
+        "Macro 4",
+        "Chaos X",
+        "Chaos Y",
+        "Chaos Z",
+        "Perlin",
+        "S&H"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod12_dst",
+      "name": "Mod 12 Destination",
+      "type": "choice",
+      "choices": [
+        "None",
+        "Osc1 Frame",
+        "Osc1 Warp",
+        "Osc1 Level",
+        "Osc1 Detune",
+        "Osc1 Spread",
+        "Osc1 Fine",
+        "Osc1 Pan",
+        "Osc2 Frame",
+        "Osc2 Warp",
+        "Osc2 Level",
+        "Osc2 Detune",
+        "Osc2 Spread",
+        "Osc2 Fine",
+        "Osc2 Pan",
+        "Osc3 Frame",
+        "Osc3 Warp",
+        "Osc3 Level",
+        "Osc3 Detune",
+        "Osc3 Spread",
+        "Osc3 Fine",
+        "Osc3 Pan",
+        "Filt1 Cutoff",
+        "Filt1 Res",
+        "Filt1 Drive",
+        "Filt2 Cutoff",
+        "Filt2 Res",
+        "Filt2 Drive",
+        "Sub Level",
+        "Noise Level"
+      ],
+      "default": "None"
+    },
+    {
+      "id": "mod12_depth",
+      "name": "Mod 12 Depth",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "mod12_curve",
+      "name": "Mod 12 Curve",
+      "type": "float",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "mod12_bipolar",
+      "name": "Mod 12 Bipolar",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "id": "fx_dist_on",
+      "name": "Distortion On",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "fx_dist_type",
+      "name": "Distortion Type",
+      "type": "choice",
+      "choices": [
+        "Soft",
+        "Hard",
+        "Fold",
+        "Tube"
+      ],
+      "default": "Soft"
+    },
+    {
+      "id": "fx_dist_drive",
+      "name": "Distortion Drive",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.3
+    },
+    {
+      "id": "fx_dist_tone",
+      "name": "Distortion Tone",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.7
+    },
+    {
+      "id": "fx_dist_mix",
+      "name": "Distortion Mix",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 1.0
+    },
+    {
+      "id": "fx_chorus_on",
+      "name": "Chorus On",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "fx_chorus_mode",
+      "name": "Chorus Mode",
+      "type": "choice",
+      "choices": [
+        "Chorus",
+        "Flanger"
+      ],
+      "default": "Chorus"
+    },
+    {
+      "id": "fx_chorus_rate",
+      "name": "Chorus Rate",
+      "type": "float",
+      "min": 0.05,
+      "max": 8.0,
+      "default": 0.6,
+      "unit": "Hz",
+      "skew": 0.4
+    },
+    {
+      "id": "fx_chorus_depth",
+      "name": "Chorus Depth",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "fx_chorus_feedback",
+      "name": "Chorus Feedback",
+      "type": "float",
+      "min": 0.0,
+      "max": 0.85,
+      "default": 0.0
+    },
+    {
+      "id": "fx_chorus_mix",
+      "name": "Chorus Mix",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "fx_delay_on",
+      "name": "Delay On",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "fx_delay_sync",
+      "name": "Delay Tempo Sync",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "1/16T",
+        "1/16",
+        "1/16.",
+        "1/8T",
+        "1/8",
+        "1/8.",
+        "1/4T",
+        "1/4",
+        "1/4.",
+        "1/2",
+        "1 bar",
+        "2 bars",
+        "4 bars"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "fx_delay_time",
+      "name": "Delay Time",
+      "type": "float",
+      "min": 10.0,
+      "max": 2000.0,
+      "default": 375.0,
+      "unit": "ms",
+      "skew": 0.4
+    },
+    {
+      "id": "fx_delay_feedback",
+      "name": "Delay Feedback",
+      "type": "float",
+      "min": 0.0,
+      "max": 0.95,
+      "default": 0.4
+    },
+    {
+      "id": "fx_delay_tone",
+      "name": "Delay Tone",
+      "type": "float",
+      "min": 300.0,
+      "max": 16000.0,
+      "default": 5000.0,
+      "unit": "Hz",
+      "skew": 0.4
+    },
+    {
+      "id": "fx_delay_mix",
+      "name": "Delay Mix",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.3
+    },
+    {
+      "id": "fx_reverb_on",
+      "name": "Reverb On",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "fx_reverb_size",
+      "name": "Reverb Size",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "fx_reverb_decay",
+      "name": "Reverb Decay",
+      "type": "float",
+      "min": 0.2,
+      "max": 20.0,
+      "default": 3.0,
+      "unit": "s",
+      "skew": 0.4
+    },
+    {
+      "id": "fx_reverb_damp",
+      "name": "Reverb Damping",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.4
+    },
+    {
+      "id": "fx_reverb_mix",
+      "name": "Reverb Mix",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.3
+    },
+    {
+      "id": "fx_slot1",
+      "name": "FX Slot 1",
+      "type": "choice",
+      "choices": [
+        "Distortion",
+        "Chorus/Flanger",
+        "Delay",
+        "Reverb"
+      ],
+      "default": "Distortion"
+    },
+    {
+      "id": "fx_slot2",
+      "name": "FX Slot 2",
+      "type": "choice",
+      "choices": [
+        "Distortion",
+        "Chorus/Flanger",
+        "Delay",
+        "Reverb"
+      ],
+      "default": "Chorus/Flanger"
+    },
+    {
+      "id": "fx_slot3",
+      "name": "FX Slot 3",
+      "type": "choice",
+      "choices": [
+        "Distortion",
+        "Chorus/Flanger",
+        "Delay",
+        "Reverb"
+      ],
+      "default": "Delay"
+    },
+    {
+      "id": "fx_slot4",
+      "name": "FX Slot 4",
+      "type": "choice",
+      "choices": [
+        "Distortion",
+        "Chorus/Flanger",
+        "Delay",
+        "Reverb"
+      ],
+      "default": "Reverb"
+    }
+  ],
+  "modulation_sources": [
+    {
+      "name": "LFO 1",
+      "bipolar": true
+    },
+    {
+      "name": "LFO 2",
+      "bipolar": true
+    },
+    {
+      "name": "LFO 3",
+      "bipolar": true
+    },
+    {
+      "name": "ENV 1",
+      "bipolar": false
+    },
+    {
+      "name": "ENV 2",
+      "bipolar": false
+    },
+    {
+      "name": "ENV 3",
+      "bipolar": false
+    },
+    {
+      "name": "Macro 1",
+      "bipolar": false
+    },
+    {
+      "name": "Macro 2",
+      "bipolar": false
+    },
+    {
+      "name": "Macro 3",
+      "bipolar": false
+    },
+    {
+      "name": "Macro 4",
+      "bipolar": false
+    },
+    {
+      "name": "Chaos X",
+      "bipolar": true
+    },
+    {
+      "name": "Chaos Y",
+      "bipolar": true
+    },
+    {
+      "name": "Chaos Z",
+      "bipolar": true
+    },
+    {
+      "name": "Perlin",
+      "bipolar": true
+    },
+    {
+      "name": "S&H",
+      "bipolar": true
+    }
+  ],
+  "modulation_destinations": [
+    {
+      "label": "Osc1 Frame",
+      "parameter": "osc1_frame"
+    },
+    {
+      "label": "Osc1 Warp",
+      "parameter": "osc1_warp_amt"
+    },
+    {
+      "label": "Osc1 Level",
+      "parameter": "osc1_level"
+    },
+    {
+      "label": "Osc1 Detune",
+      "parameter": "osc1_detune"
+    },
+    {
+      "label": "Osc1 Spread",
+      "parameter": "osc1_spread"
+    },
+    {
+      "label": "Osc1 Fine",
+      "parameter": "osc1_fine"
+    },
+    {
+      "label": "Osc1 Pan",
+      "parameter": "osc1_pan"
+    },
+    {
+      "label": "Osc2 Frame",
+      "parameter": "osc2_frame"
+    },
+    {
+      "label": "Osc2 Warp",
+      "parameter": "osc2_warp_amt"
+    },
+    {
+      "label": "Osc2 Level",
+      "parameter": "osc2_level"
+    },
+    {
+      "label": "Osc2 Detune",
+      "parameter": "osc2_detune"
+    },
+    {
+      "label": "Osc2 Spread",
+      "parameter": "osc2_spread"
+    },
+    {
+      "label": "Osc2 Fine",
+      "parameter": "osc2_fine"
+    },
+    {
+      "label": "Osc2 Pan",
+      "parameter": "osc2_pan"
+    },
+    {
+      "label": "Osc3 Frame",
+      "parameter": "osc3_frame"
+    },
+    {
+      "label": "Osc3 Warp",
+      "parameter": "osc3_warp_amt"
+    },
+    {
+      "label": "Osc3 Level",
+      "parameter": "osc3_level"
+    },
+    {
+      "label": "Osc3 Detune",
+      "parameter": "osc3_detune"
+    },
+    {
+      "label": "Osc3 Spread",
+      "parameter": "osc3_spread"
+    },
+    {
+      "label": "Osc3 Fine",
+      "parameter": "osc3_fine"
+    },
+    {
+      "label": "Osc3 Pan",
+      "parameter": "osc3_pan"
+    },
+    {
+      "label": "Filt1 Cutoff",
+      "parameter": "filt1_cutoff"
+    },
+    {
+      "label": "Filt1 Res",
+      "parameter": "filt1_res"
+    },
+    {
+      "label": "Filt1 Drive",
+      "parameter": "filt1_drive"
+    },
+    {
+      "label": "Filt2 Cutoff",
+      "parameter": "filt2_cutoff"
+    },
+    {
+      "label": "Filt2 Res",
+      "parameter": "filt2_res"
+    },
+    {
+      "label": "Filt2 Drive",
+      "parameter": "filt2_drive"
+    },
+    {
+      "label": "Sub Level",
+      "parameter": "sub_level"
+    },
+    {
+      "label": "Noise Level",
+      "parameter": "noise_level"
+    }
+  ]
+}

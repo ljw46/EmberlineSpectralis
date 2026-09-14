@@ -16,11 +16,16 @@ EmberlineProcessor::EmberlineProcessor()
     {
         lfoRate[i] = ptrs.mod.lfo[i].rate;
         lfoMode[i] = ptrs.mod.lfo[i].mode;
+        lfoSync[i] = ptrs.mod.lfo[i].sync;
     }
 
     for (int i = 0; i < numVoices; ++i)
         synth.addVoice (new ember::SynthVoice (bank, ptrs, modCtx, (uint32_t) (i + 1)));
     synth.addSound (new ember::SynthSound());
+
+    presetLibrary.scanFactory();
+    presetLibrary.scanUser();
+    loadPresetByName ("Warm Keys");   // a musical starting point instead of a bare saw
 }
 
 void EmberlineProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
@@ -47,6 +52,32 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
 
     buffer.clear();
 
+    // transport: host tempo if there is one (standalone falls back to the tempo knob)
+    {
+        double bpm = (double) modPtrs.tempo->load();
+        double ppq = -1.0;
+        if (auto* head = getPlayHead())
+            if (auto pos = head->getPosition())
+            {
+                if (auto b = pos->getBpm()) bpm = *b;
+                if (pos->getIsPlaying())
+                    if (auto q = pos->getPpqPosition()) ppq = *q;
+            }
+        modCtx.bpm = juce::jmax (20.0, bpm);
+        modCtx.hostPpq = ppq;
+
+        // free-running, tempo-synced LFOs lock to the host's musical position
+        for (size_t i = 0; i < lfoRate.size(); ++i)
+        {
+            const int sync = juce::roundToInt (lfoSync[i]->load());
+            if (sync > 0 && ppq >= 0.0 && lfoMode[i]->load() > 0.5f)
+            {
+                const double cycles = ppq / (double) ember::tempo::beats (sync);
+                modCtx.blockPhase[i] = cycles - std::floor (cycles);
+            }
+        }
+    }
+
     modCtx.blockLength = buffer.getNumSamples();
     chaos.process (buffer.getNumSamples(), modPtrs.chaosRate->load(), modPtrs.fractalRate->load(), modCtx.chaosPrev, modCtx.chaosNext);
     {
@@ -63,13 +94,13 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
     for (size_t i = 0; i < lfoRate.size(); ++i)
     {
         auto& ph = modCtx.blockPhase[i];
-        ph += (double) buffer.getNumSamples() * (double) lfoRate[i]->load() / currentSampleRate;
+        ph += (double) buffer.getNumSamples() * (double) ember::tempo::rateHz (juce::roundToInt (lfoSync[i]->load()), lfoRate[i]->load(), modCtx.bpm) / currentSampleRate;
         ph -= std::floor (ph);
         if (lfoMode[i]->load() > 0.5f)
             modCtx.displayPhase[i].store ((float) ph, std::memory_order_relaxed);
     }
 
-    fxChain.process (buffer, fxPtrs);
+    fxChain.process (buffer, fxPtrs, modCtx.bpm);
 
     gain.setTargetValue (juce::Decibels::decibelsToGain (volumeParam->load()));
 
@@ -109,6 +140,46 @@ void EmberlineProcessor::setStateInformation (const void* data, int size)
 
             apvts.replaceState (state);
         }
+}
+
+bool EmberlineProcessor::loadPreset (int index)
+{
+    const auto& all = presetLibrary.all();
+    if (! juce::isPositiveAndBelow (index, (int) all.size()))
+        return false;
+
+    juce::var v;
+    juce::String error;
+    if (! ember::presets::parse (all[(size_t) index].json, v, error))
+        return false;
+
+    lastPresetResult = ember::presets::apply (*this, v);
+    if (index < presetLibrary.numFactory())
+        currentProgram = index;
+    return lastPresetResult.ok;
+}
+
+bool EmberlineProcessor::loadPresetByName (const juce::String& name)
+{
+    const int i = presetLibrary.indexOf (name);
+    return i >= 0 && loadPreset (i);
+}
+
+bool EmberlineProcessor::saveUserPreset (const juce::String& name, const juce::String& category, const juce::String& description)
+{
+    const auto dir = ember::presets::Library::userDirectory();
+    if (! dir.createDirectory().wasOk())
+        return false;
+
+    const auto file = dir.getChildFile (ember::presets::safeFileName (name) + ".json");
+    const auto text = ember::presets::toJson (ember::presets::capture (*this, name, category.isEmpty() ? "User" : category, description));
+    if (! file.replaceWithText (text))
+        return false;
+
+    apvts.state.setProperty ("presetName", name, nullptr);
+    apvts.state.setProperty ("presetCategory", category, nullptr);
+    presetLibrary.scanUser();
+    return true;
 }
 
 bool EmberlineProcessor::assignModulation (int source, int destination)

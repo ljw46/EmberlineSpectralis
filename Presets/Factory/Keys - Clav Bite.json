@@ -1,0 +1,37 @@
+{
+    "name": "Clav Bite",
+    "category": "Keys",
+    "description": "Clavinet-style keys: a bright saw through a bandpass-leaning filter with a very short decay. Funky.",
+    "tags": ["keys", "clav", "funky", "bite"],
+    "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
+    "parameters": {
+        "master_volume": 2.9,
+        "osc1_on": true,
+        "osc1_frame": 0.55,
+        "osc1_level": 0.8,
+        "filt1_type": "Bandpass",
+        "filt1_cutoff": 1800,
+        "filt1_res": 0.35,
+        "env1_attack": 0.001,
+        "env1_decay": 0.25,
+        "env1_sustain": 0.0,
+        "env1_release": 0.1,
+        "env1_dcurve": 0.6,
+        "env2_attack": 0.001,
+        "env2_decay": 0.15,
+        "env2_sustain": 0.0,
+        "env2_release": 0.1,
+        "fx_dist_on": true,
+        "fx_dist_type": "Hard",
+        "fx_dist_drive": 0.15,
+        "fx_dist_tone": 0.6,
+        "fx_dist_mix": 0.3
+    },
+    "modulation": [
+        {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.142},
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.5},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.5},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.4},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.5}
+    ]
+}
