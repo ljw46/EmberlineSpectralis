@@ -5,7 +5,7 @@
     "tags": ["organic", "wind", "noise", "spacious"],
     "macro_names": ["Brightness", "-", "Focus", "-"],
     "parameters": {
-        "master_volume": 2.0,
+        "master_volume": 1.8,
         "osc1_on": false,
         "osc1_frame": 0.0,
         "osc1_level": 0.0,

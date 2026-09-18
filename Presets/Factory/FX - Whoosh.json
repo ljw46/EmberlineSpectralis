@@ -5,7 +5,7 @@
     "tags": ["fx", "whoosh", "swish", "transition"],
     "macro_names": ["Brightness", "-", "Focus", "-"],
     "parameters": {
-        "master_volume": 4.9,
+        "master_volume": 4.8,
         "osc1_on": false,
         "osc1_frame": 0.0,
         "osc1_level": 0.0,

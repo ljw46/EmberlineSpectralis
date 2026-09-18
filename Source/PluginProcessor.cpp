@@ -173,7 +173,7 @@ bool EmberlineProcessor::saveUserPreset (const juce::String& name, const juce::S
 
     const auto file = dir.getChildFile (ember::presets::safeFileName (name) + ".json");
     const auto text = ember::presets::toJson (ember::presets::capture (*this, name, category.isEmpty() ? "User" : category, description));
-    if (! file.replaceWithText (text))
+    if (! file.replaceWithText (text, false, false, "\n"))   // LF everywhere, same on every platform
         return false;
 
     apvts.state.setProperty ("presetName", name, nullptr);

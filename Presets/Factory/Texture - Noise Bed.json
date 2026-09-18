@@ -5,7 +5,7 @@
     "tags": ["texture", "noise", "bed", "air"],
     "macro_names": ["Brightness", "-", "-", "-"],
     "parameters": {
-        "master_volume": 2.0,
+        "master_volume": 2.1,
         "osc1_on": false,
         "osc1_frame": 0.0,
         "osc1_level": 0.0,

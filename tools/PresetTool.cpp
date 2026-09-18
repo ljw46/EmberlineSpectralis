@@ -112,8 +112,8 @@ namespace
         }
         root->setProperty ("modulation_destinations", dests);
 
-        dir.getChildFile ("parameters.json").replaceWithText (juce::JSON::toString (juce::var (root), false, 4));
-        dir.getChildFile ("parameters.md").replaceWithText (md);
+        dir.getChildFile ("parameters.json").replaceWithText (juce::JSON::toString (juce::var (root), false, 4), false, false, "\n");
+        dir.getChildFile ("parameters.md").replaceWithText (md, false, false, "\n");
         std::printf ("wrote %s/parameters.json and parameters.md (%d parameters)\n", dir.getFullPathName().toRawUTF8(), params.size());
         return 0;
     }
@@ -278,7 +278,7 @@ namespace
                 const double newVolume = juce::jlimit (-40.0, 6.0, current + gain);
                 if (std::abs (newVolume - current) > 0.05)
                 {
-                    f.replaceWithText (withVolume (text, newVolume));
+                    f.replaceWithText (withVolume (text, newVolume), false, false, "\n");
                     text = f.loadFileAsString();
                     presets::parse (text, v, error);
                     presets::apply (proc, v);
