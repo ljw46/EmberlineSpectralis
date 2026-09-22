@@ -1,4 +1,5 @@
 // Developer tool (not part of the plugin):
+//   EmberlineTools audio-diag                        (tries to open every audio output device and prints the exact result)
 //   EmberlineTools selftest
 //   EmberlineTools snapshot <outdir> [preset name]   (renders every editor tab offscreen to PNG)
 //   EmberlineTools dump-params <outdir>
@@ -6,7 +7,9 @@
 //   EmberlineTools render <preset.json> <out.wav>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_audio_formats/juce_audio_formats.h>
+#include <juce_audio_utils/juce_audio_utils.h>
 #include <cstdio>
 
 using namespace ember;
@@ -514,6 +517,81 @@ int snapshot (EmberlineProcessor& proc, const juce::File& dir, const juce::Strin
     return 0;
 }
 
+// Opens every output device of every device type the way the standalone app does, then once more with the
+// real processor attached and running, and prints exactly what happened. For "error opening audio device".
+int audioDiag (EmberlineProcessor& proc)
+{
+    juce::AudioDeviceManager manager;
+    int failures = 0, attempts = 0;
+
+    for (auto* type : manager.getAvailableDeviceTypes())
+    {
+        type->scanForDevices();
+        std::printf ("\n== device type: %s\n", type->getTypeName().toRawUTF8());
+        const auto outputs = type->getDeviceNames (false);
+        if (outputs.isEmpty()) { std::printf ("   (no output devices)\n"); continue; }
+
+        manager.setCurrentAudioDeviceType (type->getTypeName(), true);
+
+        for (auto& name : outputs)
+        {
+            juce::AudioDeviceManager::AudioDeviceSetup setup;
+            manager.getAudioDeviceSetup (setup);
+            setup.outputDeviceName = name;
+            setup.inputDeviceName = {};
+            setup.useDefaultInputChannels = false;
+            setup.inputChannels.clear();
+            setup.useDefaultOutputChannels = true;
+            setup.sampleRate = 0.0;
+            setup.bufferSize = 0;
+
+            ++attempts;
+            const auto error = manager.setAudioDeviceSetup (setup, true);
+            if (error.isEmpty())
+            {
+                auto* dev = manager.getCurrentAudioDevice();
+                std::printf ("   [ OK ] %-52s %.0f Hz, %d samples, %d out ch\n", name.toRawUTF8(), dev->getCurrentSampleRate(),
+                             dev->getCurrentBufferSizeSamples(), dev->getActiveOutputChannels().countNumberOfSetBits());
+            }
+            else
+            {
+                ++failures;
+                std::printf ("   [FAIL] %-52s %s\n", name.toRawUTF8(), error.toRawUTF8());
+            }
+            manager.closeAudioDevice();
+        }
+    }
+
+    std::printf ("\n== with the plugin attached (default device, as the standalone does it)\n");
+    {
+        juce::AudioProcessorPlayer player;
+        player.setProcessor (&proc);
+        juce::String error = manager.initialiseWithDefaultDevices (0, 2);
+        manager.addAudioCallback (&player);
+        std::printf ("   initialise: %s\n", error.isEmpty() ? "OK" : error.toRawUTF8());
+
+        if (auto* dev = manager.getCurrentAudioDevice())
+        {
+            std::printf ("   device: %s (%s), %.0f Hz, %d samples\n", dev->getName().toRawUTF8(), dev->getTypeName().toRawUTF8(),
+                         dev->getCurrentSampleRate(), dev->getCurrentBufferSizeSamples());
+            juce::MidiBuffer midi;
+            midi.addEvent (juce::MidiMessage::noteOn (1, 60, (juce::uint8) 100), 0);
+            player.handleIncomingMidiMessage (nullptr, juce::MidiMessage::noteOn (1, 60, (juce::uint8) 100));
+            juce::Thread::sleep (1500);
+            std::printf ("   ran for 1.5 s with a note held: %s, cpu load %.1f%%\n", dev->isPlaying() ? "audio callback active" : "NOT playing", manager.getCpuUsage() * 100.0);
+        }
+        else
+            ++failures;
+
+        manager.removeAudioCallback (&player);
+        manager.closeAudioDevice();
+        player.setProcessor (nullptr);
+    }
+
+    std::printf ("\n%d of %d device opens failed\n", failures, attempts);
+    return failures == 0 ? 0 : 1;
+}
+
 int main (int argc, char** argv)
 {
     juce::ScopedJuceInitialiser_GUI init;
@@ -524,6 +602,9 @@ int main (int argc, char** argv)
 
     if (args.size() >= 2 && args[0] == "snapshot")
         return snapshot (proc, juce::File::getCurrentWorkingDirectory().getChildFile (args[1]), args.size() >= 3 ? args[2] : juce::String());
+
+    if (args.size() >= 1 && args[0] == "audio-diag")
+        return audioDiag (proc);
 
     if (args.size() >= 1 && args[0] == "selftest")
         return selftest (proc);
