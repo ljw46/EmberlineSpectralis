@@ -592,6 +592,64 @@ int audioDiag (EmberlineProcessor& proc)
     return failures == 0 ? 0 : 1;
 }
 
+// Every output device x sample rate x buffer size, with the plugin attached and running, failures only.
+int audioSweep (EmberlineProcessor& proc)
+{
+    juce::AudioDeviceManager manager;
+    juce::AudioProcessorPlayer player;
+    player.setProcessor (&proc);
+    int attempts = 0, failures = 0;
+
+    for (auto* type : manager.getAvailableDeviceTypes())
+    {
+        type->scanForDevices();
+        manager.setCurrentAudioDeviceType (type->getTypeName(), true);
+
+        for (auto& name : type->getDeviceNames (false))
+            for (double rate : { 44100.0, 48000.0, 96000.0 })
+                for (int buffer : { 64, 128, 256, 512, 1024 })
+                {
+                    juce::AudioDeviceManager::AudioDeviceSetup setup;
+                    manager.getAudioDeviceSetup (setup);
+                    setup.outputDeviceName = name;
+                    setup.inputDeviceName = {};
+                    setup.useDefaultInputChannels = false;
+                    setup.inputChannels.clear();
+                    setup.useDefaultOutputChannels = true;
+                    setup.sampleRate = rate;
+                    setup.bufferSize = buffer;
+
+                    ++attempts;
+                    manager.removeAudioCallback (&player);
+                    const auto error = manager.setAudioDeviceSetup (setup, true);
+                    if (error.isNotEmpty())
+                    {
+                        ++failures;
+                        std::printf ("[FAIL] %s | %s | %.0f Hz | %d samples -> %s\n", type->getTypeName().toRawUTF8(), name.toRawUTF8(), rate, buffer, error.toRawUTF8());
+                        continue;
+                    }
+
+                    manager.addAudioCallback (&player);
+                    player.handleIncomingMidiMessage (nullptr, juce::MidiMessage::noteOn (1, 60, (juce::uint8) 100));
+                    juce::Thread::sleep (120);
+                    player.handleIncomingMidiMessage (nullptr, juce::MidiMessage::noteOff (1, 60));
+
+                    auto* dev = manager.getCurrentAudioDevice();
+                    if (dev == nullptr || ! dev->isPlaying())
+                    {
+                        ++failures;
+                        std::printf ("[FAIL] %s | %s | %.0f Hz | %d samples -> opened but not playing\n", type->getTypeName().toRawUTF8(), name.toRawUTF8(), rate, buffer);
+                    }
+                }
+    }
+
+    manager.removeAudioCallback (&player);
+    manager.closeAudioDevice();
+    player.setProcessor (nullptr);
+    std::printf ("\nsweep: %d of %d combinations failed\n", failures, attempts);
+    return failures == 0 ? 0 : 1;
+}
+
 int main (int argc, char** argv)
 {
     juce::ScopedJuceInitialiser_GUI init;
@@ -602,6 +660,9 @@ int main (int argc, char** argv)
 
     if (args.size() >= 2 && args[0] == "snapshot")
         return snapshot (proc, juce::File::getCurrentWorkingDirectory().getChildFile (args[1]), args.size() >= 3 ? args[2] : juce::String());
+
+    if (args.size() >= 2 && args[0] == "audio-diag" && args[1] == "--sweep")
+        return audioSweep (proc);
 
     if (args.size() >= 1 && args[0] == "audio-diag")
         return audioDiag (proc);
