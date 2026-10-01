@@ -650,6 +650,54 @@ int audioSweep (EmberlineProcessor& proc)
     return failures == 0 ? 0 : 1;
 }
 
+// Mimics the standalone's Options dialog: start from the default setup (which may include a default
+// *input* device) and only change the output device, leaving the input exactly as JUCE leaves it.
+int audioUiLike (EmberlineProcessor& proc)
+{
+    juce::AudioDeviceManager manager;
+    juce::AudioProcessorPlayer player;
+    player.setProcessor (&proc);
+
+    const auto initError = manager.initialise (0, 2, nullptr, true);   // what the standalone asks for
+    juce::AudioDeviceManager::AudioDeviceSetup start;
+    manager.getAudioDeviceSetup (start);
+    std::printf ("initialise(0 in, 2 out): %s\n", initError.isEmpty() ? "OK" : initError.toRawUTF8());
+    std::printf ("  type=%s\n  output='%s'\n  input='%s'  useDefaultIn=%d  inputChannels=%d  outputChannels=%d\n",
+                 manager.getCurrentAudioDeviceType().toRawUTF8(), start.outputDeviceName.toRawUTF8(), start.inputDeviceName.toRawUTF8(),
+                 (int) start.useDefaultInputChannels, start.inputChannels.countNumberOfSetBits(), start.outputChannels.countNumberOfSetBits());
+
+    int attempts = 0, failures = 0;
+    for (auto* type : manager.getAvailableDeviceTypes())
+    {
+        type->scanForDevices();
+        manager.setCurrentAudioDeviceType (type->getTypeName(), true);
+
+        for (auto& name : type->getDeviceNames (false))
+        {
+            juce::AudioDeviceManager::AudioDeviceSetup setup;
+            manager.getAudioDeviceSetup (setup);   // keeps whatever input JUCE selected
+            setup.outputDeviceName = name;
+
+            ++attempts;
+            manager.removeAudioCallback (&player);
+            const auto error = manager.setAudioDeviceSetup (setup, true);
+            if (error.isNotEmpty())
+            {
+                ++failures;
+                std::printf ("[FAIL] %s | out='%s' in='%s' -> %s\n", type->getTypeName().toRawUTF8(), name.toRawUTF8(), setup.inputDeviceName.toRawUTF8(), error.toRawUTF8());
+            }
+            else
+                manager.addAudioCallback (&player);
+        }
+    }
+
+    manager.removeAudioCallback (&player);
+    manager.closeAudioDevice();
+    player.setProcessor (nullptr);
+    std::printf ("\nui-like: %d of %d failed\n", failures, attempts);
+    return failures == 0 ? 0 : 1;
+}
+
 int main (int argc, char** argv)
 {
     juce::ScopedJuceInitialiser_GUI init;
@@ -660,6 +708,9 @@ int main (int argc, char** argv)
 
     if (args.size() >= 2 && args[0] == "snapshot")
         return snapshot (proc, juce::File::getCurrentWorkingDirectory().getChildFile (args[1]), args.size() >= 3 ? args[2] : juce::String());
+
+    if (args.size() >= 2 && args[0] == "audio-diag" && args[1] == "--ui-like")
+        return audioUiLike (proc);
 
     if (args.size() >= 2 && args[0] == "audio-diag" && args[1] == "--sweep")
         return audioSweep (proc);
