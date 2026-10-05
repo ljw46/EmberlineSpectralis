@@ -750,6 +750,12 @@ int main (int argc, char** argv)
         return writeWav (m.audio, juce::File::getCurrentWorkingDirectory().getChildFile (args[2])) ? 0 : 1;
     }
 
-    std::printf ("usage:\n  EmberlineTools dump-params <outdir>\n  EmberlineTools check <presetdir> [--wav <outdir>] [--fix-levels] [--target <rms dBFS>]\n  EmberlineTools render <preset.json> <out.wav>\n");
+    std::printf ("usage:\n"
+                 "  EmberlineTools dump-params <outdir>\n"
+                 "  EmberlineTools check <presetdir> [--wav <outdir>] [--fix-levels] [--target <rms dBFS>]\n"
+                 "  EmberlineTools render <preset.json> <out.wav>\n"
+                 "  EmberlineTools selftest\n"
+                 "  EmberlineTools snapshot <outdir> [preset name]\n"
+                 "  EmberlineTools audio-diag [--sweep | --ui-like]   (debug 'error opening audio device')\n");
     return 2;
 }
