@@ -1,0 +1,13 @@
+{
+    "id": 6,
+    "name": "Bend Saw",
+    "category": "Analog",
+    "description": "A saw whose slope is bent harder across the table, from straight to an S-shaped, asymmetric wave.",
+    "tags": [
+        "bend",
+        "saw",
+        "asymmetric"
+    ],
+    "mode": "waveform",
+    "expression": "2*bend(phase,t)-1"
+}

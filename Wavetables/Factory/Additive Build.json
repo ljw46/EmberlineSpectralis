@@ -1,0 +1,14 @@
+{
+    "id": 19,
+    "name": "Additive Build",
+    "category": "Digital",
+    "description": "Harmonics are added one by one: Frame 1 is a sine, and each step adds the next partial (up to about 32).",
+    "tags": [
+        "additive",
+        "harmonics",
+        "build"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 40,
+    "amplitude": "clamp(1+t*31-(h-1),0,1)/pow(h,0.9)"
+}

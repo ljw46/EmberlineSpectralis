@@ -5,7 +5,7 @@
     "tags": ["organic", "rain", "crackle", "lo-fi"],
     "macro_names": ["Brightness", "-", "-", "-"],
     "parameters": {
-        "master_volume": 2.8,
+        "master_volume": 3.1,
         "noise_level": 1.0,
         "noise_type": "Crackle",
         "osc1_on": true,

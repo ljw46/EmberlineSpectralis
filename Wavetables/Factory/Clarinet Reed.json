@@ -1,0 +1,13 @@
+{
+    "id": 10,
+    "name": "Clarinet Reed",
+    "category": "Organic",
+    "description": "Strong odd harmonics with a resonant bump that rises across the table. Woody and reedy.",
+    "tags": [
+        "clarinet",
+        "reed",
+        "woody"
+    ],
+    "mode": "spectrum",
+    "amplitude": "if(odd(h), 1/pow(h,1.2-0.5*t), 0.12/pow(h,1.5)) * (1+1.6*exp(-0.5*pow((h-(5+14*t))/3,2)))"
+}

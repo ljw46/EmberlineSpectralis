@@ -1,0 +1,14 @@
+{
+    "id": 12,
+    "name": "Mallet",
+    "category": "Organic",
+    "description": "Marimba and vibraphone-style partials (1 : 4 : 9) that bloom across the table. Warm, wooden and tuned.",
+    "tags": [
+        "marimba",
+        "mallet",
+        "wooden"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 20,
+    "amplitude": "if(h==1,1,0)+if(h==4,0.9*t,0)+if(h==9,0.55*t*t,0)+if(h==10,0.25*t,0)+if(h==16,0.2*t*t,0)"
+}

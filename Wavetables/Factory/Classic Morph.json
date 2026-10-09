@@ -1,0 +1,29 @@
+{
+    "id": 0,
+    "name": "Classic Morph",
+    "category": "Analog",
+    "description": "Sine, triangle, saw, square, then a reedy vowel-ish shape. The all-rounder; Frame sweeps the whole family.",
+    "tags": [
+        "classic",
+        "analog",
+        "morph"
+    ],
+    "mode": "morph",
+    "stages": [
+        {
+            "amplitude": "if(h==1,1,0)"
+        },
+        {
+            "amplitude": "if(odd(h), pow(-1,(h-1)/2)/(h*h), 0)"
+        },
+        {
+            "amplitude": "1/h"
+        },
+        {
+            "amplitude": "if(odd(h),1/h,0)"
+        },
+        {
+            "amplitude": "(1/h)*(1+5*exp(-pow(h-7,2)/12))"
+        }
+    ]
+}

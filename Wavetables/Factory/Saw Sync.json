@@ -1,0 +1,13 @@
+{
+    "id": 5,
+    "name": "Saw Sync",
+    "category": "Analog",
+    "description": "A saw restarted several times per cycle (hard-sync saw), ratio 1 to 6. The classic cutting sync-lead sweep.",
+    "tags": [
+        "sync",
+        "saw",
+        "lead"
+    ],
+    "mode": "waveform",
+    "expression": "2*frac(phase*(1+5*t))-1"
+}

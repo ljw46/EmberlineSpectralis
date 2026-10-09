@@ -1,0 +1,37 @@
+{
+    "name": "Organ Pluck",
+    "category": "Pluck",
+    "description": "A percussive organ pluck: drawbar registration with a quick decay - a classic house organ stab voice.",
+    "tags": ["pluck", "organ", "drawbar", "wavetable"],
+    "macro_names": ["Brightness", "Drawbars", "Resonance", "-"],
+    "parameters": {
+        "master_volume": 5.3,
+        "osc1_table": "Organ Drawbars",
+        "osc1_on": true,
+        "osc1_frame": 0.62,
+        "osc1_level": 0.85,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 5500,
+        "filt1_res": 0.15,
+        "env1_attack": 0.001,
+        "env1_decay": 0.3,
+        "env1_sustain": 0.0,
+        "env1_release": 0.12,
+        "env1_dcurve": 0.5,
+        "fx_chorus_on": true,
+        "fx_chorus_mix": 0.3,
+        "fx_chorus_rate": 4.0,
+        "fx_chorus_depth": 0.2,
+        "fx_reverb_on": true,
+        "fx_reverb_mix": 0.15,
+        "fx_reverb_size": 0.4,
+        "fx_reverb_decay": 1.6,
+        "fx_reverb_damp": 0.4
+    },
+    "modulation": [
+        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
+        {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.5},
+        {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.2},
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+    ]
+}

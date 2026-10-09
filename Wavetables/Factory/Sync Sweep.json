@@ -1,0 +1,13 @@
+{
+    "id": 4,
+    "name": "Sync Sweep",
+    "category": "Analog",
+    "description": "A sine restarted several times per cycle, as in hard sync: the ratio sweeps from 1 to 8. Vowel-like sweeps.",
+    "tags": [
+        "sync",
+        "sweep",
+        "vowel-like"
+    ],
+    "mode": "waveform",
+    "expression": "sin(tau*frac(phase*(1+7*t)))"
+}

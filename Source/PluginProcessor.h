@@ -56,7 +56,7 @@ public:
     ember::presets::Library presetLibrary;
     ember::presets::Result lastPresetResult;
 
-    const ember::WavetableBank& getWavetableBank() const noexcept { return bank; }
+    ember::WavetableBank& getWavetableBank() const noexcept { return bank; }
 
     juce::AudioProcessorValueTreeState apvts;
     ember::mod::ModPtrs modPtrs {};   // cached raw parameter pointers for the editor's mod displays
@@ -73,7 +73,7 @@ private:
     ember::ChaosEngine chaos;
     ember::fx::Chain fxChain;
     ember::fx::Ptrs fxPtrs {};
-    ember::WavetableBank bank;   // immutable after construction; shared by all voices
+    ember::WavetableBank& bank = ember::WavetableBank::shared();   // one per process; shared by every instance and voice
     juce::Synthesiser synth;
     juce::SmoothedValue<float> gain;
 

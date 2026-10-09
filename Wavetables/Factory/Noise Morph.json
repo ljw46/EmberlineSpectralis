@@ -1,0 +1,31 @@
+{
+    "id": 26,
+    "name": "Noise Morph",
+    "category": "Digital",
+    "description": "Random spectra that morph smoothly between four different anchors. Organic, unpredictable, a different timbre every few frames.",
+    "tags": [
+        "random",
+        "organic",
+        "evolving"
+    ],
+    "mode": "morph",
+    "harmonic_limit": 72,
+    "stages": [
+        {
+            "amplitude": "1/pow(h,0.8)*(0.3+rand(31,h))*cos(tau*rand(97,h))",
+            "cosine": "1/pow(h,0.8)*(0.3+rand(31,h))*sin(tau*rand(97,h))"
+        },
+        {
+            "amplitude": "1/pow(h,0.8)*(0.3+rand(32,h))*cos(tau*rand(98,h))",
+            "cosine": "1/pow(h,0.8)*(0.3+rand(32,h))*sin(tau*rand(98,h))"
+        },
+        {
+            "amplitude": "1/pow(h,0.8)*(0.3+rand(33,h))*cos(tau*rand(99,h))",
+            "cosine": "1/pow(h,0.8)*(0.3+rand(33,h))*sin(tau*rand(99,h))"
+        },
+        {
+            "amplitude": "1/pow(h,0.8)*(0.3+rand(34,h))*cos(tau*rand(100,h))",
+            "cosine": "1/pow(h,0.8)*(0.3+rand(34,h))*sin(tau*rand(100,h))"
+        }
+    ]
+}

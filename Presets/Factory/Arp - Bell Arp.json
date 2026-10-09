@@ -5,9 +5,9 @@
     "tags": ["arp", "bell", "metallic", "pretty"],
     "macro_names": ["Brightness", "Tone", "-", "Shimmer"],
     "parameters": {
-        "master_volume": -0.1,
+        "master_volume": -0.6,
         "osc1_on": true,
-        "osc1_frame": 0.1,
+        "osc1_frame": 0.25,
         "osc1_level": 0.7,
         "osc2_on": true,
         "osc2_frame": 0.0,
@@ -29,7 +29,8 @@
         "fx_reverb_mix": 0.3,
         "fx_reverb_size": 0.7,
         "fx_reverb_decay": 4.0,
-        "fx_reverb_damp": 0.3
+        "fx_reverb_damp": 0.3,
+        "osc1_table": "FM 1:5 Bell"
     },
     "modulation": [
         {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},

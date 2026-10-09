@@ -5,15 +5,13 @@
     "tags": ["texture", "cyber", "digital", "haze"],
     "macro_names": ["Brightness", "Warp", "Resonance", "Width"],
     "parameters": {
-        "master_volume": -10.6,
+        "master_volume": 1.8,
         "osc1_on": true,
-        "osc1_frame": 0.2,
+        "osc1_frame": 0.35,
         "osc1_level": 0.6,
         "osc1_unison": 4,
         "osc1_detune": 16,
         "osc1_spread": 0.9,
-        "osc1_warp_mode": "Phase Dist",
-        "osc1_warp_amt": 0.45,
         "osc2_on": true,
         "osc2_frame": 0.8,
         "osc2_level": 0.35,
@@ -43,15 +41,15 @@
         "fx_reverb_mix": 0.4,
         "fx_reverb_size": 0.8,
         "fx_reverb_decay": 5.0,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Phase Warp"
     },
     "modulation": [
-        {"source": "LFO 1", "destination": "Osc1 Warp", "depth": 0.25},
         {"source": "Chaos Y", "destination": "Filt1 Cutoff", "depth": 0.15},
         {"source": "Chaos X", "destination": "Osc2 Pan", "depth": 0.6},
         {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.5},
-        {"source": "Macro 2", "destination": "Osc1 Warp", "depth": 0.5},
         {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.3},
-        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.5}
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.5},
+        {"source": "LFO 1", "destination": "Osc1 Frame", "depth": 0.25}
     ]
 }

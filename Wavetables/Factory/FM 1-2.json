@@ -1,0 +1,14 @@
+{
+    "id": 15,
+    "name": "FM 1:2",
+    "category": "FM",
+    "description": "FM with the modulator an octave above the carrier. Odd-harmonic sidebands: hollow, clarinet-like to glassy.",
+    "tags": [
+        "fm",
+        "hollow",
+        "glassy"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 160,
+    "amplitude": "fm(h,2,t*8)"
+}

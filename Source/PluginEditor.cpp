@@ -78,7 +78,9 @@ void EmberlineEditor::buildTop()
         panel.setCentredTitle (true);
         panel.setTinted (true);
         panel.addOnSwitch (params::osc (o, "on"));
-        panel.addCombo (params::osc (o, "warp_mode"), params::warpModeNames);
+        panel.addCombo (params::osc (o, "table"), WavetableBank::shared().displayNames(), WavetableBank::shared().displayCategories());   // combo 0: wavetable
+        panel.setComboWeights ({ 0.62f, 0.38f });
+        panel.addCombo (params::osc (o, "warp_mode"), params::warpModeNames);                  // combo 1: warp
         for (size_t k = 0; k < std::size (ids); ++k)
             panel.addKnob (params::osc (o, ids[k]), names[k]);
         oscPanels.push_back (&panel);
@@ -325,6 +327,15 @@ void EmberlineEditor::layoutFiltersAndEnvs()
 
 void EmberlineEditor::timerCallback()
 {
+    const auto tables = WavetableBank::shared().displayNames();
+    const auto tableKey = tables.joinIntoString ("|");
+    if (tableKey != shownTableNames)
+    {
+        shownTableNames = tableKey;   // a user wavetable was added / removed / renamed
+        for (auto* p : oscPanels)
+            p->setComboItems (0, tables, WavetableBank::shared().displayCategories());
+    }
+
     const auto names = processor.getMacroNames();
     if (names != shownMacroNames)
     {

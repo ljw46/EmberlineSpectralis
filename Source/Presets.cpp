@@ -1,5 +1,6 @@
 #include "Presets.h"
 #include "PluginProcessor.h"
+#include "WavetableBank.h"
 #include <PresetData.h>
 
 namespace ember::presets
@@ -35,6 +36,8 @@ namespace ember::presets
                 if (v.isString())
                 {
                     index = choice->choices.indexOf (v.toString(), true);
+                    if (index < 0 && id.endsWith ("_table"))   // a user wavetable can be named by its own name
+                        index = WavetableBank::shared().indexOfName (v.toString());
                     if (index < 0)
                         r.warnings.add (id + ": \"" + v.toString() + "\" is not one of [" + choice->choices.joinIntoString (", ") + "]");
                 }
@@ -352,7 +355,13 @@ namespace ember::presets
 
             const float real = r->convertFrom0to1 (r->getValue());
             if (auto* c = dynamic_cast<juce::AudioParameterChoice*> (r))
-                params->setProperty (id, c->choices[juce::roundToInt (real)]);
+            {
+                const int index = juce::roundToInt (real);
+                auto& bank = WavetableBank::shared();
+                const bool userTable = id.endsWith ("_table") && index >= bank.numFactoryTables() && index < bank.numSlots() && bank.info (index).loaded;
+                // a user wavetable is written by its real name so the preset still works if the files are re-ordered
+                params->setProperty (id, userTable ? bank.info (index).name : c->choices[index]);
+            }
             else if (dynamic_cast<juce::AudioParameterBool*> (r) != nullptr)
                 params->setProperty (id, real > 0.5f);
             else if (dynamic_cast<juce::AudioParameterInt*> (r) != nullptr)

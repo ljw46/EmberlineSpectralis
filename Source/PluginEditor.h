@@ -66,7 +66,7 @@ private:
     std::array<std::atomic<float>*, ember::fx::numEffects> fxSlot {};
     std::array<int, ember::fx::numEffects> lastFxOrder { 0, 1, 2, 3 };
     juce::Label fxHint;
-    juce::String shownMacroNames { "?" };
+    juce::String shownMacroNames { "?" }, shownTableNames { "?" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EmberlineEditor)
 };

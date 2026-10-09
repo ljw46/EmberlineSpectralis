@@ -5,15 +5,15 @@
     "tags": ["keys", "organ", "drawbar", "sustained"],
     "macro_names": ["Brightness", "Tone", "-", "-"],
     "parameters": {
-        "master_volume": -3.1,
+        "master_volume": 1.9,
         "osc1_on": true,
-        "osc1_frame": 0.0,
+        "osc1_frame": 0.6,
         "osc1_level": 0.7,
-        "osc2_on": true,
+        "osc2_on": false,
         "osc2_frame": 0.75,
         "osc2_level": 0.4,
         "osc2_semi": 12,
-        "osc3_on": true,
+        "osc3_on": false,
         "osc3_frame": 0.0,
         "osc3_level": 0.35,
         "osc3_semi": 19,
@@ -32,7 +32,8 @@
         "fx_reverb_mix": 0.2,
         "fx_reverb_size": 0.5,
         "fx_reverb_decay": 2.0,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Organ Drawbars"
     },
     "modulation": [
         {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},

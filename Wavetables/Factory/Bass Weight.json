@@ -1,0 +1,15 @@
+{
+    "id": 11,
+    "name": "Bass Weight",
+    "category": "Organic",
+    "description": "A sine growing a second and third harmonic with a shifted phase. A solid, full bass tone that stays clean.",
+    "tags": [
+        "bass",
+        "sub",
+        "clean"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 8,
+    "amplitude": "if(h==1,1,0)+if(h==3,0.35*t*t,0)",
+    "cosine": "if(h==2,0.55*t,0)+if(h==4,0.15*t*t,0)"
+}

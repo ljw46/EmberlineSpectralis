@@ -1,0 +1,13 @@
+{
+    "id": 20,
+    "name": "Comb Phaser",
+    "category": "Digital",
+    "description": "A saw with moving notches in its spectrum, like a phaser or flanger frozen into the wave.",
+    "tags": [
+        "comb",
+        "phaser",
+        "notch"
+    ],
+    "mode": "spectrum",
+    "amplitude": "(1/h)*(0.5+0.5*cos(h*(0.1+t*1.3)))"
+}

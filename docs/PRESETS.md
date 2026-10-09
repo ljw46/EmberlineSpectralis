@@ -133,8 +133,12 @@ Each effect has its own `fx_*_on` switch and a mix. Only listed effects run.
 the filters) -> amp **ENV 1** -> FX chain -> master volume. ENV 1 is the amp envelope. ENV 2/3 are free modulators.
 A note ends when ENV 1 finishes - sustain 0 gives a pluck that dies after the decay.
 
-**Wavetable position (`oscN_frame`, 0..1):** 0 = sine, 0.25 = triangle, 0.5 = saw, 0.75 = square, 1.0 = bright reedy/vowel-like.
-Values in between morph smoothly. Low (0-0.2) = soft/round/sub, mid (0.4-0.6) = classic analogue, high (0.85-1) = glassy/bright.
+**Wavetable (`oscN_table`) and position (`oscN_frame`, 0..1):** `oscN_table` picks one of the wavetables (by name - see
+[`wavetables.md`](wavetables.md); `Classic Morph` is the default) and `oscN_frame` moves through its 16 frames. What Frame
+does depends on the table: in `Classic Morph` 0 = sine, 0.25 = triangle, 0.5 = saw, 0.75 = square, 1.0 = reedy; in `Vowel Sweep`
+it glides A-E-I-O-U; in `FM 1:1` it raises the modulation index; in `Pulse Width` it narrows the pulse; and so on. Modulate
+`Frame` (LFO / envelope / macro / chaos) for the classic wavetable movement. Choose the table for the *character* first,
+then set Frame. You can write new tables yourself - see [`WAVETABLES.md`](WAVETABLES.md).
 
 **Warp (`oscN_warp_mode` + `oscN_warp_amt`):** `Formant` (vocal, nasal), `Sync` (cutting lead, laser), `Bend` (asymmetric
 growl), `Phase Dist` (digital, pulse-width-like). Animate the amount with an envelope or LFO for movement.

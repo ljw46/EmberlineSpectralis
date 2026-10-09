@@ -1,0 +1,13 @@
+{
+    "id": 21,
+    "name": "Sine Fold",
+    "category": "Digital",
+    "description": "A sine through a wavefolder, folding harder across the table. Rich, buzzy, West-Coast-style.",
+    "tags": [
+        "fold",
+        "wavefolder",
+        "buzzy"
+    ],
+    "mode": "waveform",
+    "expression": "fold(sin(tau*phase)*(1+t*6.5))"
+}

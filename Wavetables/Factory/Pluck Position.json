@@ -1,0 +1,13 @@
+{
+    "id": 8,
+    "name": "Pluck Position",
+    "category": "Organic",
+    "description": "String-like: a saw with the notches of a string plucked at a changing point, from the middle (hollow) to the bridge (bright).",
+    "tags": [
+        "string",
+        "pluck",
+        "notch"
+    ],
+    "mode": "spectrum",
+    "amplitude": "(1/h)*abs(sin(pi*h*(0.5-0.46*t)))"
+}

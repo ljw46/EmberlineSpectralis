@@ -1,0 +1,31 @@
+{
+    "id": 13,
+    "name": "Vowel Sweep",
+    "category": "Vocal",
+    "description": "Formant peaks stepping through the vowels A, E, I, O, U. Vocal and choir-like; formants are fixed in harmonic number, so they follow the note.",
+    "tags": [
+        "vowel",
+        "formant",
+        "vocal",
+        "choir"
+    ],
+    "mode": "morph",
+    "harmonic_limit": 80,
+    "stages": [
+        {
+            "amplitude": "(1/pow(h,0.7))*(exp(-0.5*pow((h-7.3)/1.6,2))+0.7*exp(-0.5*pow((h-10.5)/2.6,2)))+0.12/h"
+        },
+        {
+            "amplitude": "(1/pow(h,0.7))*(exp(-0.5*pow((h-3.6)/1.6,2))+0.7*exp(-0.5*pow((h-18.0)/2.6,2)))+0.12/h"
+        },
+        {
+            "amplitude": "(1/pow(h,0.7))*(exp(-0.5*pow((h-2.5)/1.6,2))+0.7*exp(-0.5*pow((h-19.5)/2.6,2)))+0.12/h"
+        },
+        {
+            "amplitude": "(1/pow(h,0.7))*(exp(-0.5*pow((h-4.1)/1.6,2))+0.7*exp(-0.5*pow((h-7.3)/2.6,2)))+0.12/h"
+        },
+        {
+            "amplitude": "(1/pow(h,0.7))*(exp(-0.5*pow((h-3.0)/1.6,2))+0.7*exp(-0.5*pow((h-6.4)/2.6,2)))+0.12/h"
+        }
+    ]
+}

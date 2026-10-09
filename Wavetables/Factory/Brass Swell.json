@@ -1,0 +1,13 @@
+{
+    "id": 9,
+    "name": "Brass Swell",
+    "category": "Organic",
+    "description": "Mellow, dark tone that gets steadily brighter - the way brass opens up as it gets louder.",
+    "tags": [
+        "brass",
+        "swell",
+        "bright"
+    ],
+    "mode": "spectrum",
+    "amplitude": "1/pow(h,1.9-1.4*t)"
+}

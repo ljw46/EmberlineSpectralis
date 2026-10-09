@@ -5,28 +5,40 @@
 #include "WavetableOscillator.h"
 #include <array>
 
-// Isometric wireframe of the whole wavetable (phase across, frame in depth, waveform as height).
-// Each active oscillator's current - modulated - frame is traced across the mesh in its own colour,
-// so frame morphing is visible in real time.
+// Isometric wireframe of a wavetable (phase across, frame in depth, waveform as height). The OSC 1/2/3
+// buttons choose whose table is shown; every active oscillator using that table traces its current -
+// modulated and warped - frame across the mesh in its own colour, so frame morphing is visible live.
 class WavetableMesh final : public juce::Component, private juce::Timer
 {
 public:
     explicit WavetableMesh (EmberlineProcessor& p) : proc (p)
     {
-        const auto& bank = proc.getWavetableBank();
-        for (int f = 0; f < frames; ++f)
-            for (int i = 0; i < points; ++i)
-                stack[(size_t) f][(size_t) i] = bank.sample (0, (float) f, (float) i / (float) points);
-
         for (int o = 0; o < ember::params::numOscs; ++o)
         {
             on[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "on"));
             level[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "level"));
+            tableParam[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "table"));
             warpMode[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "warp_mode"));
             warpAmt[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "warp_amt"));
-        }
 
+            auto& b = oscButtons[(size_t) o];
+            b.setButtonText ("OSC " + juce::String (o + 1));
+            b.setClickingTogglesState (true);
+            b.setRadioGroupId (77);
+            b.setColour (juce::TextButton::buttonOnColourId, oscColour (o).withAlpha (0.25f));
+            b.setColour (juce::TextButton::textColourOnId, oscColour (o));
+            b.onClick = [this, o] { selectedOsc = o; repaint(); };
+            addAndMakeVisible (b);
+        }
+        oscButtons[0].setToggleState (true, juce::dontSendNotification);
         startTimerHz (30);
+    }
+
+    void resized() override
+    {
+        auto r = getLocalBounds().reduced (8, 6).removeFromTop (22);
+        for (auto& b : oscButtons)
+            b.setBounds (r.removeFromLeft (58).reduced (2, 0));
     }
 
     void paint (juce::Graphics& g) override
@@ -35,7 +47,11 @@ public:
         g.setColour (juce::Colour (0xff080b10));
         g.fillRoundedRectangle (area, 6.0f);
 
-        const auto plot = area.reduced (14.0f, 10.0f);
+        auto& bank = proc.getWavetableBank();
+        const int table = juce::jlimit (0, bank.numSlots() - 1, juce::roundToInt (tableParam[(size_t) selectedOsc]->load()));
+        ensureStack (table);
+
+        const auto plot = area.reduced (14.0f, 10.0f).withTrimmedTop (22.0f);
         const float amp = plot.getHeight() * 0.13f;
 
         // projection: phase runs right and slightly down, depth runs right and up
@@ -96,17 +112,16 @@ public:
                     g.drawLine ({ pts[(size_t) i], behind[(size_t) i] }, 1.0f);
             }
 
-            neon.multiplyOpacity (1.0f);
             g.setGradientFill (neon);
             g.setOpacity (0.35f + 0.55f * (1.0f - z));
             g.strokePath (line, juce::PathStrokeType (1.0f));
         }
 
-        // live frame trace per active oscillator
-        const juce::Colour oscColours[] { ember::colours::cyan, ember::colours::coral, ember::colours::purple };
+        // live frame trace for every active oscillator that plays this table
         for (int o = 0; o < ember::params::numOscs; ++o)
         {
-            if (on[(size_t) o]->load() < 0.5f || level[(size_t) o]->load() < 0.001f)
+            if (on[(size_t) o]->load() < 0.5f || level[(size_t) o]->load() < 0.001f
+                || juce::roundToInt (tableParam[(size_t) o]->load()) != table)
                 continue;
 
             const auto d = (size_t) ember::mod::oscDest (o, 0);
@@ -133,11 +148,17 @@ public:
                 const auto pt = project ((float) i / (float) points, z, h);
                 if (i == 0) trace.startNewSubPath (pt); else trace.lineTo (pt);
             }
-            g.setColour (oscColours[o].withAlpha (0.28f));
+            g.setColour (oscColour (o).withAlpha (0.28f));
             g.strokePath (trace, juce::PathStrokeType (6.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-            g.setColour (oscColours[o].brighter (0.4f));
+            g.setColour (oscColour (o).brighter (0.4f));
             g.strokePath (trace, juce::PathStrokeType (1.8f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
         }
+
+        // table name
+        const auto names = bank.displayNames();
+        g.setColour (juce::Colours::white.withAlpha (0.75f));
+        g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
+        g.drawText (names[table], getLocalBounds().reduced (10, 6).removeFromTop (22), juce::Justification::centredRight);
     }
 
 private:
@@ -145,9 +166,33 @@ private:
     static constexpr int points = 64;
     static constexpr int rows = 26;
 
+    static juce::Colour oscColour (int o)
+    {
+        const juce::Colour c[] { ember::colours::cyan, ember::colours::coral, ember::colours::purple };
+        return c[o];
+    }
+
+    // the surface samples the chosen table; refreshed when the table (or its user file) changes
+    void ensureStack (int table)
+    {
+        auto& bank = proc.getWavetableBank();
+        const auto& info = bank.info (table);
+        const auto key = juce::String (table) + info.name + juce::String (bank.table (table, 0, 0)[37]) + juce::String (bank.table (table, 0, frames - 1)[101]);
+        if (key == stackKey)
+            return;
+
+        stackKey = key;
+        for (int f = 0; f < frames; ++f)
+            for (int i = 0; i < points; ++i)
+                stack[(size_t) f][(size_t) i] = bank.table (table, 0, f)[(size_t) i * (ember::WavetableBank::tableSize / points)];
+    }
+
     void timerCallback() override { repaint(); }
 
     EmberlineProcessor& proc;
-    std::array<std::atomic<float>*, ember::params::numOscs> on {}, level {}, warpMode {}, warpAmt {};
+    int selectedOsc = 0;
+    juce::String stackKey;
+    std::array<juce::TextButton, ember::params::numOscs> oscButtons;
+    std::array<std::atomic<float>*, ember::params::numOscs> on {}, level {}, tableParam {}, warpMode {}, warpAmt {};
     std::array<std::array<float, (size_t) points>, (size_t) frames> stack {};
 };

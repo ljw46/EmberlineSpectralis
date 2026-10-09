@@ -5,9 +5,9 @@
     "tags": ["organic", "pan flute", "hollow", "wind"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": 4.0,
+        "master_volume": -3.7,
         "osc1_on": true,
-        "osc1_frame": 0.22,
+        "osc1_frame": 0.08,
         "osc1_level": 0.75,
         "noise_level": 0.1,
         "noise_type": "Pink",
@@ -24,7 +24,8 @@
         "fx_reverb_mix": 0.3,
         "fx_reverb_size": 0.7,
         "fx_reverb_decay": 3.5,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Odd to Even"
     },
     "modulation": [
         {"source": "LFO 2", "destination": "Osc1 Fine", "depth": 0.03},

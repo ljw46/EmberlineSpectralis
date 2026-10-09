@@ -1,0 +1,14 @@
+{
+    "id": 25,
+    "name": "Glass Harmonics",
+    "category": "Digital",
+    "description": "A sparse, random-looking set of harmonics that fills in across the table. Icy, bell-like to dense and shimmering.",
+    "tags": [
+        "glass",
+        "sparse",
+        "icy"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 64,
+    "amplitude": "if(h==1 || rand(7,h) < 0.12+0.75*t, 1/pow(h,0.6), 0)"
+}

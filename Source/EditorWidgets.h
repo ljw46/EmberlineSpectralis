@@ -189,10 +189,26 @@ public:
             knobs[(size_t) index].label.setText (text, juce::dontSendNotification);
     }
 
-    void addCombo (const juce::String& paramId, const juce::StringArray& items)
+    // replaces the entries of a combo (same order / count) without disturbing its attached parameter
+    void setComboItems (int index, const juce::StringArray& items, const juce::StringArray& sections = {})
+    {
+        if (! juce::isPositiveAndBelow (index, (int) combos.size()))
+            return;
+        auto& box = combos[(size_t) index].box;
+        const int selected = box.getSelectedItemIndex();
+        box.clear (juce::dontSendNotification);
+        fillCombo (box, items, sections);
+        box.setSelectedItemIndex (selected, juce::dontSendNotification);
+    }
+
+    // relative widths of the combos in the row (default: equal)
+    void setComboWeights (std::vector<float> weights) { comboWeights = std::move (weights); }
+
+    // `sections` (optional, one per item) adds a heading whenever the section changes
+    void addCombo (const juce::String& paramId, const juce::StringArray& items, const juce::StringArray& sections = {})
     {
         auto& c = combos.emplace_back();
-        c.box.addItemList (items, 1);
+        fillCombo (c.box, items, sections);
         c.box.setColour (juce::ComboBox::outlineColourId, accent.withAlpha (0.45f));
         addAndMakeVisible (c.box);
         c.attachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.apvts, paramId, c.box);
@@ -270,9 +286,15 @@ public:
         if (! combos.empty())
         {
             auto row = inner.removeFromTop (24);
-            const int w = row.getWidth() / (int) combos.size();
-            for (auto& c : combos)
-                c.box.setBounds (row.removeFromLeft (w).reduced (2, 0));
+            float total = 0.0f;
+            for (size_t i = 0; i < combos.size(); ++i)
+                total += i < comboWeights.size() ? comboWeights[i] : 1.0f;
+            const int rowWidth = row.getWidth();
+            for (size_t i = 0; i < combos.size(); ++i)
+            {
+                const float weight = i < comboWeights.size() ? comboWeights[i] : 1.0f;
+                combos[i].box.setBounds (row.removeFromLeft ((int) ((float) rowWidth * weight / total)).reduced (2, 0));
+            }
             inner.removeFromTop (4);
         }
 
@@ -319,6 +341,25 @@ public:
     }
 
 private:
+    static void fillCombo (juce::ComboBox& box, const juce::StringArray& items, const juce::StringArray& sections)
+    {
+        if (sections.isEmpty())
+        {
+            box.addItemList (items, 1);
+            return;
+        }
+        juce::String last;
+        for (int i = 0; i < items.size(); ++i)
+        {
+            if (sections[i] != last)
+            {
+                last = sections[i];
+                box.addSectionHeading (last);
+            }
+            box.addItem (items[i], i + 1);   // ids stay index + 1 whatever headings are added
+        }
+    }
+
     struct Knob
     {
         Knob (EmberlineProcessor& p, int dest) : slider (p, dest) {}
@@ -345,6 +386,7 @@ private:
     std::deque<Combo> combos;
     std::deque<Knob> knobs;
     juce::Component* widget = nullptr;
+    std::vector<float> comboWeights;
     int widgetHeight = 0;
     bool widgetOnSide = false;
     float widgetSideFraction = 0.62f;

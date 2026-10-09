@@ -5,9 +5,9 @@
     "tags": ["bass", "fold", "harmonic", "sub"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": 0.0,
+        "master_volume": 0.4,
         "osc1_on": true,
-        "osc1_frame": 0.0,
+        "osc1_frame": 0.18,
         "osc1_level": 0.8,
         "sub_level": 0.5,
         "sub_wave": "Sine",
@@ -23,7 +23,8 @@
         "fx_dist_type": "Fold",
         "fx_dist_drive": 0.55,
         "fx_dist_tone": 0.6,
-        "fx_dist_mix": 0.6
+        "fx_dist_mix": 0.6,
+        "osc1_table": "Sine Fold"
     },
     "modulation": [
         {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},

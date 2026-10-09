@@ -41,12 +41,19 @@ juce_add_binary_data(EmberlineAssets HEADER_NAME AssetData.h NAMESPACE AssetData
 file(GLOB EMBERLINE_FACTORY_PRESETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Presets/Factory/*.json")
 juce_add_binary_data(EmberlinePresets HEADER_NAME PresetData.h NAMESPACE PresetData SOURCES ${EMBERLINE_FACTORY_PRESETS})
 
+# factory wavetables are plain JSON files in Wavetables/Factory (see docs/WAVETABLES.md), also embedded at build time
+file(GLOB EMBERLINE_FACTORY_WAVETABLES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Wavetables/Factory/*.json")
+juce_add_binary_data(EmberlineWavetables HEADER_NAME WavetableData.h NAMESPACE WavetableData SOURCES ${EMBERLINE_FACTORY_WAVETABLES})
+
 target_sources(EmberlineSpectralis PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginProcessor.h
     Source/PluginEditor.cpp
     Source/Presets.cpp
     Source/Presets.h
+    Source/Expression.cpp
+    Source/Expression.h
+    Source/WavetableBank.cpp
     Source/PluginEditor.h
     Source/EmberLookAndFeel.cpp
     Source/PhoenixLogo.h
@@ -81,6 +88,7 @@ target_link_libraries(EmberlineSpectralis
     PRIVATE
         EmberlineAssets
         EmberlinePresets
+        EmberlineWavetables
         juce::juce_audio_utils
         juce::juce_dsp
     PUBLIC
@@ -100,6 +108,8 @@ target_sources(EmberlineTools PRIVATE
     Source/PluginEditor.cpp
     Source/EmberLookAndFeel.cpp
     Source/Presets.cpp
+    Source/Expression.cpp
+    Source/WavetableBank.cpp
 )
 target_compile_definitions(EmberlineTools PRIVATE
     JucePlugin_Name="Emberline Spectralis"
@@ -110,6 +120,7 @@ target_link_libraries(EmberlineTools
     PRIVATE
         EmberlineAssets
         EmberlinePresets
+        EmberlineWavetables
         juce::juce_audio_utils
         juce::juce_dsp
     PUBLIC

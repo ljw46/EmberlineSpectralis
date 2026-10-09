@@ -5,9 +5,9 @@
     "tags": ["organic", "kora", "string", "pluck"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": -2.9,
+        "master_volume": -2.2,
         "osc1_on": true,
-        "osc1_frame": 0.3,
+        "osc1_frame": 0.35,
         "osc1_level": 0.8,
         "osc1_unison": 2,
         "osc1_detune": 4,
@@ -36,7 +36,8 @@
         "fx_reverb_mix": 0.3,
         "fx_reverb_size": 0.65,
         "fx_reverb_decay": 3.5,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Pluck Position"
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.159},

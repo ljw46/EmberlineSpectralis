@@ -1,0 +1,14 @@
+{
+    "id": 1,
+    "name": "Pulse Width",
+    "category": "Analog",
+    "description": "Square wave whose pulse narrows from 50% to about 4%. Classic PWM from hollow to thin and nasal.",
+    "tags": [
+        "pwm",
+        "pulse",
+        "analog"
+    ],
+    "mode": "spectrum",
+    "amplitude": "2/(pi*h)*(1-cos(tau*h*(0.5-0.46*t)))",
+    "cosine": "2/(pi*h)*sin(tau*h*(0.5-0.46*t))"
+}

@@ -1,0 +1,14 @@
+{
+    "id": 16,
+    "name": "FM 1:3",
+    "category": "FM",
+    "description": "FM at 1:3. Bright, bell-ish and slightly hollow, with a distinctive twelfth-based character.",
+    "tags": [
+        "fm",
+        "bell",
+        "bright"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 160,
+    "amplitude": "fm(h,3,t*8)"
+}

@@ -1,0 +1,14 @@
+{
+    "id": 14,
+    "name": "FM 1:1",
+    "category": "FM",
+    "description": "Two-operator FM at a 1:1 ratio: the modulation index rises across the table, adding bright sidebands. Electric-piano to harsh digital.",
+    "tags": [
+        "fm",
+        "digital",
+        "epiano"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 160,
+    "amplitude": "fm(h,1,t*8)"
+}

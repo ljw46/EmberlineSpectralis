@@ -5,7 +5,7 @@
     "tags": ["organic", "ocean", "noise", "wash"],
     "macro_names": ["Brightness", "-", "Resonance", "-"],
     "parameters": {
-        "master_volume": 3.4,
+        "master_volume": 2.7,
         "osc1_on": false,
         "osc1_frame": 0.0,
         "osc1_level": 0.0,

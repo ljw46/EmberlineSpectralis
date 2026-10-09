@@ -1,0 +1,13 @@
+{
+    "id": 3,
+    "name": "Odd to Even",
+    "category": "Analog",
+    "description": "Odd harmonics only (hollow, clarinet-like), through the full spectrum, to even harmonics only (an octave up).",
+    "tags": [
+        "odd",
+        "even",
+        "hollow"
+    ],
+    "mode": "spectrum",
+    "amplitude": "if(odd(h), min(1,(1-t)*2), min(1,t*2))/h"
+}

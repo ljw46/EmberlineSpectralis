@@ -1,0 +1,14 @@
+{
+    "id": 27,
+    "name": "Spectral Peak",
+    "category": "Digital",
+    "description": "A single resonant peak that climbs through the harmonics, like a very sharp filter sweep. Squelchy and vocal.",
+    "tags": [
+        "peak",
+        "resonant",
+        "sweep"
+    ],
+    "mode": "spectrum",
+    "harmonic_limit": 100,
+    "amplitude": "0.25/h + exp(-0.5*pow((h-(1+30*pow(t,1.5)))/(0.7+0.09*(1+30*pow(t,1.5))),2))"
+}

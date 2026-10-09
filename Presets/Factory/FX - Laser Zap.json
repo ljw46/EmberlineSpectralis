@@ -7,10 +7,8 @@
     "parameters": {
         "master_volume": 6.0,
         "osc1_on": true,
-        "osc1_frame": 0.5,
+        "osc1_frame": 0.9,
         "osc1_level": 0.8,
-        "osc1_warp_mode": "Sync",
-        "osc1_warp_amt": 0.9,
         "filt1_type": "Lowpass",
         "filt1_cutoff": 9000,
         "filt1_res": 0.3,
@@ -33,13 +31,14 @@
         "fx_reverb_mix": 0.2,
         "fx_reverb_size": 0.5,
         "fx_reverb_decay": 2.0,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Saw Sync"
     },
     "modulation": [
-        {"source": "ENV 2", "destination": "Osc1 Warp", "depth": -0.9},
         {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.4},
         {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.5},
         {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.2},
-        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0}
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.0},
+        {"source": "ENV 2", "destination": "Osc1 Frame", "depth": -0.7}
     ]
 }

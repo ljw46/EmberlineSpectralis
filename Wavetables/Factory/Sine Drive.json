@@ -1,0 +1,13 @@
+{
+    "id": 22,
+    "name": "Sine Drive",
+    "category": "Digital",
+    "description": "A sine driven into saturation: it squares up smoothly into a full, thick square-ish wave.",
+    "tags": [
+        "drive",
+        "saturation",
+        "square"
+    ],
+    "mode": "waveform",
+    "expression": "tanh((0.1+t*t*14)*sin(tau*phase))/tanh(0.1+t*t*14)"
+}

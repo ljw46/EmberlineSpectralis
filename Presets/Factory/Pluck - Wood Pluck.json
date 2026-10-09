@@ -5,9 +5,9 @@
     "tags": ["pluck", "wood", "hollow", "organic"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": 1.6,
+        "master_volume": 5.0,
         "osc1_on": true,
-        "osc1_frame": 0.72,
+        "osc1_frame": 0.8,
         "osc1_level": 0.8,
         "filt1_type": "Lowpass",
         "filt1_cutoff": 1000,
@@ -25,7 +25,8 @@
         "fx_reverb_mix": 0.12,
         "fx_reverb_size": 0.35,
         "fx_reverb_decay": 1.2,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Mallet"
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.161},

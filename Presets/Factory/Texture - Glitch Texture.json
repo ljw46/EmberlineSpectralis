@@ -5,9 +5,9 @@
     "tags": ["texture", "glitch", "random", "sample and hold"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": -3.6,
+        "master_volume": -1.4,
         "osc1_on": true,
-        "osc1_frame": 0.5,
+        "osc1_frame": 0.4,
         "osc1_level": 0.6,
         "osc1_unison": 2,
         "osc1_detune": 10,
@@ -34,7 +34,8 @@
         "fx_reverb_decay": 2.5,
         "fx_reverb_damp": 0.4,
         "lfo1_rate": 6.0,
-        "lfo1_mode": "Free"
+        "lfo1_mode": "Free",
+        "osc1_table": "Noise Morph"
     },
     "modulation": [
         {"source": "S&H", "destination": "Filt1 Cutoff", "depth": 0.3},

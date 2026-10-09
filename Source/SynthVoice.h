@@ -316,7 +316,7 @@ namespace ember
                 {
                     const float semis = p.semi->load() + eff (mod::oscDest (o, 5), p.fine->load()) * 0.01f;
                     oscs[(size_t) o].configure (sr, baseHz * std::pow (2.0f, semis / 12.0f),
-                                                (WarpMode) juce::roundToInt (p.warpMode->load()), warp,
+                                                juce::roundToInt (p.table->load()), (WarpMode) juce::roundToInt (p.warpMode->load()), warp,
                                                 juce::roundToInt (p.unison->load()),
                                                 eff (mod::oscDest (o, 3), p.detune->load()),
                                                 eff (mod::oscDest (o, 4), p.spread->load()));

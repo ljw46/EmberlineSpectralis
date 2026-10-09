@@ -1,0 +1,13 @@
+{
+    "id": 2,
+    "name": "Saw Sweep",
+    "category": "Analog",
+    "description": "A saw with a low-pass filter baked in: Frame opens it from a near-sine to a full bright saw.",
+    "tags": [
+        "saw",
+        "filter",
+        "sweep"
+    ],
+    "mode": "spectrum",
+    "amplitude": "(1/h)/sqrt(1+pow(h/(1+t*t*70),8))"
+}

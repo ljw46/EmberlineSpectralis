@@ -25,10 +25,11 @@ namespace ember
         }
 
         // Called once per block: recomputes pitch, mip level and stereo gains for each unison voice.
-        void configure (double sampleRate, float baseHz, WarpMode warpMode, float warpAmountTarget,
+        void configure (double sampleRate, float baseHz, int tableIndex, WarpMode warpMode, float warpAmountTarget,
                         int unison, float detuneCents, float spread)
         {
             mode = warpMode;
+            table = tableIndex;
             count = juce::jlimit (1, maxUnison, unison);
             gainNorm = 1.0f / std::sqrt ((float) count);
 
@@ -61,7 +62,7 @@ namespace ember
                 float window = 1.0f;
                 const float q = warpPhase (mode, ph, warpAmount, window);
 
-                const float s = bank.sample (mip[(size_t) u], frame, q) * window;
+                const float s = bank.sample (table, mip[(size_t) u], frame, q) * window;
                 l += s * gainL[(size_t) u];
                 r += s * gainR[(size_t) u];
 
@@ -115,6 +116,7 @@ namespace ember
     private:
         const WavetableBank& bank;
         WarpMode mode = WarpMode::off;
+        int table = 0;
         int count = 1;
         float gainNorm = 1.0f;
         std::array<float, maxUnison> phases {}, inc {}, gainL {}, gainR {};

@@ -5,9 +5,9 @@
     "tags": ["lead", "flute", "breathy", "organic"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": -5.0,
+        "master_volume": -5.2,
         "osc1_on": true,
-        "osc1_frame": 0.05,
+        "osc1_frame": 0.15,
         "osc1_level": 0.85,
         "osc2_on": true,
         "osc2_frame": 0.2,
@@ -28,7 +28,8 @@
         "fx_reverb_mix": 0.25,
         "fx_reverb_size": 0.6,
         "fx_reverb_decay": 2.6,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Clarinet Reed"
     },
     "modulation": [
         {"source": "LFO 2", "destination": "Osc1 Fine", "depth": 0.04},

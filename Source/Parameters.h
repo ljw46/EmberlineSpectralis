@@ -2,6 +2,7 @@
 
 #include "Fx.h"
 #include "Modulation.h"
+#include "WavetableBank.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <array>
 #include <atomic>
@@ -27,7 +28,7 @@ namespace ember::params
 
     struct OscParamPtrs
     {
-        std::atomic<float> *on, *level, *frame, *warpMode, *warpAmt, *unison, *detune, *spread, *semi, *fine, *pan;
+        std::atomic<float> *on, *level, *table, *frame, *warpMode, *warpAmt, *unison, *detune, *spread, *semi, *fine, *pan;
     };
 
     struct FilterParamPtrs { std::atomic<float> *type, *cutoff, *res, *drive; };
@@ -44,7 +45,7 @@ namespace ember::params
     inline OscParamPtrs lookupOsc (juce::AudioProcessorValueTreeState& apvts, int i)
     {
         auto get = [&] (const char* n) { return apvts.getRawParameterValue (osc (i, n)); };
-        return { get ("on"), get ("level"), get ("frame"), get ("warp_mode"), get ("warp_amt"),
+        return { get ("on"), get ("level"), get ("table"), get ("frame"), get ("warp_mode"), get ("warp_amt"),
                  get ("unison"), get ("detune"), get ("spread"), get ("semi"), get ("fine"), get ("pan") };
     }
 
@@ -112,6 +113,8 @@ namespace ember::params
 
             p.push_back (std::make_unique<AudioParameterBool> (ParameterID { osc (i, "on"), 1 }, n + "On", first));
             addFloat ("level",    "Level",       { 0.0f, 1.0f, 0.001f }, 0.8f);
+            p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { osc (i, "table"), 1 }, n + "Wavetable",
+                                                                  WavetableBank::shared().paramChoiceNames(), 0));
             addFloat ("frame",    "Wave Frame",  { 0.0f, 1.0f, 0.001f }, first ? 0.5f : 0.0f);
             p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { osc (i, "warp_mode"), 1 }, n + "Warp Mode", warpModeNames, 0));
             addFloat ("warp_amt", "Warp Amount", { 0.0f, 1.0f, 0.001f }, 0.0f);

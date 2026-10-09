@@ -5,9 +5,9 @@
     "tags": ["organic", "marimba", "mallet", "wooden"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": -1.9,
+        "master_volume": -1.0,
         "osc1_on": true,
-        "osc1_frame": 0.05,
+        "osc1_frame": 0.7,
         "osc1_level": 0.8,
         "osc2_on": true,
         "osc2_frame": 0.0,
@@ -29,7 +29,8 @@
         "fx_reverb_mix": 0.2,
         "fx_reverb_size": 0.5,
         "fx_reverb_decay": 2.2,
-        "fx_reverb_damp": 0.5
+        "fx_reverb_damp": 0.5,
+        "osc1_table": "Mallet"
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.149},

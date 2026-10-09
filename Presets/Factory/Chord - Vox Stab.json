@@ -5,15 +5,15 @@
     "tags": ["stab", "vocal", "formant", "choir"],
     "macro_names": ["Vowel", "Morph", "Resonance", "Width"],
     "parameters": {
-        "master_volume": 4.9,
+        "master_volume": 6.0,
         "osc1_on": true,
-        "osc1_frame": 0.5,
+        "osc1_frame": 0.55,
         "osc1_level": 0.75,
         "osc1_unison": 4,
         "osc1_detune": 12,
         "osc1_spread": 0.8,
-        "filt1_type": "Formant",
-        "filt1_cutoff": 560,
+        "filt1_type": "Lowpass",
+        "filt1_cutoff": 5000,
         "filt1_res": 0.5,
         "env1_attack": 0.004,
         "env1_decay": 0.35,
@@ -31,13 +31,13 @@
         "fx_reverb_mix": 0.3,
         "fx_reverb_size": 0.65,
         "fx_reverb_decay": 3.2,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "osc1_table": "Vowel Sweep"
     },
     "modulation": [
-        {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.18},
-        {"source": "Macro 1", "destination": "Filt1 Cutoff", "depth": 0.3},
         {"source": "Macro 2", "destination": "Osc1 Frame", "depth": 0.4},
         {"source": "Macro 3", "destination": "Filt1 Res", "depth": 0.4},
-        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.4}
+        {"source": "Macro 4", "destination": "Osc1 Detune", "depth": 0.4},
+        {"source": "ENV 2", "destination": "Osc1 Frame", "depth": -0.3, "bipolar": false}
     ]
 }

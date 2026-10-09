@@ -1,0 +1,13 @@
+{
+    "id": 24,
+    "name": "Phase Warp",
+    "category": "Digital",
+    "description": "Casio-style phase distortion of a sine: from pure to a bright pulse-like resonance.",
+    "tags": [
+        "phase distortion",
+        "casio",
+        "resonant"
+    ],
+    "mode": "waveform",
+    "expression": "sin(tau*pd(phase,t))"
+}
