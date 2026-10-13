@@ -1,0 +1,16 @@
+{
+    "id": 27,
+    "name": "Clavinet",
+    "category": "Keys",
+    "description": "Recorded clavinet cycles: funky, twangy and percussive, soft to biting.",
+    "tags": [
+        "clavinet",
+        "funk",
+        "keys",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Clavinet.wav",
+    "frame_size": 2048,
+    "source": "AKWF_clavinet (Adventure Kid Waveforms, CC0)"
+}

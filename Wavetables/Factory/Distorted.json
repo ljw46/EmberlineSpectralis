@@ -1,0 +1,15 @@
+{
+    "id": 52,
+    "name": "Distorted",
+    "category": "Digital",
+    "description": "Overdriven and folded waveforms: aggressive, buzzy and harmonically dense.",
+    "tags": [
+        "distorted",
+        "harsh",
+        "buzzy"
+    ],
+    "mode": "wav",
+    "file": "Distorted.wav",
+    "frame_size": 2048,
+    "source": "AKWF_distorted (Adventure Kid Waveforms, CC0)"
+}

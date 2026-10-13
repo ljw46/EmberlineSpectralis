@@ -1,0 +1,16 @@
+{
+    "id": 28,
+    "name": "Electric Piano",
+    "category": "Keys",
+    "description": "Recorded electric-piano cycles (Rhodes / Wurlitzer family): warm bell tones to bright bark.",
+    "tags": [
+        "epiano",
+        "rhodes",
+        "keys",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Electric Piano.wav",
+    "frame_size": 2048,
+    "source": "AKWF_epiano (Adventure Kid Waveforms, CC0)"
+}

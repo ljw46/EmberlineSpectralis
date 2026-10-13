@@ -81,6 +81,8 @@ namespace ember::fx
 
     namespace detail
     {
+        inline float clamp01 (float v) { return juce::jlimit (0.0f, 1.0f, v); }
+
         inline int nextPow2 (int v) { int p = 1; while (p < v) p <<= 1; return p; }
 
         // Circular buffer with linearly interpolated fractional-delay reads.
@@ -180,13 +182,14 @@ namespace ember::fx
             gain.setCurrentAndTargetValue (1.0f);
         }
 
-        void process (juce::AudioBuffer<float>& b, const Ptrs& p)
+        // `off` = modulation offsets for the global FX parameters (see mod::fxDestBase); dist uses 0 = drive, 1 = mix
+        void process (juce::AudioBuffer<float>& b, const Ptrs& p, const float* off)
         {
             const int n = b.getNumSamples();
             const bool on = p.distOn->load() > 0.5f;
-            const bool run = gate.update (on, p.distMix->load());
+            const bool run = gate.update (on, detail::clamp01 (p.distMix->load() + off[1]));
             const int type = juce::roundToInt (p.distType->load());
-            const float drive = p.distDrive->load();
+            const float drive = detail::clamp01 (p.distDrive->load() + off[0]);
 
             // the dry path is always delayed by the oversampler latency so the chain stays time-aligned
             if (! run)
@@ -277,14 +280,15 @@ namespace ember::fx
 
         void reset() { for (auto& d : line) d.clear(); phase = 0.0f; fbState = { 0.0f, 0.0f }; }
 
-        void process (juce::AudioBuffer<float>& b, const Ptrs& p)
+        // chorus uses off[2] = depth, off[3] = mix
+        void process (juce::AudioBuffer<float>& b, const Ptrs& p, const float* off)
         {
-            const bool run = gate.update (p.chOn->load() > 0.5f, p.chMix->load());
+            const bool run = gate.update (p.chOn->load() > 0.5f, detail::clamp01 (p.chMix->load() + off[3]));
             if (! run) { if (gate.needsReset) reset(); return; }
 
             const bool flanger = p.chMode->load() > 0.5f;
             rate.setTargetValue (p.chRate->load());
-            depth.setTargetValue (p.chDepth->load());
+            depth.setTargetValue (detail::clamp01 (p.chDepth->load() + off[2]));
             feedback.setTargetValue (p.chFeedback->load());
 
             const float baseMs = flanger ? 3.0f : 14.0f, rangeMs = flanger ? 2.5f : 8.0f;
@@ -344,16 +348,17 @@ namespace ember::fx
 
         void reset() { for (auto& d : line) d.clear(); lp = 0.0f; time.setCurrentAndTargetValue (time.getTargetValue()); }
 
-        void process (juce::AudioBuffer<float>& b, const Ptrs& p, double bpm)
+        // delay uses off[4] = feedback, off[5] = mix
+        void process (juce::AudioBuffer<float>& b, const Ptrs& p, double bpm, const float* off)
         {
-            const bool run = gate.update (p.dlOn->load() > 0.5f, p.dlMix->load());
+            const bool run = gate.update (p.dlOn->load() > 0.5f, detail::clamp01 (p.dlMix->load() + off[5]));
             if (! run) { if (gate.needsReset) reset(); return; }
 
             const float timeMs = juce::jlimit (10.0f, 2000.0f, tempo::timeMs (juce::roundToInt (p.dlSync->load()), p.dlTime->load(), bpm));
             if (gate.justWoke)
                 time.setCurrentAndTargetValue (timeMs);
             time.setTargetValue (timeMs);
-            feedback.setTargetValue (p.dlFeedback->load());
+            feedback.setTargetValue (juce::jlimit (0.0f, 0.95f, p.dlFeedback->load() + off[4]));
             const float a = 1.0f - std::exp (-juce::MathConstants<float>::twoPi * p.dlTone->load() / (float) sampleRate);
 
             auto* l = b.getWritePointer (0);
@@ -420,14 +425,16 @@ namespace ember::fx
             for (int i = 0; i < N; ++i) lfoPhase[(size_t) i] = 0.125f * (float) i;
         }
 
-        void process (juce::AudioBuffer<float>& b, const Ptrs& p)
+        // reverb uses off[6] = size, off[7] = mix
+        void process (juce::AudioBuffer<float>& b, const Ptrs& p, const float* off)
         {
-            const bool run = gate.update (p.rvOn->load() > 0.5f, p.rvMix->load());
+            const bool run = gate.update (p.rvOn->load() > 0.5f, detail::clamp01 (p.rvMix->load() + off[7]));
             if (! run) { if (gate.needsReset) reset(); return; }
 
+            const float roomSize = detail::clamp01 (p.rvSize->load() + off[6]);
             if (gate.justWoke)
-                size.setCurrentAndTargetValue (p.rvSize->load());
-            size.setTargetValue (p.rvSize->load());
+                size.setCurrentAndTargetValue (roomSize);
+            size.setTargetValue (roomSize);
 
             const float decay = p.rvDecay->load();
             const float dampA = 1.0f - p.rvDamp->load() * 0.85f;
@@ -493,7 +500,8 @@ namespace ember::fx
 
         int getLatency() const noexcept { return dist.getLatency(); }
 
-        void process (juce::AudioBuffer<float>& b, const Ptrs& p, double bpm)
+        // fxOffsets: modulation of the global FX parameters, indexed like mod::fxDestBase.. (8 values)
+        void process (juce::AudioBuffer<float>& b, const Ptrs& p, double bpm, const float* fxOffsets)
         {
             // chain order comes from the slot params; a duplicate (mid-swap) just runs once and any
             // missing effect is appended, so the order is always a valid permutation
@@ -512,10 +520,10 @@ namespace ember::fx
             {
                 switch (e)
                 {
-                    case 0:  dist.process (b, p); break;
-                    case 1:  chorus.process (b, p); break;
-                    case 2:  delay.process (b, p, bpm); break;
-                    default: reverb.process (b, p); break;
+                    case 0:  dist.process (b, p, fxOffsets); break;
+                    case 1:  chorus.process (b, p, fxOffsets); break;
+                    case 2:  delay.process (b, p, bpm, fxOffsets); break;
+                    default: reverb.process (b, p, fxOffsets); break;
                 }
             }
         }

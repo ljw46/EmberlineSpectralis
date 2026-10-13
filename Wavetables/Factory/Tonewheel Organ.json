@@ -1,0 +1,15 @@
+{
+    "id": 30,
+    "name": "Tonewheel Organ",
+    "category": "Keys",
+    "description": "Recorded electric-organ cycles: pure flute registrations through to full, bright drawbar sounds.",
+    "tags": [
+        "organ",
+        "keys",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Tonewheel Organ.wav",
+    "frame_size": 2048,
+    "source": "AKWF_eorgan (Adventure Kid Waveforms, CC0)"
+}

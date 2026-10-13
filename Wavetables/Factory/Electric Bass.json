@@ -1,0 +1,15 @@
+{
+    "id": 33,
+    "name": "Electric Bass",
+    "category": "Bass",
+    "description": "Recorded electric-bass cycles: round and deep to bright and growling.",
+    "tags": [
+        "bass",
+        "electric",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Electric Bass.wav",
+    "frame_size": 2048,
+    "source": "AKWF_ebass (Adventure Kid Waveforms, CC0)"
+}

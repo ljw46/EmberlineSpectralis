@@ -1,0 +1,15 @@
+{
+    "id": 23,
+    "name": "Oboe",
+    "category": "Organic",
+    "description": "Recorded oboe cycles: nasal, vocal reed tones, soft to piercing.",
+    "tags": [
+        "oboe",
+        "reed",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Oboe.wav",
+    "frame_size": 2048,
+    "source": "AKWF_oboe (Adventure Kid Waveforms, CC0)"
+}

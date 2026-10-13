@@ -1,0 +1,16 @@
+{
+    "id": 25,
+    "name": "Violin",
+    "category": "Organic",
+    "description": "Recorded violin cycles, soft and sweet through to bright and scratchy.",
+    "tags": [
+        "violin",
+        "strings",
+        "bowed",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Violin.wav",
+    "frame_size": 2048,
+    "source": "AKWF_violin (Adventure Kid Waveforms, CC0)"
+}

@@ -1,0 +1,15 @@
+{
+    "id": 29,
+    "name": "Grand Piano",
+    "category": "Keys",
+    "description": "Recorded piano cycles from a soft, round tone to a bright, struck one.",
+    "tags": [
+        "piano",
+        "keys",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Grand Piano.wav",
+    "frame_size": 2048,
+    "source": "AKWF_piano (Adventure Kid Waveforms, CC0)"
+}

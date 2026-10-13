@@ -15,8 +15,9 @@ namespace ember::colours
     inline const juce::Colour gold      { 0xffffc933 };
     inline const juce::Colour amber     { 0xffff9f2e };   // performance macros (mockup orange)
     inline const juce::Colour steel     { 0xff6fa8dc };   // master controls
+    inline const juce::Colour lime      { 0xff8cff9e };   // performance sources (velocity, key, wheel, aftertouch, random)
 
-    // Colour code for modulation sources: LFO = magenta, envelope = coral, macro = cyan, chaos = gold
+    // Colour code for modulation sources: LFO = magenta, envelope = coral, macro = cyan, chaos = gold, performance = green
     inline juce::Colour sourceColour (int src)
     {
         switch (mod::sourceKind (src))
@@ -25,6 +26,7 @@ namespace ember::colours
             case mod::SourceKind::env:   return coral;
             case mod::SourceKind::macro: return cyan;
             case mod::SourceKind::chaos: return gold;
+            case mod::SourceKind::perform: return lime;
         }
         return cyan;
     }

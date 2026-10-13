@@ -1,0 +1,16 @@
+{
+    "id": 19,
+    "name": "Cello",
+    "category": "Organic",
+    "description": "Recorded cello cycles from a dark, woody bow to a bright, rasping one.",
+    "tags": [
+        "cello",
+        "strings",
+        "bowed",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Cello.wav",
+    "frame_size": 2048,
+    "source": "AKWF_cello (Adventure Kid Waveforms, CC0)"
+}

@@ -1,0 +1,15 @@
+{
+    "id": 54,
+    "name": "Linear Ramps",
+    "category": "Digital",
+    "description": "Piecewise-linear shapes: ramps, steps and corners with a clean, geometric sound.",
+    "tags": [
+        "linear",
+        "geometric",
+        "clean"
+    ],
+    "mode": "wav",
+    "file": "Linear Ramps.wav",
+    "frame_size": 2048,
+    "source": "AKWF_linear (Adventure Kid Waveforms, CC0)"
+}

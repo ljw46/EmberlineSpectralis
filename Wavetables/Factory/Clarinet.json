@@ -1,0 +1,15 @@
+{
+    "id": 20,
+    "name": "Clarinet",
+    "category": "Organic",
+    "description": "Recorded clarinet cycles: hollow, odd-harmonic woodwind tones from mellow to reedy.",
+    "tags": [
+        "clarinet",
+        "reed",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Clarinet.wav",
+    "frame_size": 2048,
+    "source": "AKWF_clarinett (Adventure Kid Waveforms, CC0)"
+}

@@ -1,0 +1,15 @@
+{
+    "id": 57,
+    "name": "Snippets",
+    "category": "Digital",
+    "description": "Tiny cuts from larger recordings: unpredictable, instrument-ish and strange.",
+    "tags": [
+        "snippets",
+        "odd",
+        "texture"
+    ],
+    "mode": "wav",
+    "file": "Snippets.wav",
+    "frame_size": 2048,
+    "source": "AKWF_snippets (Adventure Kid Waveforms, CC0)"
+}

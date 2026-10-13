@@ -39,7 +39,10 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     const auto srcNames = mod::sourceNames();
     for (int s = 1; s < mod::numSources; ++s)
     {
-        chips.push_back (std::make_unique<SourceChip> (s, srcNames[s].toUpperCase(), colours::sourceColour (s)));
+        auto label = srcNames[s].toUpperCase();
+        label = label.replace ("MACRO ", "M").replace ("CHAOS ", "CH ").replace ("MOD WHEEL", "WHEEL").replace ("KEY TRACK", "KEY")
+                     .replace ("AFTERTOUCH", "AFTER").replace ("VELOCITY", "VEL").replace ("RANDOM", "RAND");
+        chips.push_back (std::make_unique<SourceChip> (s, label, colours::sourceColour (s)));
         addAndMakeVisible (*chips.back());
     }
 
@@ -78,8 +81,8 @@ void EmberlineEditor::buildTop()
         panel.setCentredTitle (true);
         panel.setTinted (true);
         panel.addOnSwitch (params::osc (o, "on"));
-        panel.addCombo (params::osc (o, "table"), WavetableBank::shared().displayNames(), WavetableBank::shared().displayCategories());   // combo 0: wavetable
-        panel.setComboWeights ({ 0.62f, 0.38f });
+        panel.addRowWidget (tableSelectors.emplace_back (processor, o, accents[o]));   // wavetable selector (thumbnails, import, rescan)
+        panel.setComboWeights ({ 0.64f, 0.36f });
         panel.addCombo (params::osc (o, "warp_mode"), params::warpModeNames);                  // combo 1: warp
         for (size_t k = 0; k < std::size (ids); ++k)
             panel.addKnob (params::osc (o, ids[k]), names[k]);
@@ -327,15 +330,6 @@ void EmberlineEditor::layoutFiltersAndEnvs()
 
 void EmberlineEditor::timerCallback()
 {
-    const auto tables = WavetableBank::shared().displayNames();
-    const auto tableKey = tables.joinIntoString ("|");
-    if (tableKey != shownTableNames)
-    {
-        shownTableNames = tableKey;   // a user wavetable was added / removed / renamed
-        for (auto* p : oscPanels)
-            p->setComboItems (0, tables, WavetableBank::shared().displayCategories());
-    }
-
     const auto names = processor.getMacroNames();
     if (names != shownMacroNames)
     {

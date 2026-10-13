@@ -1,0 +1,16 @@
+{
+    "id": 35,
+    "name": "Human Voice",
+    "category": "Vocal",
+    "description": "Recorded human-voice cycles ordered dark to bright: Frame moves from rounded, 'oo'-like colours toward open, bright vowels.",
+    "tags": [
+        "voice",
+        "vowel",
+        "choir",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Human Voice.wav",
+    "frame_size": 2048,
+    "source": "AKWF_hvoice (Adventure Kid Waveforms, CC0)"
+}

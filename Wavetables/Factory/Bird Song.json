@@ -1,0 +1,15 @@
+{
+    "id": 18,
+    "name": "Bird Song",
+    "category": "Organic",
+    "description": "Bird-call cycles: whistly, chirpy and strange. Use sparingly for organic sparkle.",
+    "tags": [
+        "birds",
+        "nature",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Bird Song.wav",
+    "frame_size": 2048,
+    "source": "AKWF_birds (Adventure Kid Waveforms, CC0)"
+}

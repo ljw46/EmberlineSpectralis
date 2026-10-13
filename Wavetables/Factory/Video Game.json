@@ -1,0 +1,15 @@
+{
+    "id": 58,
+    "name": "Video Game",
+    "category": "Digital",
+    "description": "Video-game console waves: pulse, noise-like and quirky arcade tones.",
+    "tags": [
+        "chiptune",
+        "arcade",
+        "retro"
+    ],
+    "mode": "wav",
+    "file": "Video Game.wav",
+    "frame_size": 2048,
+    "source": "AKWF_vgame (Adventure Kid Waveforms, CC0)"
+}

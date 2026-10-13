@@ -201,13 +201,21 @@ public:
         box.setSelectedItemIndex (selected, juce::dontSendNotification);
     }
 
-    // relative widths of the combos in the row (default: equal)
+    // relative widths of the items in the combo row, in the order they were added (default: equal)
     void setComboWeights (std::vector<float> weights) { comboWeights = std::move (weights); }
+
+    // puts a custom component (e.g. the wavetable selector) into the combo row
+    void addRowWidget (juce::Component& w)
+    {
+        rowItems.push_back (&w);
+        addAndMakeVisible (w);
+    }
 
     // `sections` (optional, one per item) adds a heading whenever the section changes
     void addCombo (const juce::String& paramId, const juce::StringArray& items, const juce::StringArray& sections = {})
     {
         auto& c = combos.emplace_back();
+        rowItems.push_back (&c.box);
         fillCombo (c.box, items, sections);
         c.box.setColour (juce::ComboBox::outlineColourId, accent.withAlpha (0.45f));
         addAndMakeVisible (c.box);
@@ -283,17 +291,17 @@ public:
             }
         }
 
-        if (! combos.empty())
+        if (! rowItems.empty())
         {
             auto row = inner.removeFromTop (24);
             float total = 0.0f;
-            for (size_t i = 0; i < combos.size(); ++i)
+            for (size_t i = 0; i < rowItems.size(); ++i)
                 total += i < comboWeights.size() ? comboWeights[i] : 1.0f;
             const int rowWidth = row.getWidth();
-            for (size_t i = 0; i < combos.size(); ++i)
+            for (size_t i = 0; i < rowItems.size(); ++i)
             {
                 const float weight = i < comboWeights.size() ? comboWeights[i] : 1.0f;
-                combos[i].box.setBounds (row.removeFromLeft ((int) ((float) rowWidth * weight / total)).reduced (2, 0));
+                rowItems[i]->setBounds (row.removeFromLeft ((int) ((float) rowWidth * weight / total)).reduced (2, 0));
             }
             inner.removeFromTop (4);
         }
@@ -387,6 +395,7 @@ private:
     std::deque<Knob> knobs;
     juce::Component* widget = nullptr;
     std::vector<float> comboWeights;
+    std::vector<juce::Component*> rowItems;   // everything in the combo row, in order
     int widgetHeight = 0;
     bool widgetOnSide = false;
     float widgetSideFraction = 0.62f;

@@ -1,0 +1,15 @@
+{
+    "id": 51,
+    "name": "Chip Oscillators",
+    "category": "Digital",
+    "description": "Waves from classic oscillator chips: gritty, lo-fi and full of aliasing character.",
+    "tags": [
+        "chip",
+        "lofi",
+        "digital"
+    ],
+    "mode": "wav",
+    "file": "Chip Oscillators.wav",
+    "frame_size": 2048,
+    "source": "AKWF_oscchip (Adventure Kid Waveforms, CC0)"
+}

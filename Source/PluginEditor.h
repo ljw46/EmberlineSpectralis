@@ -6,6 +6,7 @@
 #include "MeshDisplay.h"
 #include "PluginProcessor.h"
 #include "PresetBar.h"
+#include "TableSelector.h"
 
 class EmberlineEditor final : public juce::AudioProcessorEditor,
                               public juce::DragAndDropContainer,
@@ -55,6 +56,7 @@ private:
     std::deque<LfoEditor> lfoEditors;
     std::deque<LfoPreview> lfoPreviews;
     std::deque<ChaosDisplay> chaosDisplays;
+    std::deque<TableSelector> tableSelectors;
     std::deque<EnvDisplay> envDisplays;
     WavetableMesh mesh;
     PresetBar presetBar;
@@ -66,7 +68,7 @@ private:
     std::array<std::atomic<float>*, ember::fx::numEffects> fxSlot {};
     std::array<int, ember::fx::numEffects> lastFxOrder { 0, 1, 2, 3 };
     juce::Label fxHint;
-    juce::String shownMacroNames { "?" }, shownTableNames { "?" };
+    juce::String shownMacroNames { "?" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EmberlineEditor)
 };

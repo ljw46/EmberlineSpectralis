@@ -55,6 +55,9 @@ namespace ember
         {
             baseHz = juce::MidiMessage::getMidiNoteInHertz (midiNote);
             velocityGain = velocity;
+            keyTrack = juce::jlimit (-1.0f, 1.0f, (float) (midiNote - 60) / 48.0f);
+            noteRandom = random.nextFloat() * 2.0f - 1.0f;
+            bendSmoothed = ctx.pitchBend;
             snapNext = true;
 
             stamp = ++ctx.stampCounter;
@@ -105,7 +108,6 @@ namespace ember
             const bool subTri = juce::roundToInt (P.subWave->load()) == 1;
             const auto noiseType = (NoiseType) juce::roundToInt (P.noiseType->load());
             const bool parallel = juce::roundToInt (P.routing->load()) == 1;
-            sub.setFrequency (sr, baseHz, 1 + juce::roundToInt (P.subOct->load()));
 
             auto* left  = out.getWritePointer (0, start);
             auto* right = out.getNumChannels() > 1 ? out.getWritePointer (1, start) : nullptr;
@@ -259,6 +261,9 @@ namespace ember
             const bool snap = snapNext;
             snapNext = false;
 
+            const float bendFactor = std::pow (2.0f, bendSmoothed * P.mod.bendRange->load() / 12.0f);
+            sub.setFrequency (sr, baseHz * bendFactor, 1 + juce::roundToInt (P.subOct->load()));
+
             // sources
             std::array<float, mod::numSources> src {};
             for (int i = 0; i < mod::numLfos; ++i)
@@ -272,6 +277,16 @@ namespace ember
             for (int i = 0; i < mod::numMacros; ++i)
                 src[(size_t) (mod::srcMacro + i)] = P.mod.macro[(size_t) i]->load();
 
+            // performance sources
+            src[(size_t) mod::srcPerform + 0] = velocityGain;
+            src[(size_t) mod::srcPerform + 1] = keyTrack;
+            src[(size_t) mod::srcPerform + 2] = ctx.modWheel;
+            src[(size_t) mod::srcPerform + 3] = ctx.aftertouch;
+            src[(size_t) mod::srcPerform + 4] = noteRandom;
+
+            // pitch bend glides in over a few chunks instead of stepping once per host block
+            bendSmoothed += (ctx.pitchBend - bendSmoothed) * 0.35f;
+
             const float blockPos = juce::jlimit (0.0f, 1.0f, (float) absoluteStart / (float) juce::jmax (1, ctx.blockLength));
             for (size_t i = 0; i < ctx.chaosPrev.size(); ++i)
                 src[(size_t) mod::srcChaos + i] = ctx.chaosPrev[i] + (ctx.chaosNext[i] - ctx.chaosPrev[i]) * blockPos;
@@ -280,13 +295,7 @@ namespace ember
             for (int s = 0; s < numActiveSlots; ++s)
             {
                 const auto si = (size_t) s;
-                float v = src[(size_t) slotSrc[si]];
-
-                const bool native = mod::isBipolar (slotSrc[si]);
-                if (slotBipolar[si] && ! native)       v = 2.0f * v - 1.0f;
-                else if (! slotBipolar[si] && native)  v = 0.5f * (v + 1.0f);
-
-                v = std::copysign (curveShape (std::abs (v), slotCurve[si]), v);
+                const float v = mod::shapeSource (src[(size_t) slotSrc[si]], slotSrc[si], slotBipolar[si], slotCurve[si]);
                 offsets[(size_t) slotDst[si]] += slotDepth[si] * v;
             }
 
@@ -315,7 +324,7 @@ namespace ember
                 if (level > 0.0f || s.level.isSmoothing())
                 {
                     const float semis = p.semi->load() + eff (mod::oscDest (o, 5), p.fine->load()) * 0.01f;
-                    oscs[(size_t) o].configure (sr, baseHz * std::pow (2.0f, semis / 12.0f),
+                    oscs[(size_t) o].configure (sr, baseHz * bendFactor * std::pow (2.0f, semis / 12.0f),
                                                 juce::roundToInt (p.table->load()), (WarpMode) juce::roundToInt (p.warpMode->load()), warp,
                                                 juce::roundToInt (p.unison->load()),
                                                 eff (mod::oscDest (o, 3), p.detune->load()),
@@ -360,6 +369,7 @@ namespace ember
 
         std::uint64_t stamp = 0;
         bool snapNext = false;
-        float baseHz = 440.0f, velocityGain = 1.0f;
+        float baseHz = 440.0f, velocityGain = 1.0f, keyTrack = 0.0f, noteRandom = 0.0f, bendSmoothed = 0.0f;
+        juce::Random random { 0x51ed };
     };
 }

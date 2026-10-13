@@ -421,7 +421,8 @@ namespace
             {
                 b.clear();
                 if (blk == 0) { b.setSample (0, 0, 1.0f); b.setSample (1, 0, 1.0f); }
-                chain.process (b, ptrs, 100.0);   // 100 BPM -> 1/8 = 300 ms
+                const float noOffsets[mod::numFxDests] {};
+                chain.process (b, ptrs, 100.0, noOffsets);   // 100 BPM -> 1/8 = 300 ms
                 for (int i = 0; i < blockSize; ++i) left.push_back (b.getSample (0, i));
             }
             int peakAt = 0;
@@ -500,6 +501,14 @@ namespace
 }
 
 // ------------------------------------------------------------------ wavetables
+WavetableBank::FileResolver resolverFor (const juce::File& dir)
+{
+    return [dir] (const juce::String& name, juce::MemoryBlock& out)
+    {
+        return dir.getChildFile (name).loadFileAsData (out) || dir.getChildFile ("Audio").getChildFile (name).loadFileAsData (out);
+    };
+}
+
 int checkWavetables (const juce::File& dir)
 {
     auto files = dir.findChildFiles (juce::File::findFiles, false, "*.json");
@@ -521,7 +530,7 @@ int checkWavetables (const juce::File& dir)
             continue;
         }
 
-        auto built = WavetableBank::buildFromJson (v);
+        auto built = WavetableBank::buildFromJson (v, resolverFor (dir));
         if (! built.ok)
         {
             std::printf ("%-24s ERROR: %s\n", f.getFileName().toRawUTF8(), built.error.toRawUTF8());
@@ -563,7 +572,7 @@ int exportWavetables (const juce::File& dir, const juce::File& outDir)
     {
         juce::var v;
         if (juce::JSON::parse (f.loadFileAsString(), v).failed()) continue;
-        auto built = WavetableBank::buildFromJson (v);
+        auto built = WavetableBank::buildFromJson (v, resolverFor (dir));
         if (! built.ok) continue;
 
         juce::AudioBuffer<float> audio (1, WavetableBank::numFrames * WavetableBank::tableSize);
@@ -662,6 +671,74 @@ void wavetableSelftest (EmberlineProcessor& proc)
             residual = std::max (residual, std::abs (t[n] - (a * std::sin (ph) + b * std::cos (ph))));
         }
         expect (residual < 1.0e-3, "band-limiting: the 1-harmonic mip is a pure sinusoid (residual " + juce::String (residual, 6) + ")");
+    }
+
+    std::printf ("sampled (WAV) tables and phase alignment\n");
+    {
+        // two frames of the same waveform, the second shifted by 0.3 of a cycle: aligned import must make them identical
+        auto makeWav = [] (int cycles, float shiftOfSecond)
+        {
+            juce::AudioBuffer<float> audio (1, 2048 * cycles);
+            for (int f = 0; f < cycles; ++f)
+                for (int n = 0; n < 2048; ++n)
+                {
+                    const float ph = (float) n / 2048.0f + (f == 1 ? shiftOfSecond : 0.0f);
+                    audio.setSample (0, f * 2048 + n, std::sin (juce::MathConstants<float>::twoPi * ph) + 0.5f * std::sin (juce::MathConstants<float>::twoPi * 2.0f * ph + 0.7f)
+                                                       + 0.3f * std::sin (juce::MathConstants<float>::twoPi * 3.0f * ph + 1.9f));
+                }
+            // (the writer owns and deletes its stream, so go through a temporary file)
+            const auto tmp = juce::File::createTempFile (".wav");
+            {
+                juce::WavAudioFormat wav;
+                std::unique_ptr<juce::AudioFormatWriter> w (wav.createWriterFor (new juce::FileOutputStream (tmp), 44100.0, 1, 24, {}, 0));
+                w->writeFromAudioSampleBuffer (audio, 0, audio.getNumSamples());
+            }
+            juce::MemoryBlock bytes;
+            tmp.loadFileAsData (bytes);
+            tmp.deleteFile();
+            return bytes;
+        };
+
+        auto correlation = [] (const WavetableBank::Built& b)
+        {
+            const float* a = b.data.data();
+            const float* c = b.data.data() + (size_t) (WavetableBank::numFrames - 1) * WavetableBank::tableSize;
+            double ab = 0, aa = 0, cc = 0;
+            for (int n = 0; n < WavetableBank::tableSize; ++n) { ab += (double) a[n] * c[n]; aa += (double) a[n] * a[n]; cc += (double) c[n] * c[n]; }
+            return ab / std::sqrt (aa * cc + 1.0e-12);
+        };
+
+        const auto block = makeWav (2, 0.3f);
+        auto aligned = WavetableBank::buildFromAudio (std::make_unique<juce::MemoryInputStream> (block, true), "t", "test", 2048, true);
+        auto raw = WavetableBank::buildFromAudio (std::make_unique<juce::MemoryInputStream> (block, true), "t", "test", 2048, false);
+        expect (aligned.ok && raw.ok, "an in-memory 2-frame WAV imports");
+        expect (correlation (aligned) > 0.999, "phase alignment: a shifted copy becomes the identical frame (correlation " + juce::String (correlation (aligned), 4) + ")");
+        expect (correlation (raw) < 0.9, "...whereas without alignment the frames stay offset (correlation " + juce::String (correlation (raw), 3) + ")");
+
+        // every sampled factory table should have its fundamental in sine phase on every frame
+        int checked = 0, misaligned = 0;
+        for (int t = 0; t < bank.numFactoryTables(); ++t)
+            if (bank.info (t).source.endsWithIgnoreCase (".wav"))
+            {
+                ++checked;
+                for (int f = 0; f < WavetableBank::numFrames; ++f)
+                {
+                    const float* x = bank.table (t, 0, f);
+                    double a = 0.0, c = 0.0;
+                    for (int n = 0; n < WavetableBank::tableSize; ++n)
+                    {
+                        const double ph = juce::MathConstants<double>::twoPi * n / WavetableBank::tableSize;
+                        a += x[n] * std::sin (ph);
+                        c += x[n] * std::cos (ph);
+                    }
+                    if (std::hypot (a, c) > 20.0 && std::abs (c) > 0.12 * std::abs (a))   // fundamental present but not in sine phase
+                        ++misaligned;
+                }
+            }
+        const int totalFrames = checked * WavetableBank::numFrames;
+        expect (checked >= 20 && misaligned * 100 <= totalFrames * 5,
+                juce::String (checked) + " sampled tables loaded; " + juce::String (misaligned) + " of " + juce::String (totalFrames)
+                    + " frames have the fundamental out of sine phase (those are frames dominated by a higher harmonic, aligned to that one instead)");
     }
 
     std::printf ("malformed wavetable definitions are rejected with a useful message\n");

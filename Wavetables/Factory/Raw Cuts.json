@@ -1,0 +1,15 @@
+{
+    "id": 56,
+    "name": "Raw Cuts",
+    "category": "Digital",
+    "description": "Raw, unprocessed cycles from assorted sources: rough around the edges.",
+    "tags": [
+        "raw",
+        "lofi",
+        "texture"
+    ],
+    "mode": "wav",
+    "file": "Raw Cuts.wav",
+    "frame_size": 2048,
+    "source": "AKWF_raw (Adventure Kid Waveforms, CC0)"
+}

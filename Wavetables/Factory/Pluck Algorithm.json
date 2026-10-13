@@ -1,0 +1,15 @@
+{
+    "id": 55,
+    "name": "Pluck Algorithm",
+    "category": "Digital",
+    "description": "Waves produced by plucked-string algorithms: sharp, string-like attacks.",
+    "tags": [
+        "pluck",
+        "string",
+        "digital"
+    ],
+    "mode": "wav",
+    "file": "Pluck Algorithm.wav",
+    "frame_size": 2048,
+    "source": "AKWF_pluckalgo (Adventure Kid Waveforms, CC0)"
+}

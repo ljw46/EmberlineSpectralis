@@ -1,0 +1,15 @@
+{
+    "id": 9,
+    "name": "Hand Drawn",
+    "category": "Analog",
+    "description": "Hand-drawn waveforms: irregular, unmistakably human shapes with unusual harmonics.",
+    "tags": [
+        "hand drawn",
+        "odd",
+        "character"
+    ],
+    "mode": "wav",
+    "file": "Hand Drawn.wav",
+    "frame_size": 2048,
+    "source": "AKWF_hdrawn (Adventure Kid Waveforms, CC0)"
+}

@@ -2,6 +2,8 @@
 
 #include <juce_core/juce_core.h>
 #include <cmath>
+#include <functional>
+#include <memory>
 #include <vector>
 
 namespace ember
@@ -41,8 +43,13 @@ namespace ember
 
         static WavetableBank& shared();
 
-        static Built buildFromJson (const juce::var& definition);
+        // finds the bytes of a file named in a "wav" table (embedded resources for factory tables, the JSON's folder for user ones)
+        using FileResolver = std::function<bool (const juce::String& name, juce::MemoryBlock& bytes)>;
+
+        static Built buildFromJson (const juce::var& definition, const FileResolver& resolver = {});
         static Built buildFromWav (const juce::File& file);
+        static Built buildFromAudio (std::unique_ptr<juce::InputStream> stream, const juce::String& name, const juce::String& source,
+                                     int frameSize = 0, bool alignPhase = true);
         static juce::File userDirectory();
 
         int numFactoryTables() const noexcept { return factoryCount; }

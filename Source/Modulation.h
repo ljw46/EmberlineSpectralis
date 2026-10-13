@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Chaos.h"
+#include "Curve.h"
 #include "LfoShape.h"
 #include "Tempo.h"
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -14,26 +15,45 @@ namespace ember::mod
     inline constexpr int numEnvs = 3, numMacros = 4, numSlots = 12, oscCount = 3;
 
     // Source indices (0 = none). The matrix stores these as choice indices.
-    inline constexpr int srcNone = 0, srcLfo = 1, srcEnv = 4, srcMacro = 7, srcChaos = 11, numChaos = ChaosEngine::numOutputs, numSources = srcChaos + numChaos;
+    inline constexpr int srcNone = 0, srcLfo = 1, srcEnv = 4, srcMacro = 7, srcChaos = 11, numChaos = ChaosEngine::numOutputs,
+                  srcPerform = srcChaos + numChaos, numPerform = 5, numSources = srcPerform + numPerform;
 
     inline juce::StringArray sourceNames()
     {
         return { "None", "LFO 1", "LFO 2", "LFO 3", "ENV 1", "ENV 2", "ENV 3", "Macro 1", "Macro 2", "Macro 3", "Macro 4",
-                 "Chaos X", "Chaos Y", "Chaos Z", "Perlin", "S&H" };
+                 "Chaos X", "Chaos Y", "Chaos Z", "Perlin", "S&H",
+                 "Velocity", "Key Track", "Mod Wheel", "Aftertouch", "Random" };
     }
 
-    enum class SourceKind { lfo, env, macro, chaos };
+    enum class SourceKind { lfo, env, macro, chaos, perform };
     inline SourceKind sourceKind (int src)
     {
-        return src < srcEnv ? SourceKind::lfo : src < srcMacro ? SourceKind::env : src < srcChaos ? SourceKind::macro : SourceKind::chaos;
+        return src < srcEnv ? SourceKind::lfo : src < srcMacro ? SourceKind::env : src < srcChaos ? SourceKind::macro
+             : src < srcPerform ? SourceKind::chaos : SourceKind::perform;
     }
+
     // A source's native polarity; a matrix slot can override it with its Bipolar switch.
-    inline bool isBipolar (int src) { return sourceKind (src) == SourceKind::lfo || sourceKind (src) == SourceKind::chaos; }
+    // Key Track (centred on middle C) and Random (per note) are bipolar; Velocity, Mod Wheel and Aftertouch are 0..1.
+    inline bool isBipolar (int src)
+    {
+        return sourceKind (src) == SourceKind::lfo || sourceKind (src) == SourceKind::chaos || src == srcPerform + 1 || src == srcPerform + 4;
+    }
+
+    // A source's value as a route sees it: the polarity switch applied, then the curve, keeping the sign.
+    inline float shapeSource (float v, int src, bool bipolar, float curve) noexcept
+    {
+        const bool native = isBipolar (src);
+        if (bipolar && ! native)       v = 2.0f * v - 1.0f;
+        else if (! bipolar && native)  v = 0.5f * (v + 1.0f);
+        return std::copysign (curveShape (std::abs (v), curve), v);
+    }
 
     // Destination indices (matrix choice index = dest + 1; 0 = none).
     inline constexpr int oscDestStride = 7;   // frame, warp_amt, level, detune, spread, fine, pan
     inline constexpr int filterDestBase = oscCount * oscDestStride;
-    inline constexpr int subDest = filterDestBase + 6, noiseDest = subDest + 1, numDests = noiseDest + 1;
+    inline constexpr int subDest = filterDestBase + 6, noiseDest = subDest + 1;
+    // FX destinations are global (one set of effects for all voices), so only global sources can drive them
+    inline constexpr int fxDestBase = noiseDest + 1, numFxDests = 8, numDests = fxDestBase + numFxDests;
 
     inline constexpr int oscDest (int osc, int k) { return osc * oscDestStride + k; }
     inline constexpr int filterDest (int filter, int k) { return filterDestBase + filter * 3 + k; }
@@ -59,6 +79,16 @@ namespace ember::mod
 
             d.push_back ({ "sub_level", "Sub Level" });
             d.push_back ({ "noise_level", "Noise Level" });
+
+            // global (FX) destinations, in this order (see fx::Chain)
+            d.push_back ({ "fx_dist_drive", "Dist Drive" });
+            d.push_back ({ "fx_dist_mix", "Dist Mix" });
+            d.push_back ({ "fx_chorus_depth", "Chorus Depth" });
+            d.push_back ({ "fx_chorus_mix", "Chorus Mix" });
+            d.push_back ({ "fx_delay_feedback", "Delay Feedback" });
+            d.push_back ({ "fx_delay_mix", "Delay Mix" });
+            d.push_back ({ "fx_reverb_size", "Reverb Size" });
+            d.push_back ({ "fx_reverb_mix", "Reverb Mix" });
             return d;
         }();
         return list;
@@ -93,7 +123,7 @@ namespace ember::mod
         std::array<LfoPtrs, numLfos> lfo;
         std::array<EnvPtrs, numEnvs> env;
         std::array<std::atomic<float>*, numMacros> macro;
-        std::atomic<float> *chaosRate, *fractalRate, *tempo;
+        std::atomic<float> *chaosRate, *fractalRate, *tempo, *bendRange;
         std::array<std::atomic<float>*, numDests> destBase;
         std::array<juce::NormalisableRange<float>, numDests> destRange;
     };
@@ -136,6 +166,8 @@ namespace ember::mod
 
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "global_tempo", 1 }, "Tempo (no host)",
             NormalisableRange<float> (40.0f, 240.0f, 0.1f), 120.0f, AudioParameterFloatAttributes().withLabel ("BPM")));
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "pitch_bend_range", 1 }, "Pitch Bend Range",
+            NormalisableRange<float> (0.0f, 24.0f, 1.0f), 2.0f, AudioParameterFloatAttributes().withLabel ("st")));
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "chaos_rate", 1 }, "Chaos Rate",
             NormalisableRange<float> (0.02f, 10.0f, 0.001f, 0.4f), 1.0f));
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "fractal_rate", 1 }, "Fractal Rate",
@@ -184,6 +216,7 @@ namespace ember::mod
         m.chaosRate = get ("chaos_rate");
         m.fractalRate = get ("fractal_rate");
         m.tempo = get ("global_tempo");
+        m.bendRange = get ("pitch_bend_range");
 
         const auto& d = destinations();
         for (size_t i = 0; i < d.size(); ++i)
@@ -205,6 +238,8 @@ namespace ember::mod
         std::array<std::atomic<float>, numDests> liveOffset {};        // newest voice's modulation, for the knob arcs
         ChaosEngine::Frame chaosPrev {}, chaosNext {};                 // chaos outputs at the start / end of the current block
         int blockLength = 512;
+        float pitchBend = 0.0f, modWheel = 0.0f, aftertouch = 0.0f;     // channel state from MIDI (audio thread); pitch bend -1..1
+        std::array<float, numFxDests> fxOffset {};                     // modulation of the global FX parameters this block
         double bpm = 120.0;                                            // host tempo (or the standalone tempo knob)
         double hostPpq = -1.0;                                         // host position in quarter notes while playing, else -1
         static constexpr int trailSize = 192;                          // lorenz x/z history for the display

@@ -1,0 +1,16 @@
+{
+    "id": 41,
+    "name": "FM Synth Bank",
+    "category": "FM",
+    "description": "Recorded FM-synthesizer cycles: glassy, metallic and electric-piano-like, dark to bright.",
+    "tags": [
+        "fm",
+        "digital",
+        "glassy",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "FM Synth Bank.wav",
+    "frame_size": 2048,
+    "source": "AKWF_fmsynth (Adventure Kid Waveforms, CC0)"
+}

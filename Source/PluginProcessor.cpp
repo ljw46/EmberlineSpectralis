@@ -78,6 +78,17 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
         }
     }
 
+    // channel state the voices read as modulation sources / pitch bend (block-accurate: the last value in the block wins)
+    for (const auto meta : midi)
+    {
+        const auto m = meta.getMessage();
+        if (m.isPitchWheel())                                   modCtx.pitchBend = (float) (m.getPitchWheelValue() - 8192) / 8192.0f;
+        else if (m.isController() && m.getControllerNumber() == 1)  modCtx.modWheel = (float) m.getControllerValue() / 127.0f;
+        else if (m.isChannelPressure())                         modCtx.aftertouch = (float) m.getChannelPressureValue() / 127.0f;
+        else if (m.isAftertouch())                              modCtx.aftertouch = (float) m.getAfterTouchValue() / 127.0f;
+        else if (m.isAllNotesOff() || m.isAllSoundOff())        modCtx.aftertouch = 0.0f;
+    }
+
     modCtx.blockLength = buffer.getNumSamples();
     chaos.process (buffer.getNumSamples(), modPtrs.chaosRate->load(), modPtrs.fractalRate->load(), modCtx.chaosPrev, modCtx.chaosNext);
     {
@@ -100,7 +111,36 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
             modCtx.displayPhase[i].store ((float) ph, std::memory_order_relaxed);
     }
 
-    fxChain.process (buffer, fxPtrs, modCtx.bpm);
+    // modulation of the global FX parameters: only sources that exist outside a single voice can drive them
+    modCtx.fxOffset.fill (0.0f);
+    for (const auto& slot : modPtrs.slots)
+    {
+        const int src = juce::roundToInt (slot.src->load());
+        const int dst = juce::roundToInt (slot.dst->load()) - 1 - ember::mod::fxDestBase;
+        if (src <= 0 || dst < 0 || dst >= ember::mod::numFxDests)
+            continue;
+
+        float v = 0.0f;
+        if (src >= ember::mod::srcLfo && src < ember::mod::srcLfo + ember::mod::numLfos)
+            v = lfoShapes.read (src - ember::mod::srcLfo, modCtx.blockPhase[(size_t) (src - ember::mod::srcLfo)]);
+        else if (src >= ember::mod::srcMacro && src < ember::mod::srcMacro + ember::mod::numMacros)
+            v = modPtrs.macro[(size_t) (src - ember::mod::srcMacro)]->load();
+        else if (src >= ember::mod::srcChaos && src < ember::mod::srcChaos + ember::mod::numChaos)
+            v = modCtx.chaosNext[(size_t) (src - ember::mod::srcChaos)];
+        else if (src == ember::mod::srcPerform + 2)
+            v = modCtx.modWheel;
+        else if (src == ember::mod::srcPerform + 3)
+            v = modCtx.aftertouch;
+        else
+            continue;   // envelopes, velocity, key and random are per voice
+
+        modCtx.fxOffset[(size_t) dst] += slot.depth->load()
+                                          * ember::mod::shapeSource (v, src, slot.bipolar->load() > 0.5f, slot.curve->load());
+    }
+    for (size_t i = 0; i < modCtx.fxOffset.size(); ++i)
+        modCtx.liveOffset[(size_t) ember::mod::fxDestBase + i].store (modCtx.fxOffset[i], std::memory_order_relaxed);
+
+    fxChain.process (buffer, fxPtrs, modCtx.bpm, modCtx.fxOffset.data());
 
     gain.setTargetValue (juce::Decibels::decibelsToGain (volumeParam->load()));
 

@@ -1,0 +1,15 @@
+{
+    "id": 11,
+    "name": "Sine Harmonics",
+    "category": "Analog",
+    "description": "Sines with added harmonics: simple, clean timbres that build up in richness.",
+    "tags": [
+        "sine",
+        "harmonics",
+        "clean"
+    ],
+    "mode": "wav",
+    "file": "Sine Harmonics.wav",
+    "frame_size": 2048,
+    "source": "AKWF_sinharm (Adventure Kid Waveforms, CC0)"
+}

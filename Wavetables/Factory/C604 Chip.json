@@ -1,0 +1,15 @@
+{
+    "id": 8,
+    "name": "C604 Chip",
+    "category": "Analog",
+    "description": "Waves from a hardware sampler's oscillator bank: tight, characterful classic-synth shapes.",
+    "tags": [
+        "hardware",
+        "classic",
+        "synth"
+    ],
+    "mode": "wav",
+    "file": "C604 Chip.wav",
+    "frame_size": 2048,
+    "source": "AKWF_c604 (Adventure Kid Waveforms, CC0)"
+}

@@ -227,7 +227,7 @@ namespace ember
     }
 
     // ------------------------------------------------------------------------------------ building
-    WavetableBank::Built WavetableBank::buildFromJson (const juce::var& def)
+    WavetableBank::Built WavetableBank::buildFromJson (const juce::var& def, const FileResolver& resolver)
     {
         Built b;
         auto fail = [&b] (const juce::String& m) { b.error = m; return std::move (b); };
@@ -244,6 +244,28 @@ namespace ember
             for (auto& t : *tags) b.info.tags.add (t.toString());
 
         const auto mode = def["mode"].toString().toLowerCase();
+
+        if (mode == "wav")   // the recipe is a recording: "file" names it (embedded in the plugin, or next to the JSON for user tables)
+        {
+            const auto file = def["file"].toString();
+            if (file.isEmpty())
+                return fail ("mode \"wav\" needs \"file\" (the name of the .wav)");
+            juce::MemoryBlock bytes;
+            if (! resolver || ! resolver (file, bytes))
+                return fail ("could not find the audio file \"" + file + "\"");
+
+            auto audio = buildFromAudio (std::make_unique<juce::MemoryInputStream> (bytes, true), b.info.name, file,
+                                         (int) def.getProperty ("frame_size", 0), (bool) def.getProperty ("align_phase", true));
+            if (! audio.ok)
+                return fail (audio.error);
+
+            audio.info.category = b.info.category;
+            audio.info.description = b.info.description.isNotEmpty() ? b.info.description : audio.info.description;
+            audio.info.tags = b.info.tags;
+            audio.info.source = file;
+            return audio;
+        }
+
         const int limit = juce::jlimit (1, H, (int) def.getProperty ("harmonic_limit", H));
         auto frames = makeFrames();
         Transform transform;
@@ -316,7 +338,7 @@ namespace ember
             }
         }
         else
-            return fail ("\"mode\" must be \"spectrum\", \"waveform\" or \"morph\"");
+            return fail ("\"mode\" must be \"spectrum\", \"waveform\", \"morph\" or \"wav\"");
 
         if (! synthesise (transform, frames, b.data, e))
             return fail (e);
@@ -326,25 +348,29 @@ namespace ember
         return b;
     }
 
-    // A .wav is either a Serum-style multi-frame table (a multiple of 2048 samples) or a single cycle of any length.
-    WavetableBank::Built WavetableBank::buildFromWav (const juce::File& file)
+    // Audio becomes a wavetable. A file whose length is a multiple of the frame size (2048 unless told otherwise) is
+    // read as a multi-frame table (the Serum / Vital layout); anything else is a single cycle of any length.
+    // Frames are phase-aligned and then interpolated *spectrally* down (or up) to the 16 frames, so morphing between
+    // recorded frames does not cancel and comb-filter the way a plain waveform cross-fade would.
+    WavetableBank::Built WavetableBank::buildFromAudio (std::unique_ptr<juce::InputStream> stream, const juce::String& name,
+                                                        const juce::String& source, int frameSize, bool alignPhase)
     {
         Built b;
-        b.info.name = file.getFileNameWithoutExtension();
+        b.info.name = name;
         b.info.category = "User";
-        b.info.description = "Imported from " + file.getFileName();
-        b.info.source = file.getFullPathName();
+        b.info.description = "Imported from " + source;
+        b.info.source = source;
 
         juce::AudioFormatManager formats;
         formats.registerBasicFormats();
-        std::unique_ptr<juce::AudioFormatReader> reader (formats.createReaderFor (file));
+        std::unique_ptr<juce::AudioFormatReader> reader (formats.createReaderFor (std::move (stream)));
         if (reader == nullptr || reader->lengthInSamples < 64)
         {
             b.error = "could not read audio (or it is too short)";
             return b;
         }
 
-        const int length = (int) juce::jmin ((juce::int64) 2 * 1000 * 1000, reader->lengthInSamples);
+        const int length = (int) juce::jmin ((juce::int64) 4 * 1000 * 1000, reader->lengthInSamples);
         juce::AudioBuffer<float> audio ((int) reader->numChannels, length);
         reader->read (&audio, 0, length, 0, true, true);
 
@@ -353,42 +379,112 @@ namespace ember
             for (int i = 0; i < length; ++i)
                 mono[(size_t) i] += audio.getSample (c, i) / (float) audio.getNumChannels();
 
-        const bool multiFrame = length >= 2 * N && length % N == 0;
-        const int sourceFrames = multiFrame ? length / N : 1;
-        const int cycleLength = multiFrame ? N : length;
-
-        auto sourceAt = [&] (int frame, float pos)   // linear read of one source cycle at a fractional position
+        int frameLen;
+        int sourceFrames;
+        if (frameSize >= 32)
         {
-            const float p = pos * (float) cycleLength;
-            const int i0 = (int) p, i1 = (i0 + 1) % cycleLength;
-            const float fr = p - (float) i0;
-            const size_t base = (size_t) frame * (size_t) cycleLength;
-            return lerp (mono[base + (size_t) (i0 % cycleLength)], mono[base + (size_t) i1], fr);
+            frameLen = frameSize;
+            sourceFrames = juce::jmax (1, length / frameSize);
+        }
+        else if (length >= 2 * N && length % N == 0)
+        {
+            frameLen = N;
+            sourceFrames = length / N;
+        }
+        else
+        {
+            frameLen = length;
+            sourceFrames = 1;
+        }
+
+        // one source cycle -> N samples (cubic interpolation, wrapping)
+        auto resampleFrame = [&] (int frame, std::array<float, N>& out)
+        {
+            const size_t base = (size_t) frame * (size_t) frameLen;
+            auto at = [&] (int i) { return mono[base + (size_t) (((i % frameLen) + frameLen) % frameLen)]; };
+            for (int n = 0; n < N; ++n)
+            {
+                const float pos = (float) n * (float) frameLen / (float) N;
+                const int i = (int) pos;
+                const float f = pos - (float) i;
+                const float y0 = at (i - 1), y1 = at (i), y2 = at (i + 1), y3 = at (i + 2);
+                const float c1 = 0.5f * (y2 - y0), c2 = y0 - 2.5f * y1 + 2.0f * y2 - 0.5f * y3, c3 = 0.5f * (y3 - y0) + 1.5f * (y1 - y2);
+                out[(size_t) n] = ((c3 * f + c2) * f + c1) * f + y1;
+            }
         };
 
         Transform transform;
-        auto frames = makeFrames();
+        std::vector<std::unique_ptr<Spectrum>> source_spectra;
         std::array<float, N> x {};
+        const int sourceLimit = frameLen < N ? juce::jmax (4, frameLen / 2 - 1) : H;   // a short cycle has nothing above its own Nyquist
+
+        for (int f = 0; f < sourceFrames; ++f)
+        {
+            resampleFrame (f, x);
+            auto sp = std::make_unique<Spectrum>();
+            transform.toSpectrum (x.data(), *sp);
+            for (int h = sourceLimit + 1; h <= H; ++h)
+                sp->s[(size_t) h] = sp->c[(size_t) h] = 0.0f;
+
+            if (alignPhase)
+            {
+                // choose the harmonic that defines the frame's phase: the fundamental unless it is weak
+                float maxAmp = 0.0f;
+                int dominant = 1;
+                for (int h = 1; h <= 8; ++h)
+                {
+                    const float amp = std::hypot (sp->s[(size_t) h], sp->c[(size_t) h]);
+                    if (amp > maxAmp) { maxAmp = amp; dominant = h; }
+                }
+                if (std::hypot (sp->s[1], sp->c[1]) >= 0.1f * maxAmp)
+                    dominant = 1;
+
+                if (maxAmp > 1.0e-6f)
+                {
+                    // amp * sin(h t + phi): s = amp cos(phi), c = amp sin(phi); shift so the dominant harmonic has phi = 0
+                    const float phi = std::atan2 (sp->c[(size_t) dominant], sp->s[(size_t) dominant]);
+                    const float shift = -phi / (float) dominant;
+                    for (int h = 1; h <= sourceLimit; ++h)
+                    {
+                        const float amp = std::hypot (sp->s[(size_t) h], sp->c[(size_t) h]);
+                        const float ph = std::atan2 (sp->c[(size_t) h], sp->s[(size_t) h]) + (float) h * shift;
+                        sp->s[(size_t) h] = amp * std::cos (ph);
+                        sp->c[(size_t) h] = amp * std::sin (ph);
+                    }
+                }
+            }
+            source_spectra.push_back (std::move (sp));
+        }
+
+        auto frames = makeFrames();
         for (int f = 0; f < F; ++f)
         {
             const float pos = sourceFrames > 1 ? (float) f / (F - 1) * (float) (sourceFrames - 1) : 0.0f;
             const int a = juce::jmin ((int) pos, juce::jmax (0, sourceFrames - 2));
             const float fr = sourceFrames > 1 ? pos - (float) a : 0.0f;
-            for (int n = 0; n < N; ++n)
+            const auto& s0 = *source_spectra[(size_t) a];
+            const auto& s1 = *source_spectra[(size_t) juce::jmin (a + 1, sourceFrames - 1)];
+            for (int h = 1; h <= H; ++h)
             {
-                const float ph = (float) n / (float) N;
-                x[(size_t) n] = sourceFrames > 1 ? lerp (sourceAt (a, ph), sourceAt (a + 1, ph), fr) : sourceAt (0, ph);
+                frames[(size_t) f]->s[(size_t) h] = lerp (s0.s[(size_t) h], s1.s[(size_t) h], fr);
+                frames[(size_t) f]->c[(size_t) h] = lerp (s0.c[(size_t) h], s1.c[(size_t) h], fr);
             }
-            transform.toSpectrum (x.data(), *frames[(size_t) f]);
         }
 
         if (! synthesise (transform, frames, b.data, b.error))
             return b;
 
-        b.info.description += multiFrame ? " (" + juce::String (sourceFrames) + " frames, resampled to 16)" : " (single cycle)";
+        b.info.description += sourceFrames > 1 ? " (" + juce::String (sourceFrames) + " frames, resampled to 16)" : " (single cycle)";
         b.info.loaded = true;
         b.ok = true;
         return b;
+    }
+
+    WavetableBank::Built WavetableBank::buildFromWav (const juce::File& file)
+    {
+        auto built = buildFromAudio (std::unique_ptr<juce::InputStream> (file.createInputStream()), file.getFileNameWithoutExtension(), file.getFileName(), 0, true);
+        built.info.source = file.getFullPathName();
+        return built;
     }
 
     // ------------------------------------------------------------------------------------ the bank
@@ -409,8 +505,26 @@ namespace ember
         struct Item { int id; Built built; };
         std::vector<Item> items;
 
+        // WAV-backed tables find their audio among the embedded resources, by file name
+        const FileResolver embedded = [] (const juce::String& name, juce::MemoryBlock& out)
+        {
+            const auto wanted = juce::File::createFileWithoutCheckingPath (name).getFileName();
+            for (int i = 0; i < WavetableData::namedResourceListSize; ++i)
+                if (juce::String (WavetableData::getNamedResourceOriginalFilename (WavetableData::namedResourceList[i])) == wanted)
+                {
+                    int size = 0;
+                    const char* bytes = WavetableData::getNamedResource (WavetableData::namedResourceList[i], size);
+                    out.replaceAll (bytes, (size_t) size);
+                    return true;
+                }
+            return false;
+        };
+
         for (int i = 0; i < WavetableData::namedResourceListSize; ++i)
         {
+            if (! juce::String (WavetableData::getNamedResourceOriginalFilename (WavetableData::namedResourceList[i])).endsWithIgnoreCase (".json"))
+                continue;   // audio files are pulled in by the tables that name them
+
             int size = 0;
             const char* text = WavetableData::getNamedResource (WavetableData::namedResourceList[i], size);
 
@@ -421,7 +535,7 @@ namespace ember
                 continue;
             }
 
-            auto built = buildFromJson (v);
+            auto built = buildFromJson (v, embedded);
             if (! built.ok)
             {
                 DBG ("Bad factory wavetable " << WavetableData::namedResourceList[i] << ": " << built.error);
@@ -516,7 +630,11 @@ namespace ember
                 juce::var v;
                 const auto parsed = juce::JSON::parse (file.loadFileAsString(), v);
                 if (parsed.failed()) built.error = "invalid JSON: " + parsed.getErrorMessage();
-                else                 built = buildFromJson (v);
+                else
+                {
+                    const auto folder = file.getParentDirectory();
+                    built = buildFromJson (v, [folder] (const juce::String& name, juce::MemoryBlock& out) { return folder.getChildFile (name).loadFileAsData (out); });
+                }
                 built.info.source = file.getFullPathName();
             }
 

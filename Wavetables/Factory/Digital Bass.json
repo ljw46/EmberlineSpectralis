@@ -1,0 +1,15 @@
+{
+    "id": 32,
+    "name": "Digital Bass",
+    "category": "Bass",
+    "description": "Digital bass cycles: clean subs to gritty, harmonically rich bass waves.",
+    "tags": [
+        "bass",
+        "digital",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Digital Bass.wav",
+    "frame_size": 2048,
+    "source": "AKWF_dbass (Adventure Kid Waveforms, CC0)"
+}

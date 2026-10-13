@@ -1,0 +1,15 @@
+{
+    "id": 16,
+    "name": "Acoustic Guitar",
+    "category": "Organic",
+    "description": "Recorded acoustic-guitar cycles, from a soft body to a bright pick attack.",
+    "tags": [
+        "guitar",
+        "plucked",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Acoustic Guitar.wav",
+    "frame_size": 2048,
+    "source": "AKWF_aguitar (Adventure Kid Waveforms, CC0)"
+}

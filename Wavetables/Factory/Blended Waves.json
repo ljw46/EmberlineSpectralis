@@ -1,0 +1,15 @@
+{
+    "id": 7,
+    "name": "Blended Waves",
+    "category": "Analog",
+    "description": "Classic synth waves blended into one another: saws, squares and in-betweens, ordered dark to bright.",
+    "tags": [
+        "analog",
+        "blended",
+        "classic"
+    ],
+    "mode": "wav",
+    "file": "Blended Waves.wav",
+    "frame_size": 2048,
+    "source": "AKWF_bw_blended (Adventure Kid Waveforms, CC0)"
+}

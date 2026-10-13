@@ -1,0 +1,15 @@
+{
+    "id": 24,
+    "name": "Theremin",
+    "category": "Organic",
+    "description": "Recorded theremin cycles: pure, eerie sine-like tones to richer ones.",
+    "tags": [
+        "theremin",
+        "eerie",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Theremin.wav",
+    "frame_size": 2048,
+    "source": "AKWF_theremin (Adventure Kid Waveforms, CC0)"
+}

@@ -1,0 +1,15 @@
+{
+    "id": 17,
+    "name": "Alto Sax",
+    "category": "Organic",
+    "description": "Recorded alto-saxophone cycles: warm and breathy to bright and buzzy.",
+    "tags": [
+        "sax",
+        "reed",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Alto Sax.wav",
+    "frame_size": 2048,
+    "source": "AKWF_altosax (Adventure Kid Waveforms, CC0)"
+}

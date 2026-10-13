@@ -1,0 +1,15 @@
+{
+    "id": 53,
+    "name": "Granular Grit",
+    "category": "Digital",
+    "description": "Granular-textured cycles: rough, crackly and unstable. Good for movement and noise.",
+    "tags": [
+        "granular",
+        "texture",
+        "gritty"
+    ],
+    "mode": "wav",
+    "file": "Granular Grit.wav",
+    "frame_size": 2048,
+    "source": "AKWF_granular (Adventure Kid Waveforms, CC0)"
+}

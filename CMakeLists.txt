@@ -42,7 +42,9 @@ file(GLOB EMBERLINE_FACTORY_PRESETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DI
 juce_add_binary_data(EmberlinePresets HEADER_NAME PresetData.h NAMESPACE PresetData SOURCES ${EMBERLINE_FACTORY_PRESETS})
 
 # factory wavetables are plain JSON files in Wavetables/Factory (see docs/WAVETABLES.md), also embedded at build time
-file(GLOB EMBERLINE_FACTORY_WAVETABLES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Wavetables/Factory/*.json")
+file(GLOB EMBERLINE_FACTORY_WAVETABLES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/Wavetables/Factory/*.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Wavetables/Factory/Audio/*.wav")
 juce_add_binary_data(EmberlineWavetables HEADER_NAME WavetableData.h NAMESPACE WavetableData SOURCES ${EMBERLINE_FACTORY_WAVETABLES})
 
 target_sources(EmberlineSpectralis PRIVATE

@@ -1,0 +1,15 @@
+{
+    "id": 21,
+    "name": "Electric Guitar",
+    "category": "Organic",
+    "description": "Recorded electric-guitar cycles: clean to bitey, with the pickup's character.",
+    "tags": [
+        "guitar",
+        "electric",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Electric Guitar.wav",
+    "frame_size": 2048,
+    "source": "AKWF_eguitar (Adventure Kid Waveforms, CC0)"
+}

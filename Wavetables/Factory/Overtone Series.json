@@ -1,0 +1,15 @@
+{
+    "id": 10,
+    "name": "Overtone Series",
+    "category": "Analog",
+    "description": "Cycles built from overtone stacks: bell- and organ-like partial structures, soft to bright.",
+    "tags": [
+        "overtone",
+        "additive",
+        "hollow"
+    ],
+    "mode": "wav",
+    "file": "Overtone Series.wav",
+    "frame_size": 2048,
+    "source": "AKWF_overtone (Adventure Kid Waveforms, CC0)"
+}

@@ -1,0 +1,15 @@
+{
+    "id": 22,
+    "name": "Flute",
+    "category": "Organic",
+    "description": "Recorded flute cycles, dark and breathy to bright and edgy. Natural, airy and slightly imperfect.",
+    "tags": [
+        "flute",
+        "wind",
+        "recorded"
+    ],
+    "mode": "wav",
+    "file": "Flute.wav",
+    "frame_size": 2048,
+    "source": "AKWF_flute (Adventure Kid Waveforms, CC0)"
+}
