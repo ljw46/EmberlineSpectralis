@@ -147,6 +147,7 @@ namespace
     struct Metrics
     {
         float peakDb = -120.0f, rmsDb = -120.0f, dcDb = -120.0f;
+        float motion = 0.0f, width = 0.0f;   // % change of brightness over the held note, and 1 - L/R correlation, both in %
         bool finite = true;
         juce::AudioBuffer<float> audio;
     };
@@ -213,6 +214,41 @@ namespace
             best = std::max (best, sum / window);
         }
         m.rmsDb = db (std::sqrt (best));
+
+        // how much does the sound change while the note is held, and how wide is it?
+        {
+            const int startSample = (int) (0.35 * sampleRate), endSample = (int) ((longForm ? 7.0 : 2.0) * sampleRate);
+            juce::dsp::FFT fft (11);
+            std::vector<float> fftData (4096);
+            std::vector<double> centroids;
+            for (int pos = startSample; pos + 2048 < endSample; pos += 4096)
+            {
+                std::fill (fftData.begin(), fftData.end(), 0.0f);
+                for (int i = 0; i < 2048; ++i)
+                    fftData[(size_t) i] = 0.5f * (m.audio.getSample (0, pos + i) + m.audio.getSample (1, pos + i))
+                                          * (0.5f - 0.5f * std::cos (juce::MathConstants<float>::twoPi * (float) i / 2048.0f));
+                fft.performFrequencyOnlyForwardTransform (fftData.data());
+                double num = 0.0, den = 0.0;
+                for (int k = 1; k < 1024; ++k) { num += (double) k * fftData[(size_t) k]; den += fftData[(size_t) k]; }
+                if (den > 1.0e-6) centroids.push_back (num / den);
+            }
+            if (centroids.size() >= 3)
+            {
+                double mean = 0.0, var = 0.0;
+                for (auto c : centroids) mean += c;
+                mean /= (double) centroids.size();
+                for (auto c : centroids) var += (c - mean) * (c - mean);
+                m.motion = (float) (100.0 * std::sqrt (var / (double) centroids.size()) / std::max (mean, 1.0));
+            }
+
+            double ll = 0.0, rr = 0.0, lr = 0.0;
+            for (int i = startSample; i < endSample; ++i)
+            {
+                const double l = m.audio.getSample (0, i), r = m.audio.getSample (1, i);
+                ll += l * l; rr += r * r; lr += l * r;
+            }
+            m.width = (float) (100.0 * (1.0 - lr / std::sqrt (ll * rr + 1.0e-12)));
+        }
         m.dcDb = counted > 0 ? db (std::abs (sumL / counted)) : -120.0f;
         return m;
     }
@@ -263,7 +299,7 @@ namespace
         if (wavDir != juce::File()) wavDir.createDirectory();
 
         int problems = 0, warned = 0, loud = 0, quiet = 0;
-        std::printf ("%-44s %8s %8s  %s\n", "preset", "peak dB", "rms dB", "notes");
+        std::printf ("%-44s %7s %7s %6s %6s  %s\n", "preset", "peak", "rms", "move%", "wide%", "notes");
 
         for (auto& f : files)
         {
@@ -312,6 +348,12 @@ namespace
                 }
             }
 
+            // plainness guards: sustained sounds should change over time, and pads / textures should be wide
+            const bool sustained = category == "Pad" || category == "Texture" || category == "Keys" || category == "Lead" || category == "Chord"
+                                   || category == "Organic" || category == "Arp";
+            if (sustained && m.motion < 1.0f) notes.add ("static");
+            if ((category == "Pad" || category == "Texture") && m.width < 8.0f) notes.add ("narrow");
+
             if (m.peakDb > -0.5f) notes.add ("CLIPS");
             if (m.rmsDb > targetDb + 4.0f) { ++loud; notes.add ("loud"); }
             if (m.rmsDb < targetDb - 6.0f && m.rmsDb >= -50.0f) { ++quiet; notes.add ("quiet"); }
@@ -323,7 +365,7 @@ namespace
             if (bad) ++problems;
             if (! result.warnings.isEmpty()) ++warned;
 
-            std::printf ("%-44s %8.1f %8.1f  %s\n", f.getFileNameWithoutExtension().toRawUTF8(), m.peakDb, m.rmsDb,
+            std::printf ("%-44s %7.1f %7.1f %6.1f %6.1f  %s\n", f.getFileNameWithoutExtension().toRawUTF8(), m.peakDb, m.rmsDb, m.motion, m.width,
                          notes.joinIntoString ("; ").toRawUTF8());
         }
 
@@ -450,7 +492,7 @@ namespace
             expect (failed == 0 && withWarnings == 0, "every factory preset loads cleanly (" + juce::String (failed) + " failed, " + juce::String (withWarnings) + " warnings)");
 
             // capture -> apply -> capture is stable
-            proc.loadPresetByName ("Warm Pad");
+            proc.loadPresetByName ("Amber Hour");
             const auto a = presets::toJson (presets::capture (proc, "RT", "User", "round trip"));
             juce::var v;
             juce::String error;
@@ -465,7 +507,7 @@ namespace
             expect (saved && idx >= lib.numFactory(), "user preset saved to disk and found by the library");
             if (idx >= 0)
             {
-                proc.loadPresetByName ("Warm Keys");
+                proc.loadPresetByName ("Honeyed Keys");
                 proc.loadPreset (idx);
                 expect (proc.getCurrentPresetName() == "ZZ Selftest Preset", "user preset loads by index");
                 lib.all()[(size_t) idx].file.deleteFile();
@@ -474,12 +516,12 @@ namespace
             }
 
             // state save/restore keeps the preset identity + macro labels + LFO shapes
-            proc.loadPresetByName ("Vox Lead");
+            proc.loadPresetByName ("Brass Heart");
             juce::MemoryBlock mb;
             proc.getStateInformation (mb);
             EmberlineProcessor other;
             other.setStateInformation (mb.getData(), (int) mb.getSize());
-            expect (other.getCurrentPresetName() == "Vox Lead" && other.getMacroNames() == proc.getMacroNames(), "plugin state restores preset name and macro labels");
+            expect (other.getCurrentPresetName() == "Brass Heart" && other.getMacroNames() == proc.getMacroNames(), "plugin state restores preset name and macro labels");
 
             // lenient input: unknown ids / bad values warn but still load
             presets::parse (R"({"name":"Bad","category":"User","parameters":{"nope":1,"osc1_warp_mode":"Wibble","osc1_frame":7},"modulation":[{"source":"LFO 9","destination":"Nowhere"}]})", v, error);
@@ -490,7 +532,7 @@ namespace
         std::printf ("default patch\n");
         {
             EmberlineProcessor fresh;
-            expect (fresh.getCurrentPresetName() == "Warm Keys", "a fresh instance starts on 'Warm Keys', not a bare saw");
+            expect (fresh.getCurrentPresetName() == "Honeyed Keys", "a fresh instance starts on 'Honeyed Keys', not a bare saw");
             const auto m = render (fresh, "Keys");
             expect (m.rmsDb > -35.0f && m.peakDb < 0.0f, "...and it is audible without clipping (peak " + juce::String (m.peakDb, 1) + ", rms " + juce::String (m.rmsDb, 1) + " dBFS)");
         }

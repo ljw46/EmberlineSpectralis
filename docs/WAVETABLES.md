@@ -148,3 +148,24 @@ Give the model this file and, for ideas, `wavetables.md`, then something like:
 
 Save it as a `.json` file in the user wavetable folder (or `Wavetables/Factory` plus a rebuild), run
 `EmberlineTools check-wavetables <folder>`, then select it from an oscillator's wavetable list.
+
+## 4. `"wav"` - recorded or sampled material
+
+```json
+{ "name": "Clavinet", "category": "Sampled", "mode": "wav", "file": "Clavinet.wav", "frame_size": 2048, "align_phase": true }
+```
+
+* `frame_size` (default 2048): length of one cycle in the file; the file is split into cycles and resampled to 16 frames.
+* `align_phase` (default true): cycles are phase-aligned and interpolated spectrally, so morphs do not comb-filter.
+* **Dropping a `.wav` straight into the user folder works too** (or use the *Import* button / *Rescan* in the table menu).
+
+### WAV file specification (for contributors)
+
+| | |
+|---|---|
+| Format | PCM WAV, 16/24-bit or 32-bit float, mono (stereo is folded to mono) |
+| Layout A (Serum style) | N consecutive cycles, each exactly **2048 samples**; N from 1 to 256 (file length is a multiple of 2048) |
+| Layout B (single cycle) | One cycle of any length (64 - 16384 samples); it is resampled to 2048 and repeated across the frames |
+| Content | Each cycle should start and end near zero crossing with matching slope; no DC; peak below 0 dBFS |
+| Names | `Descriptive Name.wav`; no `:` or `/`; the name is shown in the table menu |
+| Licence | Only material you made or that is CC0 / public domain |

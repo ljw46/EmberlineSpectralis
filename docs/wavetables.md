@@ -13,27 +13,58 @@ Select with the `oscN_table` parameter (by name). Frame (`oscN_frame`, 0..1) the
 | 4 | Sync Sweep | Analog | A sine restarted several times per cycle, as in hard sync: the ratio sweeps from 1 to 8. Vowel-like sweeps. |
 | 5 | Saw Sync | Analog | A saw restarted several times per cycle (hard-sync saw), ratio 1 to 6. The classic cutting sync-lead sweep. |
 | 6 | Bend Saw | Analog | A saw whose slope is bent harder across the table, from straight to an S-shaped, asymmetric wave. |
-| 7 | Organ Drawbars | Organic | Drawbar-style registrations: from a pure flute through full organ to a bright, reedy chord of partials. |
-| 8 | Pluck Position | Organic | String-like: a saw with the notches of a string plucked at a changing point, from the middle (hollow) to the bridge (bright). |
-| 9 | Brass Swell | Organic | Mellow, dark tone that gets steadily brighter - the way brass opens up as it gets louder. |
-| 10 | Clarinet Reed | Organic | Strong odd harmonics with a resonant bump that rises across the table. Woody and reedy. |
-| 11 | Bass Weight | Organic | A sine growing a second and third harmonic with a shifted phase. A solid, full bass tone that stays clean. |
-| 12 | Mallet | Organic | Marimba and vibraphone-style partials (1 : 4 : 9) that bloom across the table. Warm, wooden and tuned. |
-| 13 | Vowel Sweep | Vocal | Formant peaks stepping through the vowels A, E, I, O, U. Vocal and choir-like; formants are fixed in harmonic number, so they follow the note. |
-| 14 | FM 1:1 | FM | Two-operator FM at a 1:1 ratio: the modulation index rises across the table, adding bright sidebands. Electric-piano to harsh digital. |
-| 15 | FM 1:2 | FM | FM with the modulator an octave above the carrier. Odd-harmonic sidebands: hollow, clarinet-like to glassy. |
-| 16 | FM 1:3 | FM | FM at 1:3. Bright, bell-ish and slightly hollow, with a distinctive twelfth-based character. |
-| 17 | FM 1:5 Bell | FM | FM at 1:5. Metallic, bell and mallet-like partials that get more complex as the index rises. |
-| 18 | Fibonacci Bell | FM | Partials on the Fibonacci numbers (1, 2, 3, 5, 8, 13...) with more in-between energy as Frame rises. Metallic and bell-like. |
-| 19 | Additive Build | Digital | Harmonics are added one by one: Frame 1 is a sine, and each step adds the next partial (up to about 32). |
-| 20 | Comb Phaser | Digital | A saw with moving notches in its spectrum, like a phaser or flanger frozen into the wave. |
-| 21 | Sine Fold | Digital | A sine through a wavefolder, folding harder across the table. Rich, buzzy, West-Coast-style. |
-| 22 | Sine Drive | Digital | A sine driven into saturation: it squares up smoothly into a full, thick square-ish wave. |
-| 23 | Steps | Digital | A sine quantised to fewer and fewer levels: smooth to gritty to chunky digital stair-steps (bit-crush). |
-| 24 | Phase Warp | Digital | Casio-style phase distortion of a sine: from pure to a bright pulse-like resonance. |
-| 25 | Glass Harmonics | Digital | A sparse, random-looking set of harmonics that fills in across the table. Icy, bell-like to dense and shimmering. |
-| 26 | Noise Morph | Digital | Random spectra that morph smoothly between four different anchors. Organic, unpredictable, a different timbre every few frames. |
-| 27 | Spectral Peak | Digital | A single resonant peak that climbs through the harmonics, like a very sharp filter sweep. Squelchy and vocal. |
+| 7 | Blended Waves | Analog | Classic synth waves blended into one another: saws, squares and in-betweens, ordered dark to bright. |
+| 8 | C604 Chip | Analog | Waves from a hardware sampler's oscillator bank: tight, characterful classic-synth shapes. |
+| 9 | Hand Drawn | Analog | Hand-drawn waveforms: irregular, unmistakably human shapes with unusual harmonics. |
+| 10 | Overtone Series | Analog | Cycles built from overtone stacks: bell- and organ-like partial structures, soft to bright. |
+| 11 | Sine Harmonics | Analog | Sines with added harmonics: simple, clean timbres that build up in richness. |
+| 12 | Pluck Position | Organic | String-like: a saw with the notches of a string plucked at a changing point, from the middle (hollow) to the bridge (bright). |
+| 13 | Brass Swell | Organic | Mellow, dark tone that gets steadily brighter - the way brass opens up as it gets louder. |
+| 14 | Clarinet Reed | Organic | Strong odd harmonics with a resonant bump that rises across the table. Woody and reedy. |
+| 15 | Mallet | Organic | Marimba and vibraphone-style partials (1 : 4 : 9) that bloom across the table. Warm, wooden and tuned. |
+| 16 | Acoustic Guitar | Organic | Recorded acoustic-guitar cycles, from a soft body to a bright pick attack. |
+| 17 | Alto Sax | Organic | Recorded alto-saxophone cycles: warm and breathy to bright and buzzy. |
+| 18 | Bird Song | Organic | Bird-call cycles: whistly, chirpy and strange. Use sparingly for organic sparkle. |
+| 19 | Cello | Organic | Recorded cello cycles from a dark, woody bow to a bright, rasping one. |
+| 20 | Clarinet | Organic | Recorded clarinet cycles: hollow, odd-harmonic woodwind tones from mellow to reedy. |
+| 21 | Electric Guitar | Organic | Recorded electric-guitar cycles: clean to bitey, with the pickup's character. |
+| 22 | Flute | Organic | Recorded flute cycles, dark and breathy to bright and edgy. Natural, airy and slightly imperfect. |
+| 23 | Oboe | Organic | Recorded oboe cycles: nasal, vocal reed tones, soft to piercing. |
+| 24 | Theremin | Organic | Recorded theremin cycles: pure, eerie sine-like tones to richer ones. |
+| 25 | Violin | Organic | Recorded violin cycles, soft and sweet through to bright and scratchy. |
+| 26 | Organ Drawbars | Keys | Drawbar-style registrations: from a pure flute through full organ to a bright, reedy chord of partials. |
+| 27 | Clavinet | Keys | Recorded clavinet cycles: funky, twangy and percussive, soft to biting. |
+| 28 | Electric Piano | Keys | Recorded electric-piano cycles (Rhodes / Wurlitzer family): warm bell tones to bright bark. |
+| 29 | Grand Piano | Keys | Recorded piano cycles from a soft, round tone to a bright, struck one. |
+| 30 | Tonewheel Organ | Keys | Recorded electric-organ cycles: pure flute registrations through to full, bright drawbar sounds. |
+| 31 | Bass Weight | Bass | A sine growing a second and third harmonic with a shifted phase. A solid, full bass tone that stays clean. |
+| 32 | Digital Bass | Bass | Digital bass cycles: clean subs to gritty, harmonically rich bass waves. |
+| 33 | Electric Bass | Bass | Recorded electric-bass cycles: round and deep to bright and growling. |
+| 34 | Vowel Sweep | Vocal | Formant peaks stepping through the vowels A, E, I, O, U. Vocal and choir-like; formants are fixed in harmonic number, so they follow the note. |
+| 35 | Human Voice | Vocal | Recorded human-voice cycles ordered dark to bright: Frame moves from rounded, 'oo'-like colours toward open, bright vowels. |
+| 36 | FM 1:1 | FM | Two-operator FM at a 1:1 ratio: the modulation index rises across the table, adding bright sidebands. Electric-piano to harsh digital. |
+| 37 | FM 1:2 | FM | FM with the modulator an octave above the carrier. Odd-harmonic sidebands: hollow, clarinet-like to glassy. |
+| 38 | FM 1:3 | FM | FM at 1:3. Bright, bell-ish and slightly hollow, with a distinctive twelfth-based character. |
+| 39 | FM 1:5 Bell | FM | FM at 1:5. Metallic, bell and mallet-like partials that get more complex as the index rises. |
+| 40 | Fibonacci Bell | FM | Partials on the Fibonacci numbers (1, 2, 3, 5, 8, 13...) with more in-between energy as Frame rises. Metallic and bell-like. |
+| 41 | FM Synth Bank | FM | Recorded FM-synthesizer cycles: glassy, metallic and electric-piano-like, dark to bright. |
+| 42 | Additive Build | Digital | Harmonics are added one by one: Frame 1 is a sine, and each step adds the next partial (up to about 32). |
+| 43 | Comb Phaser | Digital | A saw with moving notches in its spectrum, like a phaser or flanger frozen into the wave. |
+| 44 | Sine Fold | Digital | A sine through a wavefolder, folding harder across the table. Rich, buzzy, West-Coast-style. |
+| 45 | Sine Drive | Digital | A sine driven into saturation: it squares up smoothly into a full, thick square-ish wave. |
+| 46 | Steps | Digital | A sine quantised to fewer and fewer levels: smooth to gritty to chunky digital stair-steps (bit-crush). |
+| 47 | Phase Warp | Digital | Casio-style phase distortion of a sine: from pure to a bright pulse-like resonance. |
+| 48 | Glass Harmonics | Digital | A sparse, random-looking set of harmonics that fills in across the table. Icy, bell-like to dense and shimmering. |
+| 49 | Noise Morph | Digital | Random spectra that morph smoothly between four different anchors. Organic, unpredictable, a different timbre every few frames. |
+| 50 | Spectral Peak | Digital | A single resonant peak that climbs through the harmonics, like a very sharp filter sweep. Squelchy and vocal. |
+| 51 | Chip Oscillators | Digital | Waves from classic oscillator chips: gritty, lo-fi and full of aliasing character. |
+| 52 | Distorted | Digital | Overdriven and folded waveforms: aggressive, buzzy and harmonically dense. |
+| 53 | Granular Grit | Digital | Granular-textured cycles: rough, crackly and unstable. Good for movement and noise. |
+| 54 | Linear Ramps | Digital | Piecewise-linear shapes: ramps, steps and corners with a clean, geometric sound. |
+| 55 | Pluck Algorithm | Digital | Waves produced by plucked-string algorithms: sharp, string-like attacks. |
+| 56 | Raw Cuts | Digital | Raw, unprocessed cycles from assorted sources: rough around the edges. |
+| 57 | Snippets | Digital | Tiny cuts from larger recordings: unpredictable, instrument-ish and strange. |
+| 58 | Video Game | Digital | Video-game console waves: pulse, noise-like and quirky arcade tones. |
 
 User slots: `User 1` ... `User 8` hold the first 8 `.json` / `.wav` files found in the user wavetable folder (see WAVETABLES.md).
 

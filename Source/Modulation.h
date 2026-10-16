@@ -12,7 +12,7 @@
 
 namespace ember::mod
 {
-    inline constexpr int numEnvs = 3, numMacros = 4, numSlots = 12, oscCount = 3;
+    inline constexpr int numEnvs = 3, numMacros = 4, numSlots = 16, oscCount = 3;
 
     // Source indices (0 = none). The matrix stores these as choice indices.
     inline constexpr int srcNone = 0, srcLfo = 1, srcEnv = 4, srcMacro = 7, srcChaos = 11, numChaos = ChaosEngine::numOutputs,

@@ -25,7 +25,7 @@ EmberlineProcessor::EmberlineProcessor()
 
     presetLibrary.scanFactory();
     presetLibrary.scanUser();
-    loadPresetByName ("Warm Keys");   // a musical starting point instead of a bare saw
+    loadPresetByName ("Honeyed Keys");   // a musical starting point instead of a bare saw
 }
 
 void EmberlineProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)

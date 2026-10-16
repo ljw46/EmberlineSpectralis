@@ -16,7 +16,7 @@ The same format is used for the factory library, for user presets, and for prese
 
 ```json
 {
-    "name": "Warm Pad",
+    "name": "Amber Hour",
     "category": "Pad",
     "description": "One or two sentences: what it sounds like and when to use it.",
     "tags": ["pad", "warm", "melodic house"],
@@ -45,7 +45,7 @@ Strict JSON: no comments, no trailing commas. Only `name` and `category` are req
 | `description`, `tags` | free text, for humans and search. |
 | `macro_names` | labels for Macro 1-4 under the knobs (use `"-"` for an unused macro). |
 | `parameters` | **only the values that differ from the defaults**. Everything not listed resets to its default - a preset never inherits from the previous sound. |
-| `modulation` | up to **12** routes, applied in order. |
+| `modulation` | up to **16** routes, applied in order. |
 | `lfo_shapes` | optional; LFO 1/2/3 default to sine / triangle / random steps. |
 
 ### Parameter values
@@ -66,7 +66,9 @@ clamped or skipped) and the rest of the preset still loads. `EmberlineTools chec
 { "source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.3, "curve": 0.0, "bipolar": false }
 ```
 
-* `source`: `LFO 1-3`, `ENV 1-3`, `Macro 1-4`, `Chaos X`, `Chaos Y`, `Chaos Z`, `Perlin`, `S&H`
+* `source`: `LFO 1-3`, `ENV 1-3`, `Macro 1-4`, `Chaos X`, `Chaos Y`, `Chaos Z`, `Perlin`, `S&H`, plus performance sources `Velocity`, `Key Track`, `Mod Wheel`, `Aftertouch`, `Random`.
+  Only global sources (LFO, Macro, Chaos, Mod Wheel, Aftertouch) can drive the FX destinations (reverb/delay/chorus/distortion amounts).
+  LFO shapes can be step patterns (`lfo_shapes`), handy for tempo-locked gating and pumping; `pitch_bend_range` sets the wheel range.
 * `destination`: the label (`Filt1 Cutoff`, `Osc2 Frame`, `Osc1 Pan`, ...) or the parameter id (`filt1_cutoff`) - full list in `parameters.md`
 * `depth` (-1..1): how far the source moves the destination, **as a fraction of the destination's whole range**
   (in the same skewed 0-1 scale the knob uses).
@@ -178,7 +180,7 @@ T=build/EmberlineTools_artefacts/Release/EmberlineTools
 $T check Presets/Factory                       # validate + measure peak / loudness, report warnings
 $T check Presets/Factory --fix-levels          # ...and write a level-matched master_volume into each file
 $T check Presets/Factory --wav previews/       # ...and export a WAV preview of every preset to audition
-$T render "Presets/Factory/Pad - Warm Pad.json" warm.wav
+$T render "Presets/Factory/Pad - Amber Hour.json" amber.wav
 $T selftest                                     # engine + preset regression checks
 $T dump-params docs                             # regenerate parameters.md / parameters.json
 ```
@@ -200,7 +202,7 @@ Give the model `docs/parameters.md` and this file, then something like:
 > 3. List only parameters that differ from their defaults. Use real units. Do not set `master_volume`.
 > 4. Pick `category` from: Bass, Pluck, Lead, Pad, Keys, Chord, Arp, Organic, Texture, FX.
 > 5. Write a one-to-two sentence `description`, 3-6 `tags`, and four `macro_names`.
-> 6. Use at most 12 modulation routes. Compute filter-cutoff depths with `n(f) = ((f-20)/19980)^0.25`.
+> 6. Use at most 16 modulation routes. Compute filter-cutoff depths with `n(f) = ((f-20)/19980)^0.25`.
 > 7. Make the amp envelope (ENV 1) and filter movement fit the sound's role (see the sound-design guide).
 > 8. Keep Macros at 0; route Macros 1-4 to useful performance targets.
 
