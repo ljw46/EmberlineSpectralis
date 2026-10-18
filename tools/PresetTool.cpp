@@ -134,7 +134,7 @@ namespace
                << " `.json` / `.wav` files found in the user wavetable folder (see WAVETABLES.md).\n\n"
                << "## Functions available in wavetable expressions (name/number of arguments)\n\n";
             wt << Expression::functionNames().joinIntoString (", ") << "\n";
-            dir.getChildFile ("wavetables.md").replaceWithText (wt, false, false, "\n");
+            dir.getChildFile ("wavetable-list.md").replaceWithText (wt, false, false, "\n");
         }
 
         dir.getChildFile ("parameters.json").replaceWithText (juce::JSON::toString (juce::var (root), false, 4), false, false, "\n");

@@ -136,7 +136,7 @@ the filters) -> amp **ENV 1** -> FX chain -> master volume. ENV 1 is the amp env
 A note ends when ENV 1 finishes - sustain 0 gives a pluck that dies after the decay.
 
 **Wavetable (`oscN_table`) and position (`oscN_frame`, 0..1):** `oscN_table` picks one of the wavetables (by name - see
-[`wavetables.md`](wavetables.md); `Classic Morph` is the default) and `oscN_frame` moves through its 16 frames. What Frame
+[`wavetable-list.md`](wavetable-list.md); `Classic Morph` is the default) and `oscN_frame` moves through its 16 frames. What Frame
 does depends on the table: in `Classic Morph` 0 = sine, 0.25 = triangle, 0.5 = saw, 0.75 = square, 1.0 = reedy; in `Vowel Sweep`
 it glides A-E-I-O-U; in `FM 1:1` it raises the modulation index; in `Pulse Width` it narrows the pulse; and so on. Modulate
 `Frame` (LFO / envelope / macro / chaos) for the classic wavetable movement. Choose the table for the *character* first,

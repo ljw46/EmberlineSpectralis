@@ -6,7 +6,7 @@ wavetables are **plain JSON text** that people and LLMs can read, write and edit
 anything to add one.
 
 * Factory wavetables: `Wavetables/Factory/<Name>.json` (embedded into the plugin when it is built).
-  The list, with descriptions, is in [`wavetables.md`](wavetables.md) (generated from the code).
+  The list, with descriptions, is in [`wavetable-list.md`](wavetable-list.md) (generated from the code).
 * **User wavetables:** put `.json` or `.wav` files in
   * Windows: `%APPDATA%\Emberline\Spectralis\Wavetables\`
   * Linux: `~/.config/Emberline/Spectralis/Wavetables/`
@@ -132,7 +132,7 @@ Errors are specific: e.g. `amplitude: unknown name 'x' (available here: h, t, fr
 
 ## Prompt template for generating wavetables with an LLM
 
-Give the model this file and, for ideas, `wavetables.md`, then something like:
+Give the model this file and, for ideas, `wavetable-list.md`, then something like:
 
 > You design wavetables for **Emberline Spectralis**. Create a wavetable for: **"<describe the timbre and how it should
 > change from the first frame to the last>"**.
