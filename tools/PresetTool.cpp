@@ -1143,6 +1143,12 @@ void wavetableSelftest (EmberlineProcessor& proc)
     expect (std::abs (eval ("1/h", { "h" }, { 4.0 }) - 0.25) < 1e-9, "variables");
     expect (std::abs (eval ("fm(1,1,0)", {}, {}) - 1.0) < 1e-9 && std::abs (eval ("fm(3,1,0)", {}, {})) < 1e-9, "fm(): index 0 is a pure sine");
     expect (std::abs (eval ("odd(3)+even(4)+fib(13)+prime(7)", {}, {}) - 4.0) < 1e-9, "odd / even / fib / prime helpers");
+    // reference values from a trusted library (the function is self-implemented: libc++ on macOS has no std::cyl_bessel_j)
+    expect (std::abs (eval ("bessel(0,1)", {}, {}) - 0.7651976865579666) < 1e-12 && std::abs (eval ("bessel(1,1)", {}, {}) - 0.4400505857449335) < 1e-12
+                && std::abs (eval ("bessel(2,5)", {}, {}) - 0.04656511627775222) < 1e-12 && std::abs (eval ("bessel(10,10)", {}, {}) - 0.2074861066333589) < 1e-12,
+            "bessel(n, x) matches reference values");
+    expect (std::abs (eval ("bessel(1,-1)+bessel(1,1)", {}, {})) < 1e-12 && std::abs (eval ("bessel(-1,1)+bessel(1,1)", {}, {})) < 1e-12
+                && std::abs (eval ("bessel(2,-1)-bessel(2,1)", {}, {})) < 1e-12, "bessel(n, x) symmetry for negative n and x");
     {
         juce::String err;
         eval ("sin(", {}, {}, &err);       expect (err.isNotEmpty(), "syntax error reported: " + err);

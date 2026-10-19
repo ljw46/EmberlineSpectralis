@@ -24,12 +24,29 @@ namespace ember
 
         bool isInteger (double v) { return std::abs (v - std::round (v)) < 1.0e-9; }
 
+        // J_n(x) for integer n >= 0, x >= 0, from J_n(x) = 1/(2 pi) * integral of cos(n t - x sin t) over a full period.
+        // The integrand is periodic and analytic, so the trapezoid rule converges exponentially: with more points than
+        // |x| + n (plus a margin) the error is far below double precision. libc++ (macOS) has no std::cyl_bessel_j, and
+        // using one routine everywhere keeps the factory wavetables identical on every platform.
+        double besselJPositive (int n, double x)
+        {
+            const int points = (int) std::ceil (x + (double) n + 32.0 + 10.0 * std::cbrt (x));
+            const double step = 2.0 * 3.14159265358979323846 / (double) points;
+            double sum = 0.0;
+            for (int i = 0; i < points; ++i)
+            {
+                const double t = step * (double) i;
+                sum += std::cos ((double) n * t - x * std::sin (t));
+            }
+            return sum / (double) points;
+        }
+
         double besselJ (double order, double x)
         {
             if (! isInteger (order) || std::abs (order) > 200.0 || std::abs (x) > 1000.0)
                 return 0.0;
             const int n = (int) std::round (order);
-            const double j = std::cyl_bessel_j ((double) std::abs (n), std::abs (x));
+            const double j = besselJPositive (std::abs (n), std::abs (x));
             double v = (n < 0 && (n & 1)) ? -j : j;
             return x < 0.0 && (std::abs (n) & 1) ? -v : v;
         }

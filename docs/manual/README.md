@@ -17,4 +17,4 @@ and the odd stutter-y lead. You don't need to know synth theory to get going. If
 10. [Troubleshooting](10-troubleshooting.md) - when something's not right
 11. [Knob reference](reference.md) - every control, its range and default
 
-_Version: 0.1.0 pre-beta.0 pre-beta.0 pre-beta.0 pre-beta.0 pre-beta. Things may move around a bit before 1.0._
+_Version: 0.1.0 pre-beta. Things may move around a bit before 1.0._

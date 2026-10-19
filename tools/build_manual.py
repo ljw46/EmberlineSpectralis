@@ -27,7 +27,7 @@ version = "v" + number + (" " + label if label else "")
 # keep the human-readable README line in step
 readme_path = os.path.join(MAN, "README.md")
 readme = open(readme_path).read()
-readme2 = re.sub(r"_Version: [^.]*\.\d+[^.]*\.", f"_Version: {version[1:]}.", readme)
+readme2 = re.sub(r"_Version: .*?(?=\. Things may move)", f"_Version: {version[1:]}", readme)   # idempotent: only the text before ". Things may move"
 if readme2 != readme:
     open(readme_path, "w").write(readme2)
 
