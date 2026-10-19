@@ -1,0 +1,28 @@
+EMBERLINE SPECTRALIS - Mac install
+==================================
+
+This folder contains two things:
+
+  Emberline Spectralis.vst3   the plugin, for your DAW (Reaper, Ableton, Logic's VST3 hosts...)
+  Emberline Spectralis.app    the Standalone app: double-click it to play without a DAW
+
+PLUGIN (VST3)
+  1. Copy "Emberline Spectralis.vst3" into:
+         /Library/Audio/Plug-Ins/VST3
+     (or ~/Library/Audio/Plug-Ins/VST3 for just your user).
+  2. Open your DAW and rescan plugins. It appears as "Emberline Spectralis", an instrument.
+
+STANDALONE
+  Drag "Emberline Spectralis.app" into your Applications folder and open it.
+
+"Can't be opened because the developer cannot be verified"?
+  The beta isn't signed or notarised yet, so macOS blocks it the first time. Either:
+    - Right-click (or Control-click) the file and choose Open, then click Open again, or
+    - open Terminal and run this on the file you installed (change the path if needed):
+        xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/VST3/Emberline Spectralis.vst3"
+        xattr -dr com.apple.quarantine "/Applications/Emberline Spectralis.app"
+
+Works on Apple Silicon and Intel Macs (macOS 11 or later).
+
+Manual: click the ? button next to the preset bar inside the plugin.
+Licence: see LICENSE (code) and LICENSE-CONTENT.md (presets and wavetables).

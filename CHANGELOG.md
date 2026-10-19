@@ -13,5 +13,5 @@ Versions follow `MAJOR.MINOR.PATCH`. The number lives in one place: `project(...
 * **Mono and Legato** voice modes and **Glide** (portamento), plus 4 presets: Tidal Slide and Moon Drop (bass), Sunrise Slide (lead), Unalived Rat (pluck).
 * The manual is built into the plugin: the **?** button next to the preset bar opens it in your browser (offline). The ? menu and a small header line also link to buy-me-a-coffee.
 * Preset author and link, shown in the header (click to open); export / import of preset files.
-* 156 factory presets, 30+ factory wavetables, WAV wavetable import.
+* 160 factory presets, 30+ factory wavetables, WAV wavetable import.
 * Version shown in the UI; presets and saved sessions record their version / schema.

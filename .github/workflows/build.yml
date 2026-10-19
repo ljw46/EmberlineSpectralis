@@ -55,10 +55,8 @@ jobs:
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --config Release --target EmberlineSpectralis_Standalone EmberlineSpectralis_VST3
-      # Plugin validator (hosts-style load, parameter, state and audio tests). Reports problems without
-      # blocking the build for now: remove continue-on-error once it is known to run cleanly here.
+      # Plugin validator (host-style load, parameter, state and audio tests); a failure fails the build.
       - name: pluginval
-        continue-on-error: true
         shell: pwsh
         run: |
           Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_Windows.zip -OutFile pluginval.zip
@@ -68,9 +66,13 @@ jobs:
         shell: pwsh
         run: |
           $a = "build/EmberlineSpectralis_artefacts/Release"
-          New-Item -ItemType Directory -Force dist | Out-Null
-          Compress-Archive -Path "$a/VST3/Emberline Spectralis.vst3" -DestinationPath dist/EmberlineSpectralis-windows-vst3.zip
-          Compress-Archive -Path "$a/Standalone/Emberline Spectralis.exe" -DestinationPath dist/EmberlineSpectralis-windows-standalone.zip
+          $stage = "stage/Emberline Spectralis"
+          New-Item -ItemType Directory -Force $stage, dist | Out-Null
+          Copy-Item -Recurse "$a/VST3/Emberline Spectralis.vst3" $stage
+          Copy-Item "$a/Standalone/Emberline Spectralis.exe" $stage
+          Copy-Item docs/install-windows.txt "$stage/INSTALL.txt"
+          Copy-Item LICENSE, LICENSE-CONTENT.md $stage
+          Compress-Archive -Path $stage -DestinationPath dist/EmberlineSpectralis-windows.zip
       - uses: actions/upload-artifact@v4
         with:
           name: windows
@@ -87,7 +89,6 @@ jobs:
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
           cmake --build build --target EmberlineSpectralis_Standalone EmberlineSpectralis_VST3
       - name: pluginval
-        continue-on-error: true
         run: |
           curl -fsSL -o pluginval.zip https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_macOS.zip
           unzip -q pluginval.zip -d pluginval
@@ -95,9 +96,13 @@ jobs:
       - name: Package
         run: |
           a=build/EmberlineSpectralis_artefacts/Release
-          mkdir -p dist
-          ditto -c -k --keepParent "$a/VST3/Emberline Spectralis.vst3" dist/EmberlineSpectralis-macos-vst3.zip
-          ditto -c -k --keepParent "$a/Standalone/Emberline Spectralis.app" dist/EmberlineSpectralis-macos-standalone.zip
+          stage="stage/Emberline Spectralis"
+          mkdir -p "$stage" dist
+          cp -R "$a/VST3/Emberline Spectralis.vst3" "$stage/"
+          cp -R "$a/Standalone/Emberline Spectralis.app" "$stage/"
+          cp docs/install-macos.txt "$stage/INSTALL.txt"
+          cp LICENSE LICENSE-CONTENT.md "$stage/"
+          ditto -c -k --keepParent "$stage" dist/EmberlineSpectralis-macos.zip
       - uses: actions/upload-artifact@v4
         with:
           name: macos
@@ -112,6 +117,7 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4   # first: checkout cleans the workspace, so it must come before the download
       - uses: actions/download-artifact@v4
         with:
           path: dist
@@ -120,5 +126,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # download instructions + this version's section of the changelog
+          cp .github/release-notes.md notes.md
+          printf '## What is in this version\n\n' >> notes.md
+          awk '/^## /{n++} n==1 && !/^## /' CHANGELOG.md >> notes.md
           gh release create "${{ github.ref_name }}" dist/*.zip --repo "${{ github.repository }}" \
-            --title "${{ github.ref_name }}" --generate-notes --prerelease
+            --title "${{ github.ref_name }}" --notes-file notes.md --prerelease

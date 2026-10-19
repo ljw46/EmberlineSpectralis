@@ -1,0 +1,22 @@
+EMBERLINE SPECTRALIS - Windows install
+======================================
+
+This folder contains two things:
+
+  Emberline Spectralis.vst3   the plugin, for your DAW (Reaper, Ableton, FL Studio...)
+  Emberline Spectralis.exe    the Standalone app: double-click it to play without a DAW
+
+PLUGIN (VST3)
+  1. Copy the whole "Emberline Spectralis.vst3" item into:
+         C:\Program Files\Common Files\VST3
+     (Windows may ask for permission - click Continue.)
+  2. Open your DAW and rescan plugins. It appears as "Emberline Spectralis", an instrument.
+
+STANDALONE
+  Double-click "Emberline Spectralis.exe". Pick your audio device when asked.
+
+"Windows protected your PC" warning?
+  The beta isn't code-signed yet, so Windows is cautious. Click "More info", then "Run anyway".
+
+Manual: click the ? button next to the preset bar inside the plugin.
+Licence: see LICENSE (code) and LICENSE-CONTENT.md (presets and wavetables).

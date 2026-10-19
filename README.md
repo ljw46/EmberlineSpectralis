@@ -5,6 +5,11 @@ A wavetable synthesizer for melodic, deep and organic house. VST3 plugin and Sta
 
 > **Status:** pre-beta. Expect changes, and please report anything odd.
 
+## Download
+
+Grab the latest build from the [**Releases page**](https://github.com/ljw46/EmberlineSpectralis/releases/latest): download the zip for your
+computer (**Windows** or **Mac**), unzip it and follow `INSTALL.txt` inside. It's a free beta, so please tell me what breaks.
+
 ## Features
 
 * Three wavetable oscillators with mipmapped playback, warp modes, stereo unison, sub and noise
@@ -16,7 +21,7 @@ A wavetable synthesizer for melodic, deep and organic house. VST3 plugin and Sta
 * Poly / Mono / Legato voice modes with glide (portamento)
 * FX chain, tempo sync and an optional **arpeggiator with stutter** (speeds up and slows down, built for
   melodic / deep-house rolls)
-* 156 factory presets and 30+ factory wavetables, all plain text-editable JSON; import your own WAV
+* 160 factory presets and 30+ factory wavetables, all plain text-editable JSON; import your own WAV
   single-cycle wavetables
 
 ## Build
