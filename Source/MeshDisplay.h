@@ -5,40 +5,22 @@
 #include "WavetableOscillator.h"
 #include <array>
 
-// Isometric wireframe of a wavetable (phase across, frame in depth, waveform as height). The OSC 1/2/3
-// buttons choose whose table is shown; every active oscillator using that table traces its current -
-// modulated and warped - frame across the mesh in its own colour, so frame morphing is visible live.
+// Isometric wireframe of one oscillator's wavetable (phase across, frame in depth, waveform as height),
+// shown inside that oscillator's panel. The oscillator's current - modulated and warped - frame is traced
+// across the mesh in its colour, so frame morphing and warp are visible live.
 class WavetableMesh final : public juce::Component, private juce::Timer
 {
 public:
-    explicit WavetableMesh (EmberlineProcessor& p) : proc (p)
+    WavetableMesh (EmberlineProcessor& p, int oscIndex, juce::Colour colour) : proc (p), selectedOsc (oscIndex), traceColour (colour)
     {
-        for (int o = 0; o < ember::params::numOscs; ++o)
-        {
-            on[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "on"));
-            level[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "level"));
-            tableParam[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "table"));
-            warpMode[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "warp_mode"));
-            warpAmt[(size_t) o] = proc.apvts.getRawParameterValue (ember::params::osc (o, "warp_amt"));
-
-            auto& b = oscButtons[(size_t) o];
-            b.setButtonText ("OSC " + juce::String (o + 1));
-            b.setClickingTogglesState (true);
-            b.setRadioGroupId (77);
-            b.setColour (juce::TextButton::buttonOnColourId, oscColour (o).withAlpha (0.25f));
-            b.setColour (juce::TextButton::textColourOnId, oscColour (o));
-            b.onClick = [this, o] { selectedOsc = o; repaint(); };
-            addAndMakeVisible (b);
-        }
-        oscButtons[0].setToggleState (true, juce::dontSendNotification);
-        startTimerHz (30);
-    }
-
-    void resized() override
-    {
-        auto r = getLocalBounds().reduced (8, 6).removeFromTop (22);
-        for (auto& b : oscButtons)
-            b.setBounds (r.removeFromLeft (58).reduced (2, 0));
+        const auto o = (size_t) oscIndex;
+        on = proc.apvts.getRawParameterValue (ember::params::osc (oscIndex, "on"));
+        level = proc.apvts.getRawParameterValue (ember::params::osc (oscIndex, "level"));
+        tableParam = proc.apvts.getRawParameterValue (ember::params::osc (oscIndex, "table"));
+        warpMode = proc.apvts.getRawParameterValue (ember::params::osc (oscIndex, "warp_mode"));
+        warpAmt = proc.apvts.getRawParameterValue (ember::params::osc (oscIndex, "warp_amt"));
+        juce::ignoreUnused (o);
+        startTimerHz (24);
     }
 
     void paint (juce::Graphics& g) override
@@ -48,11 +30,11 @@ public:
         g.fillRoundedRectangle (area, 6.0f);
 
         auto& bank = proc.getWavetableBank();
-        const int table = juce::jlimit (0, bank.numSlots() - 1, juce::roundToInt (tableParam[(size_t) selectedOsc]->load()));
+        const int table = juce::jlimit (0, bank.numSlots() - 1, juce::roundToInt (tableParam->load()));
         ensureStack (table);
 
-        const auto plot = area.reduced (14.0f, 10.0f).withTrimmedTop (22.0f);
-        const float amp = plot.getHeight() * 0.13f;
+        const auto plot = area.reduced (8.0f, 5.0f);
+        const float amp = plot.getHeight() * 0.2f;
 
         // projection: phase runs right and slightly down, depth runs right and up
         const float uW = plot.getWidth() * 0.66f, uDrop = plot.getHeight() * 0.22f;
@@ -118,11 +100,9 @@ public:
         }
 
         // live frame trace for every active oscillator that plays this table
-        for (int o = 0; o < ember::params::numOscs; ++o)
+        const int o = selectedOsc;
+        if (on->load() > 0.5f && level->load() > 0.001f)
         {
-            if (on[(size_t) o]->load() < 0.5f || level[(size_t) o]->load() < 0.001f
-                || juce::roundToInt (tableParam[(size_t) o]->load()) != table)
-                continue;
 
             const auto d = (size_t) ember::mod::oscDest (o, 0);
             const float z = juce::jlimit (0.0f, 1.0f, proc.modPtrs.destBase[d]->load() + proc.modCtx.liveOffset[d].load (std::memory_order_relaxed));
@@ -132,8 +112,8 @@ public:
 
             // the trace is one cycle of what the oscillator really plays, i.e. with its warp applied
             const auto wd = (size_t) ember::mod::oscDest (o, 1);
-            const float amount = juce::jlimit (0.0f, 1.0f, warpAmt[(size_t) o]->load() + proc.modCtx.liveOffset[wd].load (std::memory_order_relaxed));
-            const auto mode = (ember::WarpMode) juce::roundToInt (warpMode[(size_t) o]->load());
+            const float amount = juce::jlimit (0.0f, 1.0f, warpAmt->load() + proc.modCtx.liveOffset[wd].load (std::memory_order_relaxed));
+            const auto mode = (ember::WarpMode) juce::roundToInt (warpMode->load());
 
             juce::Path trace;
             for (int i = 0; i <= points; ++i)
@@ -148,29 +128,17 @@ public:
                 const auto pt = project ((float) i / (float) points, z, h);
                 if (i == 0) trace.startNewSubPath (pt); else trace.lineTo (pt);
             }
-            g.setColour (oscColour (o).withAlpha (0.28f));
+            g.setColour (traceColour.withAlpha (0.28f));
             g.strokePath (trace, juce::PathStrokeType (6.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-            g.setColour (oscColour (o).brighter (0.4f));
+            g.setColour (traceColour.brighter (0.4f));
             g.strokePath (trace, juce::PathStrokeType (1.8f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
         }
-
-        // table name
-        const auto names = bank.displayNames();
-        g.setColour (juce::Colours::white.withAlpha (0.75f));
-        g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
-        g.drawText (names[table], getLocalBounds().reduced (10, 6).removeFromTop (22), juce::Justification::centredRight);
     }
 
 private:
     static constexpr int frames = ember::WavetableBank::numFrames;
     static constexpr int points = 64;
-    static constexpr int rows = 26;
-
-    static juce::Colour oscColour (int o)
-    {
-        const juce::Colour c[] { ember::colours::cyan, ember::colours::coral, ember::colours::purple };
-        return c[o];
-    }
+    static constexpr int rows = 16;
 
     // the surface samples the chosen table; refreshed when the table (or its user file) changes
     void ensureStack (int table)
@@ -190,9 +158,9 @@ private:
     void timerCallback() override { repaint(); }
 
     EmberlineProcessor& proc;
-    int selectedOsc = 0;
+    int selectedOsc;
+    juce::Colour traceColour;
     juce::String stackKey;
-    std::array<juce::TextButton, ember::params::numOscs> oscButtons;
-    std::array<std::atomic<float>*, ember::params::numOscs> on {}, level {}, tableParam {}, warpMode {}, warpAmt {};
+    std::atomic<float> *on = nullptr, *level = nullptr, *tableParam = nullptr, *warpMode = nullptr, *warpAmt = nullptr;
     std::array<std::array<float, (size_t) points>, (size_t) frames> stack {};
 };

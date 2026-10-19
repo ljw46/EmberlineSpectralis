@@ -5,7 +5,7 @@
     "tags": ["pad", "additive", "evolving", "flanger", "breathing"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.9,
+        "master_volume": 1.8,
         "osc1_on": true,
         "osc1_table": "Additive Build",
         "osc1_frame": 0.2,

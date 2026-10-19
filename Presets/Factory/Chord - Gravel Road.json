@@ -5,7 +5,7 @@
     "tags": ["stab", "gritty", "distorted", "hard", "techno"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.4,
+        "master_volume": -0.2,
         "osc1_on": true,
         "osc1_table": "Distorted",
         "osc1_frame": 0.35,

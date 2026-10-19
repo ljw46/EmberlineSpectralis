@@ -5,7 +5,7 @@
     "tags": ["lead", "pluck lead", "fm", "bright", "playful"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.5,
+        "master_volume": 1.8,
         "osc1_on": true,
         "osc1_table": "FM 1:3",
         "osc1_frame": 0.25,

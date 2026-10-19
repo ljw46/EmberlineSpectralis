@@ -5,7 +5,7 @@
     "tags": ["arp", "chiptune", "lofi", "gritty", "retro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.1,
+        "master_volume": 3.8,
         "osc1_on": true,
         "osc1_table": "Video Game",
         "osc1_frame": 0.5,

@@ -5,7 +5,7 @@
     "tags": ["fx", "impact", "hit", "boom", "reverb"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.9,
+        "master_volume": -1.1,
         "noise_level": 0.8,
         "noise_type": "White",
         "osc1_on": true,

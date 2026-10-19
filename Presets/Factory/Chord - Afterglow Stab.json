@@ -5,7 +5,7 @@
     "tags": ["stab", "brass", "voice", "wide", "cinematic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.1,
+        "master_volume": 4.3,
         "osc1_on": true,
         "osc1_table": "Brass Swell",
         "osc1_frame": 0.15,

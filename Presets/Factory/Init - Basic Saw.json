@@ -4,7 +4,7 @@
     "description": "Plain single saw through a lowpass. The blank canvas - every parameter at its default.",
     "tags": ["init", "basic"],
     "parameters": {
-        "master_volume": -3.4
+        "master_volume": -2.1
     },
     "modulation": []
 }

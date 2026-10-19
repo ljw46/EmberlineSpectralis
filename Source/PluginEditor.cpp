@@ -5,12 +5,12 @@ using namespace ember;
 
 namespace
 {
-    constexpr int headerH = 54, chipH = 28, topH = 336, tabH = 34;
-    const char* tabNames[] { "[ VISUALIZERS ]", "[ LFOs & CHAOS ]", "[ MOD MATRIX ]", "[ FX CHAIN ]", "[ FILTERS & ENVS ]" };
+    constexpr int headerH = 54, chipH = 28, topH = 416, tabH = 34;
+    const char* tabNames[] { "[ VISUALIZERS ]", "[ LFOs & CHAOS ]", "[ MOD MATRIX ]", "[ FX CHAIN ]", "[ FILTERS & ENVS ]", "[ ARP & STUTTER ]" };
 }
 
 EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), phoenix (ember::loadPhoenix()), mesh (p), presetBar (p), matrix (p)
+    : AudioProcessorEditor (&p), processor (p), phoenix (ember::loadPhoenix()), filterDisplay (p), presetBar (p), matrix (p)
 {
     setLookAndFeel (&lnf);
 
@@ -34,6 +34,7 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
     pages[matrixPage].addAndMakeVisible (matrix);
     buildFx();
     buildFiltersAndEnvs();
+    buildArp();
 
     // mod sources: always visible so any knob can be a drop target from any tab
     const auto srcNames = mod::sourceNames();
@@ -48,7 +49,7 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
 
     tabs[visualizers].setToggleState (true, juce::dontSendNotification);
     showPage (visualizers);
-    setSize (1040, 874);
+    setSize (1040, 954);
     timerCallback();   // macro labels etc. are right from the first frame
     startTimerHz (10);
 }
@@ -81,6 +82,7 @@ void EmberlineEditor::buildTop()
         panel.setCentredTitle (true);
         panel.setTinted (true);
         panel.addOnSwitch (params::osc (o, "on"));
+        panel.setWidget (meshes.emplace_back (processor, o, accents[o]), 80);   // this oscillator's own wavetable view
         panel.addRowWidget (tableSelectors.emplace_back (processor, o, accents[o]));   // wavetable selector (thumbnails, import, rescan)
         panel.setComboWeights ({ 0.64f, 0.36f });
         panel.addCombo (params::osc (o, "warp_mode"), params::warpModeNames);                  // combo 1: warp
@@ -95,6 +97,8 @@ void EmberlineEditor::buildTop()
     masterPanel->addKnob (params::filt (0, "cutoff"), "CUTOFF");
     masterPanel->addKnob (params::filt (0, "res"), "RESONANCE");
     masterPanel->addKnob (params::masterVolume, "VOLUME");
+    masterPanel->addKnob ("analog_drift", "DRIFT");
+    masterPanel->addKnob ("analog_warmth", "WARMTH");
 
     macroPanel = &addPanel (*this, "PERFORMANCE MACROS", colours::amber, 2);
     macroPanel->setCentredTitle (true);
@@ -106,7 +110,7 @@ void EmberlineEditor::buildTop()
 void EmberlineEditor::buildVisualizers()
 {
     auto& page = pages[visualizers];
-    page.addAndMakeVisible (mesh);
+    page.addAndMakeVisible (filterDisplay);
     for (int i = 0; i < mod::numLfos; ++i)
         page.addAndMakeVisible (lfoPreviews.emplace_back (processor, i, i == 0 ? colours::cyan : i == 1 ? colours::coral : colours::purple));
     page.addAndMakeVisible (chaosDisplays.emplace_back (processor));
@@ -129,7 +133,7 @@ void EmberlineEditor::layoutVisualizers()
     right.removeFromTop (8);
     chaosDisplays[0].setBounds (right);
 
-    mesh.setBounds (b);
+    filterDisplay.setBounds (b);
 }
 
 // ---------------------------------------------------------------- tab 2
@@ -286,6 +290,8 @@ void EmberlineEditor::buildFiltersAndEnvs()
     {
         auto& panel = addPanel (page, "FILTER " + juce::String (f + 1), f == 0 ? colours::cyan : colours::purple);
         panel.addCombo (params::filt (f, "type"), params::filterTypeNames);
+        panel.addCombo (params::filt (f, "slope"), params::filterSlopeNames);
+        panel.setComboWeights ({ 0.62f, 0.38f });
         panel.addKnob (params::filt (f, "cutoff"), "CUTOFF");
         panel.addKnob (params::filt (f, "res"), "RESONANCE");
         panel.addKnob (params::filt (f, "drive"), "DRIVE");
@@ -326,6 +332,50 @@ void EmberlineEditor::layoutFiltersAndEnvs()
     const int w = b.getWidth() / (int) envPanels.size();
     for (auto* p : envPanels)
         p->setBounds (b.removeFromLeft (w).reduced (3, 0));
+}
+
+// ---------------------------------------------------------------- tab 6
+void EmberlineEditor::buildArp()
+{
+    auto& page = pages[arpPage];
+
+    arpPanel = &addPanel (page, "ARPEGGIATOR", colours::cyan, 6);
+    arpPanel->setWidget (patternDisplays.emplace_back (processor), 90);
+    arpPanel->addOnSwitch ("arp_on");
+    arpPanel->addCombo ("arp_mode", arp::modeNames);
+    arpPanel->addCombo ("arp_rate", arp::rateNames);
+    arpPanel->addCombo ("arp_pattern", arp::patternNames);
+    arpPanel->addToggle ("arp_latch", "LATCH");
+    arpPanel->setComboWeights ({ 1.2f, 0.7f, 1.0f, 0.7f });
+    arpPanel->addKnob ("arp_octaves", "OCTAVES");
+    arpPanel->addKnob ("arp_gate", "GATE");
+    arpPanel->addKnob ("arp_swing", "SWING");
+    arpPanel->addKnob ("arp_accent", "ACCENT");
+    arpPanel->addKnob ("arp_humanize", "HUMANISE");
+
+    stutterPanel = &addPanel (page, "STUTTER  (RATE RAMP)", colours::coral, 1);
+    stutterPanel->setWidget (stutterDisplays.emplace_back (processor), 90);
+    stutterPanel->addCombo ("arp_stutter_mode", arp::stutterModeNames);
+    stutterPanel->addCombo ("arp_stutter_length", arp::stutterLenNames);
+    stutterPanel->addCombo ("arp_stutter_curve", arp::stutterCurveNames);
+    stutterPanel->addKnob ("arp_stutter_depth", "DEPTH");
+
+    arpHint.text = ("HOW IT WORKS   Switch the arp on and hold a chord: the keys you hold are played one at a time in the chosen MODE and RATE, locked to the host tempo.\n"
+                     "PATTERN gates the steps (tall = accent, dot = rest). LATCH keeps the notes after you let go.   "
+                     "STUTTER ramps the rate over a 1/2 - 4 bar cycle - SPEED UP builds into a roll (1/8 > 1/16 > 1/32...), SLOW DOWN falls away like a bouncing ball, "
+                     "UP & DOWN does both. STEPPED snaps to musical subdivisions; SMOOTH glides. Automate the mode or depth for fills.");
+    page.addAndMakeVisible (arpHint);
+}
+
+void EmberlineEditor::layoutArp()
+{
+    auto b = pages[arpPage].getLocalBounds().reduced (10);
+    const int bottom = b.getBottom();
+    b.setHeight (juce::jmin (b.getHeight() - 80, 262));
+    arpPanel->setBounds (b.removeFromLeft (b.getWidth() * 64 / 100));
+    b.removeFromLeft (8);
+    stutterPanel->setBounds (b);
+    arpHint.setBounds (pages[arpPage].getLocalBounds().reduced (14, 0).withTop (stutterPanel->getBottom() + 8).withBottom (bottom));
 }
 
 void EmberlineEditor::timerCallback()
@@ -421,7 +471,7 @@ void EmberlineEditor::resized()
         p->setBounds (top.removeFromLeft (oscW).reduced (3, 0));
 
     auto right = top.reduced (3, 0);
-    masterPanel->setBounds (right.removeFromTop (124));
+    masterPanel->setBounds (right.removeFromTop (176));
     right.removeFromTop (6);
     macroPanel->setBounds (right);
 
@@ -429,7 +479,7 @@ void EmberlineEditor::resized()
 
     // tab bar
     auto tabRow = area.removeFromTop (tabH);
-    const int tabW = 178;
+    const int tabW = 160;
     tabRow = tabRow.withSizeKeepingCentre (tabW * numPages, tabH);
     for (auto& t : tabs)
         t.setBounds (tabRow.removeFromLeft (tabW).reduced (4, 1));
@@ -445,4 +495,5 @@ void EmberlineEditor::resized()
     matrix.setBounds (pages[matrixPage].getLocalBounds().reduced (10));
     layoutFx();
     layoutFiltersAndEnvs();
+    layoutArp();
 }

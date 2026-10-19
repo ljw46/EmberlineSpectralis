@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "Parameters.h"
+#include "Arp.h"
 #include "Chaos.h"
 #include "Fx.h"
 #include "LfoShape.h"
@@ -71,6 +72,8 @@ private:
     std::array<std::atomic<float>*, ember::mod::numLfos> lfoRate {}, lfoMode {}, lfoSync {};
 
     ember::ChaosEngine chaos;
+    ember::arp::Arpeggiator arpeggiator;
+    ember::arp::Ptrs arpPtrs;
     ember::fx::Chain fxChain;
     ember::fx::Ptrs fxPtrs {};
     ember::WavetableBank& bank = ember::WavetableBank::shared();   // one per process; shared by every instance and voice

@@ -5,7 +5,7 @@
     "tags": ["pad", "soft", "electric piano", "flute", "calm", "organic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.3,
+        "master_volume": -0.3,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.25,

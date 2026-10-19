@@ -5,7 +5,7 @@
     "tags": ["lead", "sync", "bright", "synced", "retro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.3,
+        "master_volume": 1.6,
         "osc1_on": true,
         "osc1_table": "Saw Sync",
         "osc1_frame": 0.3,

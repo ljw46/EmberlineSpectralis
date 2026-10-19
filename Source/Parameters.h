@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Arp.h"
 #include "Fx.h"
 #include "Modulation.h"
 #include "WavetableBank.h"
@@ -11,7 +12,8 @@ namespace ember::params
 {
     inline constexpr auto masterVolume = "master_volume";
 
-    inline const juce::StringArray filterTypeNames { "Off", "Lowpass", "Highpass", "Bandpass", "Formant" };
+    inline const juce::StringArray filterTypeNames { "Off", "Lowpass", "Highpass", "Bandpass", "Formant", "Notch", "Ladder" };
+    inline const juce::StringArray filterSlopeNames { "12 dB", "24 dB" };
     inline const juce::StringArray noiseTypeNames  { "White", "Pink", "Crackle" };
     inline const juce::StringArray subWaveNames    { "Sine", "Triangle" };
     inline const juce::StringArray subOctNames     { "-1 Oct", "-2 Oct" };
@@ -31,7 +33,7 @@ namespace ember::params
         std::atomic<float> *on, *level, *table, *frame, *warpMode, *warpAmt, *unison, *detune, *spread, *semi, *fine, *pan;
     };
 
-    struct FilterParamPtrs { std::atomic<float> *type, *cutoff, *res, *drive; };
+    struct FilterParamPtrs { std::atomic<float> *type, *cutoff, *res, *drive, *slope; };
 
     struct SynthParamPtrs
     {
@@ -39,6 +41,7 @@ namespace ember::params
         std::atomic<float> *subLevel, *subWave, *subOct, *noiseLevel, *noiseType;
         std::array<FilterParamPtrs, 2> filter;
         std::atomic<float>* routing;
+        std::atomic<float> *drift, *warmth;   // analogue character (per-voice drift, saturation + high-end softening)
         mod::ModPtrs mod;
     };
 
@@ -54,12 +57,12 @@ namespace ember::params
         auto get = [&] (const juce::String& id) { return apvts.getRawParameterValue (id); };
         auto filterPtrs = [&] (int i) -> FilterParamPtrs
         {
-            return { get (filt (i, "type")), get (filt (i, "cutoff")), get (filt (i, "res")), get (filt (i, "drive")) };
+            return { get (filt (i, "type")), get (filt (i, "cutoff")), get (filt (i, "res")), get (filt (i, "drive")), get (filt (i, "slope")) };
         };
 
         return { { lookupOsc (apvts, 0), lookupOsc (apvts, 1), lookupOsc (apvts, 2) },
                  get ("sub_level"), get ("sub_wave"), get ("sub_oct"), get ("noise_level"), get ("noise_type"),
-                 { filterPtrs (0), filterPtrs (1) }, get ("filt_routing"), mod::lookup (apvts) };
+                 { filterPtrs (0), filterPtrs (1) }, get ("filt_routing"), get ("analog_drift"), get ("analog_warmth"), mod::lookup (apvts) };
     }
 
     inline juce::AudioProcessorValueTreeState::ParameterLayout createLayout()
@@ -88,11 +91,14 @@ namespace ember::params
         level ("noise_level", "Noise Level");
         choice ("noise_type", "Noise Type", noiseTypeNames);
         choice ("filt_routing", "Filter Routing", routingNames);
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_drift", 1 }, "Analog Drift", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.25f));
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_warmth", 1 }, "Analog Warmth", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.3f));
 
         for (int i = 0; i < 2; ++i)
         {
             const auto n = "Filter " + String (i + 1) + " ";
             choice (filt (i, "type"), n + "Type", filterTypeNames, i == 0 ? 1 : 0);
+            choice (filt (i, "slope"), n + "Slope", filterSlopeNames);
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { filt (i, "cutoff"), 1 }, n + "Cutoff",
                 NormalisableRange<float> (20.0f, 20000.0f, 0.1f, 0.25f), i == 0 ? 8000.0f : 300.0f, Attr().withLabel ("Hz")));
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { filt (i, "res"), 1 }, n + "Resonance",
@@ -128,6 +134,7 @@ namespace ember::params
 
         mod::addParameters (p);
         fx::addParameters (p);
+        arp::addParameters (p);
 
         return { p.begin(), p.end() };
     }

@@ -5,7 +5,6 @@
     "tags": ["lead", "guitar", "cinematic", "warm", "overdrive"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -6.6,
         "osc1_on": true,
         "osc1_table": "Electric Guitar",
         "osc1_frame": 0.55,

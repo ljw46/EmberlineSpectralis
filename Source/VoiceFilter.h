@@ -6,11 +6,13 @@
 
 namespace ember
 {
-    enum class FilterType { off = 0, lowpass, highpass, bandpass, formant };
+    enum class FilterType { off = 0, lowpass, highpass, bandpass, formant, notch, ladder };
 
     // Zavalishin TPT state-variable filter (stereo) with tanh saturation on the input drive and in
     // the integrator state. Formant mode runs two normalised band-passes whose centres glide through
-    // vowels (A-E-I-O-U) as the cutoff moves from low to high.
+    // vowels (A-E-I-O-U) as the cutoff moves from low to high. `steep` cascades a second state-variable
+    // stage for a 24 dB/oct slope. Ladder is a 4-pole transistor-ladder style lowpass (24 dB/oct, tanh
+    // in the feedback path) whose resonance pulls the low end down and saturates the way a hardware filter does.
     class VoiceFilter
     {
     public:
@@ -22,13 +24,16 @@ namespace ember
             driveSm.reset (sr, 0.003);
         }
 
-        void reset() noexcept { for (auto& c : cores) c = {}; }
+        void reset() noexcept { for (auto& c : cores) c = {}; ladder = {}; }
 
         bool isActive() const noexcept { return type != FilterType::off; }
 
-        void setTargets (FilterType t, float cutoffHz, float resonance, float drive, bool snap)
+        void setTargets (FilterType t, bool steepSlope, float cutoffHz, float resonance, float drive, bool snap)
         {
+            if (t != type || steepSlope != steep)
+                for (auto& c : cores) { c.ic1 = {}; c.ic2 = {}; }
             type = t;
+            steep = steepSlope;
             if (snap)
             {
                 cutoffSm.setCurrentAndTargetValue (cutoffHz);
@@ -65,10 +70,23 @@ namespace ember
                 return;
             }
 
-            const int mode = type == FilterType::lowpass ? 0 : type == FilterType::highpass ? 2 : 1;
+            if (type == FilterType::ladder)
+            {
+                l = tickLadder (0, inL) * postGain;
+                r = tickLadder (1, inR) * postGain;
+                return;
+            }
+
+            const int mode = type == FilterType::lowpass ? 0 : type == FilterType::highpass ? 2 : type == FilterType::notch ? 3 : 1;
             const float makeup = mode == 1 ? bandpassMakeup : 1.0f;
-            l = tick (cores[0], 0, inL, mode) * postGain * makeup;
-            r = tick (cores[0], 1, inR, mode) * postGain * makeup;
+            float outL = tick (cores[0], 0, inL, mode), outR = tick (cores[0], 1, inR, mode);
+            if (steep)
+            {
+                outL = tick (cores[1], 0, outL, mode);
+                outR = tick (cores[1], 1, outR, mode);
+            }
+            l = outL * postGain * makeup;
+            r = outR * postGain * makeup;
         }
 
     private:
@@ -76,6 +94,12 @@ namespace ember
         {
             float g = 0, k = 1, a1 = 0, a2 = 0, a3 = 0;
             std::array<float, 2> ic1 {}, ic2 {};
+        };
+
+        struct Ladder
+        {
+            float G = 0, beta = 1, k = 0, invDen = 1;
+            std::array<std::array<float, 4>, 2> s {};
         };
 
         static constexpr int updateInterval = 8;
@@ -101,8 +125,25 @@ namespace ember
             {
                 case 0:  return v2;
                 case 1:  return c.k * v1;
+                case 3:  return v0 - c.k * v1;
                 default: return v0 - c.k * v1 - v2;
             }
+        }
+
+        float tickLadder (int ch, float x) noexcept
+        {
+            auto& st = ladder.s[(size_t) ch];
+            const float G = ladder.G;
+            const float S = (G * G * G * st[0] + G * G * st[1] + G * st[2] + st[3]) * ladder.beta;
+            float in = fastTanh ((x - ladder.k * S) * ladder.invDen);
+            for (auto& s : st)
+            {
+                const float v = (in - s) * G;
+                const float y = v + s;
+                s = y + v;
+                in = y;
+            }
+            return in;
         }
 
         static void setCore (Core& c, float hz, float k, double sr) noexcept
@@ -118,6 +159,17 @@ namespace ember
         {
             preGain = 1.0f + drive * 9.0f;
             postGain = 1.0f / std::sqrt (preGain);
+
+            if (type == FilterType::ladder)
+            {
+                const float g = std::tan (juce::MathConstants<float>::pi * juce::jlimit (20.0f, (float) (0.45 * sampleRate), cutoffHz) / (float) sampleRate);
+                ladder.G = g / (1.0f + g);
+                ladder.beta = 1.0f / (1.0f + g);
+                ladder.k = res * 3.7f;
+                ladder.invDen = 1.0f / (1.0f + ladder.k * ladder.G * ladder.G * ladder.G * ladder.G);
+                postGain *= 1.0f + 0.4f * ladder.k;   // resonance thins the passband; give some of it back
+                return;
+            }
 
             if (type == FilterType::formant)
             {
@@ -135,11 +187,15 @@ namespace ember
             }
 
             setCore (cores[0], cutoffHz, 2.0f - 1.96f * res, sampleRate);
+            if (steep)
+                setCore (cores[1], cutoffHz, 1.2f, sampleRate);
         }
 
         double sampleRate = 44100.0;
         FilterType type = FilterType::off;
         std::array<Core, 2> cores;
+        Ladder ladder;
+        bool steep = false;
         juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> cutoffSm { 1000.0f };
         juce::SmoothedValue<float> resSm, driveSm;
         float preGain = 1.0f, postGain = 1.0f;

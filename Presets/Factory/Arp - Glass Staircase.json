@@ -5,7 +5,7 @@
     "tags": ["arp", "fm", "glass", "bright", "triplet"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.4,
+        "master_volume": 3.4,
         "osc1_on": true,
         "osc1_table": "FM 1:3",
         "osc1_frame": 0.3,

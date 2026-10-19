@@ -5,7 +5,7 @@
     "tags": ["fx", "sweep", "filter", "synced", "dark"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -3.7,
+        "master_volume": -3.1,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.4,

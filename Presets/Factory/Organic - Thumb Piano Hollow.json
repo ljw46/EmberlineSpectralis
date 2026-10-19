@@ -5,7 +5,7 @@
     "tags": ["organic", "kalimba", "thumb piano", "hollow", "wooden"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -3.5,
+        "master_volume": -1.3,
         "osc1_on": true,
         "osc1_table": "Clarinet",
         "osc1_frame": 0.25,

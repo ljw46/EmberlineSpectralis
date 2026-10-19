@@ -5,7 +5,7 @@
     "tags": ["arp", "flute", "mallet", "organic house", "breathy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.1,
+        "master_volume": 2.0,
         "osc1_on": true,
         "osc1_table": "Flute",
         "osc1_frame": 0.35,

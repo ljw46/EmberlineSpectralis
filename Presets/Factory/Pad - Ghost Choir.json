@@ -5,7 +5,7 @@
     "tags": ["pad", "choir", "voice", "eerie", "cinematic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.9,
+        "master_volume": 3.8,
         "osc1_on": true,
         "osc1_table": "Human Voice",
         "osc1_frame": 0.5,

@@ -5,7 +5,7 @@
     "tags": ["fx", "riser", "tonal", "spectral", "build"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 5.3,
+        "master_volume": 6.0,
         "noise_level": 0.5,
         "noise_type": "Pink",
         "osc1_on": true,

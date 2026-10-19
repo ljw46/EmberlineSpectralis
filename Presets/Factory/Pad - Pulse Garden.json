@@ -5,7 +5,7 @@
     "tags": ["pad", "sidechain", "rhythmic", "pump", "synced", "house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.5,
+        "master_volume": 1.7,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.5,

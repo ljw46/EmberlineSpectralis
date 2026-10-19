@@ -208,3 +208,18 @@ Give the model `docs/parameters.md` and this file, then something like:
 
 Save the result as `Presets/Factory/<Category> - <Name>.json` (or into the user preset folder), run
 `EmberlineTools check ... --fix-levels`, and listen.
+
+## Filters, analogue character and the built-in arpeggiator
+
+* **Filters:** `filtN_type` is `Off`, `Lowpass`, `Highpass`, `Bandpass`, `Formant`, `Notch` or `Ladder` (a 4-pole, 24 dB/oct transistor-ladder
+  lowpass with saturating resonance). `filtN_slope` is `12 dB` (default) or `24 dB` and applies to Lowpass / Highpass / Bandpass / Notch.
+* **Analogue character** (global, applies to every voice; set both to 0 for the cold digital sound):
+  `analog_drift` (0-1, default 0.25) = slow per-voice pitch wander plus a per-note tolerance;
+  `analog_warmth` (0-1, default 0.3) = soft even-harmonic saturation and a gentle high-end roll-off.
+* **Arpeggiator** (`arp_on` is false by default, so a preset only arpeggiates if it asks to):
+  `arp_mode` (`Up`, `Down`, `Up/Down`, `Down/Up`, `Up/Down Repeat`, `Converge`, `Diverge`, `Random`, `As Played`, `Chord`),
+  `arp_rate` (`1/32` ... `1/4`, with `T` triplet and `.` dotted values), `arp_octaves` (1-4), `arp_gate` (0.05-1), `arp_swing` (0-0.5),
+  `arp_pattern` (`All Steps`, `Rolling`, `Offbeat`, `Syncopated`, `Gallop`, `Skip`, `Push`, `Half Time`, `Dotted`), `arp_accent`, `arp_humanize`, `arp_latch`.
+* **Stutter** (the arp rate ramps over one cycle, locked to the transport):
+  `arp_stutter_mode` (`Off`, `Speed Up`, `Slow Down`, `Up & Down`), `arp_stutter_depth` (0-1; 1 = three doublings of the rate),
+  `arp_stutter_length` (`1/2 bar`, `1 bar`, `2 bars`, `4 bars`), `arp_stutter_curve` (`Smooth` glides, `Stepped` snaps to doublings).

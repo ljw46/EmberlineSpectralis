@@ -68,6 +68,22 @@
       "default": "Serial"
     },
     {
+      "id": "analog_drift",
+      "name": "Analog Drift",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.25
+    },
+    {
+      "id": "analog_warmth",
+      "name": "Analog Warmth",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.3
+    },
+    {
       "id": "filt1_type",
       "name": "Filter 1 Type",
       "type": "choice",
@@ -76,9 +92,21 @@
         "Lowpass",
         "Highpass",
         "Bandpass",
-        "Formant"
+        "Formant",
+        "Notch",
+        "Ladder"
       ],
       "default": "Lowpass"
+    },
+    {
+      "id": "filt1_slope",
+      "name": "Filter 1 Slope",
+      "type": "choice",
+      "choices": [
+        "12 dB",
+        "24 dB"
+      ],
+      "default": "12 dB"
     },
     {
       "id": "filt1_cutoff",
@@ -115,9 +143,21 @@
         "Lowpass",
         "Highpass",
         "Bandpass",
-        "Formant"
+        "Formant",
+        "Notch",
+        "Ladder"
       ],
       "default": "Off"
+    },
+    {
+      "id": "filt2_slope",
+      "name": "Filter 2 Slope",
+      "type": "choice",
+      "choices": [
+        "12 dB",
+        "24 dB"
+      ],
+      "default": "12 dB"
     },
     {
       "id": "filt2_cutoff",
@@ -2804,6 +2844,152 @@
         "Reverb"
       ],
       "default": "Reverb"
+    },
+    {
+      "id": "arp_on",
+      "name": "Arp On",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "arp_mode",
+      "name": "Arp Mode",
+      "type": "choice",
+      "choices": [
+        "Up",
+        "Down",
+        "Up/Down",
+        "Down/Up",
+        "Up/Down Repeat",
+        "Converge",
+        "Diverge",
+        "Random",
+        "As Played",
+        "Chord"
+      ],
+      "default": "Up"
+    },
+    {
+      "id": "arp_rate",
+      "name": "Arp Rate",
+      "type": "choice",
+      "choices": [
+        "1/32",
+        "1/16T",
+        "1/16",
+        "1/16.",
+        "1/8T",
+        "1/8",
+        "1/8.",
+        "1/4T",
+        "1/4"
+      ],
+      "default": "1/16"
+    },
+    {
+      "id": "arp_octaves",
+      "name": "Arp Octaves",
+      "type": "int",
+      "min": 1.0,
+      "max": 4.0,
+      "default": 1.0
+    },
+    {
+      "id": "arp_gate",
+      "name": "Arp Gate",
+      "type": "float",
+      "min": 0.05,
+      "max": 1.0,
+      "default": 0.6
+    },
+    {
+      "id": "arp_swing",
+      "name": "Arp Swing",
+      "type": "float",
+      "min": 0.0,
+      "max": 0.5,
+      "default": 0.0
+    },
+    {
+      "id": "arp_pattern",
+      "name": "Arp Pattern",
+      "type": "choice",
+      "choices": [
+        "All Steps",
+        "Rolling",
+        "Offbeat",
+        "Syncopated",
+        "Gallop",
+        "Skip",
+        "Push",
+        "Half Time",
+        "Dotted"
+      ],
+      "default": "All Steps"
+    },
+    {
+      "id": "arp_accent",
+      "name": "Arp Accent",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "arp_humanize",
+      "name": "Arp Humanise",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "id": "arp_latch",
+      "name": "Arp Latch",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "arp_stutter_mode",
+      "name": "Stutter Mode",
+      "type": "choice",
+      "choices": [
+        "Off",
+        "Speed Up",
+        "Slow Down",
+        "Up & Down"
+      ],
+      "default": "Off"
+    },
+    {
+      "id": "arp_stutter_depth",
+      "name": "Stutter Depth",
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "id": "arp_stutter_length",
+      "name": "Stutter Length",
+      "type": "choice",
+      "choices": [
+        "1/2 bar",
+        "1 bar",
+        "2 bars",
+        "4 bars"
+      ],
+      "default": "1 bar"
+    },
+    {
+      "id": "arp_stutter_curve",
+      "name": "Stutter Curve",
+      "type": "choice",
+      "choices": [
+        "Smooth",
+        "Stepped"
+      ],
+      "default": "Smooth"
     }
   ],
   "modulation_sources": [

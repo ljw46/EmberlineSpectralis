@@ -5,7 +5,7 @@
     "tags": ["organic", "ocean", "noise", "wash", "ambient"],
     "macro_names": ["Brightness", "-", "Space", "Width"],
     "parameters": {
-        "master_volume": 3.4,
+        "master_volume": 3.6,
         "noise_level": 1.0,
         "noise_type": "Pink",
         "osc1_on": true,

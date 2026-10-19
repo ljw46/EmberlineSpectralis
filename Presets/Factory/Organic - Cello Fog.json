@@ -5,7 +5,7 @@
     "tags": ["organic", "cello", "bowed", "drone", "sombre"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -2.8,
+        "master_volume": -1.0,
         "osc1_on": true,
         "osc1_table": "Cello",
         "osc1_frame": 0.2,

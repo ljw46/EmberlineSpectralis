@@ -5,7 +5,7 @@
     "tags": ["organic", "fire", "crackle", "guitar", "cosy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.7,
+        "master_volume": 2.5,
         "noise_level": 0.8,
         "noise_type": "Crackle",
         "osc1_on": true,

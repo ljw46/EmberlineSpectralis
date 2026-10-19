@@ -11,6 +11,7 @@ EmberlineProcessor::EmberlineProcessor()
     const auto ptrs = ember::params::lookupAll (apvts);
     modPtrs = ptrs.mod;
     fxPtrs = ember::fx::lookup (apvts);
+    arpPtrs = ember::arp::lookup (apvts);
 
     for (size_t i = 0; i < lfoRate.size(); ++i)
     {
@@ -34,6 +35,7 @@ void EmberlineProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     synth.setCurrentPlaybackSampleRate (sampleRate);
     modCtx.blockPhase.fill (0.0);
     chaos.prepare (sampleRate);
+    arpeggiator.reset();
     fxChain.prepare (sampleRate, samplesPerBlock);
     setLatencySamples (fxChain.getLatency());
 
@@ -98,6 +100,8 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
         modCtx.trailZ[(size_t) head].store (chaos.displayZ(), std::memory_order_relaxed);
         modCtx.trailHead.store ((head + 1) % ember::mod::ModContext::trailSize, std::memory_order_relaxed);
     }
+
+    arpeggiator.process (midi, buffer.getNumSamples(), currentSampleRate, modCtx.bpm, modCtx.hostPpq, arpPtrs.read());
 
     synth.renderNextBlock (buffer, midi, 0, buffer.getNumSamples());
 

@@ -5,7 +5,7 @@
     "tags": ["organic", "wind", "reeds", "noise", "spooky"],
     "macro_names": ["Brightness", "-", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.8,
+        "master_volume": 2.4,
         "noise_level": 0.8,
         "noise_type": "White",
         "osc1_on": true,

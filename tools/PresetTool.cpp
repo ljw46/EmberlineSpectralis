@@ -10,6 +10,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Expression.h"
+#include "VoiceFilter.h"
 #include "WavetableBank.h"
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_audio_formats/juce_audio_formats.h>
@@ -529,6 +530,133 @@ namespace
             expect (r.ok && r.warnings.size() >= 4, "malformed preset loads with " + juce::String (r.warnings.size()) + " warnings instead of failing");
         }
 
+        std::printf ("filters\n");
+        {
+            // steady sine through a filter at `ratio` x its cutoff; returns the output / input level
+            auto gainAt = [] (ember::FilterType t, bool steep, float ratio, float res)
+            {
+                ember::VoiceFilter f;
+                f.prepare (44100.0);
+                const float fc = 1000.0f;
+                f.setTargets (t, steep, fc, res, 0.0f, true);
+                double in = 0.0, out = 0.0;
+                for (int i = 0; i < 44100; ++i)
+                {
+                    float l = 0.1f * std::sin (juce::MathConstants<float>::twoPi * fc * ratio * (float) i / 44100.0f), r = l;
+                    const float x = l;
+                    f.process (l, r);
+                    if (i > 4000) { in += (double) x * x; out += (double) l * l; }
+                }
+                return (float) std::sqrt (out / in);
+            };
+
+            const float lp12 = gainAt (ember::FilterType::lowpass, false, 4.0f, 0.1f);
+            const float lp24 = gainAt (ember::FilterType::lowpass, true, 4.0f, 0.1f);
+            const float ladder = gainAt (ember::FilterType::ladder, false, 4.0f, 0.1f);
+            expect (lp24 < lp12 * 0.2f && lp12 < 0.2f, "24 dB slope cuts far more than 12 dB two octaves up (" + juce::String (lp12, 3) + " vs " + juce::String (lp24, 4) + ")");
+            expect (ladder < lp12 * 0.3f, "ladder is a 24 dB/oct lowpass (" + juce::String (ladder, 4) + ")");
+            expect (gainAt (ember::FilterType::lowpass, false, 0.1f, 0.1f) > 0.9f, "lowpass passes frequencies well below the cutoff");
+            expect (gainAt (ember::FilterType::notch, false, 1.0f, 0.5f) < 0.2f && gainAt (ember::FilterType::notch, false, 0.2f, 0.5f) > 0.8f, "notch removes the cutoff frequency and keeps the rest");
+            expect (gainAt (ember::FilterType::ladder, false, 1.0f, 0.9f) > gainAt (ember::FilterType::ladder, false, 1.0f, 0.1f), "ladder resonance lifts the peak");
+        }
+
+        std::printf ("analogue character\n");
+        {
+            // warmth rounds off the top end: a bright saw loses level when warmth is raised
+            auto bright = [] (float warmth)
+            {
+                EmberlineProcessor p;
+                p.loadPresetByName ("Basic Saw");
+                setParam (p, "analog_warmth", warmth);
+                setParam (p, "analog_drift", 0.0f);
+                setParam (p, "osc1_level", 0.8f);
+                return render (p, "Basic Saw").rmsDb;
+            };
+            const float dry = bright (0.0f), warm = bright (1.0f);
+            expect (warm < dry - 1.0f && warm > dry - 18.0f, "warmth softens the sound without killing it (" + juce::String (dry, 1) + " -> " + juce::String (warm, 1) + " dB rms)");
+        }
+
+        std::printf ("arpeggiator\n");
+        {
+            struct Hit { double beat; int note; bool on; };
+
+            // plays `notes` held from beat 0 for `beats` beats at 120 BPM and returns every note event with its beat position
+            auto run = [] (arp::Settings st, std::initializer_list<int> notes, double beats)
+            {
+                arp::Arpeggiator a;
+                std::vector<Hit> hits;
+                const double sr = 44100.0, bpm = 120.0, bps = bpm / 60.0 / sr;
+                const int block = 512;
+                long pos = 0;
+                for (int b = 0; pos < beats / bps; ++b)
+                {
+                    juce::MidiBuffer midi;
+                    if (b == 0)
+                        for (int n : notes)
+                            midi.addEvent (juce::MidiMessage::noteOn (1, n, (juce::uint8) 100), 0);
+                    a.process (midi, block, sr, bpm, (double) pos * bps, st);
+                    for (const auto meta : midi)
+                    {
+                        const auto m = meta.getMessage();
+                        if (m.isNoteOnOrOff())
+                            hits.push_back ({ (double) (pos + meta.samplePosition) * bps, m.getNoteNumber(), m.isNoteOn() });
+                    }
+                    pos += block;
+                }
+                return hits;
+            };
+            auto ons = [] (const std::vector<Hit>& h, double until = 1.0e9) { std::vector<Hit> o; for (auto& x : h) if (x.on && x.beat < until - 1.0e-6) o.push_back (x); return o; };
+
+            arp::Settings st;
+            st.on = true;
+            auto up = ons (run (st, { 67, 60, 64 }, 4.0), 4.0);
+            expect (up.size() == 16 && up[0].note == 60 && up[1].note == 64 && up[2].note == 67 && up[3].note == 60, "up mode cycles the held notes low to high, 16 steps in 4 beats");
+            expect (std::abs (up[1].beat - up[0].beat - 0.25) < 0.01, "1/16 rate = 0.25 beat between steps");
+
+            auto all = run (st, { 60, 64, 67 }, 4.0);
+            int open = 0;
+            for (auto& h : all) open += h.on ? 1 : -1;
+            expect (open >= 0 && open <= 1, "every arp note-on gets a note-off (" + juce::String (open) + " still open)");
+
+            st.mode = 1;
+            expect (ons (run (st, { 60, 64, 67 }, 1.0))[0].note == 67, "down mode starts on the top note");
+            st.mode = 2;
+            auto ud = ons (run (st, { 60, 64, 67 }, 2.0));
+            expect (ud[3].note == 64 && ud[2].note == 67 && ud[4].note == 60, "up/down turns round without repeating the end notes");
+            st.mode = 9;
+            expect (ons (run (st, { 60, 64, 67 }, 1.0), 1.0).size() == 12, "chord mode plays every held note on each step");
+
+            st.mode = 0;
+            st.octaves = 2;
+            expect (ons (run (st, { 60, 64 }, 2.0))[2].note == 72, "two octaves extends the sequence upwards");
+            st.octaves = 1;
+
+            st.pattern = 2;   // offbeat
+            auto off = ons (run (st, { 60 }, 2.0));
+            expect (off.size() == 2 && std::abs (off[0].beat - 0.5) < 0.01, "offbeat pattern plays only the off-beat 8ths");
+            st.pattern = 0;
+
+            st.swing = 0.3f;
+            auto sw = ons (run (st, { 60 }, 2.0));
+            expect (sw.size() > 2 && sw[1].beat - sw[0].beat > 0.3 && sw[2].beat - sw[1].beat < 0.2, "swing lengthens every other step");
+            st.swing = 0.0f;
+
+            // stutter: the gaps between steps shrink while speeding up and grow while slowing down
+            st.stutterMode = 1;
+            st.stutterDepth = 1.0f;
+            st.stutterLen = 1;
+            auto fast = ons (run (st, { 60 }, 4.0));
+            expect (fast.size() > 20 && (fast[fast.size() - 1].beat - fast[fast.size() - 2].beat) < 0.5 * (fast[1].beat - fast[0].beat),
+                    "speed-up stutter ends at least twice as fast as it starts (" + juce::String ((int) fast.size()) + " steps in a bar)");
+            st.stutterMode = 2;
+            auto slow = ons (run (st, { 60 }, 4.0));
+            expect (slow[1].beat - slow[0].beat < 0.5 * (slow[slow.size() - 1].beat - slow[slow.size() - 2].beat), "slow-down stutter starts fast and relaxes");
+            st.stutterMode = 3;
+            
+            expect (arp::stutterFactor (3, 1.0f, false, 0.5f) > 7.9f && arp::stutterFactor (3, 1.0f, false, 0.0f) < 1.01f, "up & down peaks at the middle of the cycle");
+            expect (std::abs (arp::stutterFactor (1, 0.34f, true, 1.0f) - 2.0f) < 1.0e-4f, "stepped stutter snaps to doublings of the rate");
+        }
+
         std::printf ("default patch\n");
         {
             EmberlineProcessor fresh;
@@ -867,14 +995,14 @@ int snapshot (EmberlineProcessor& proc, const juce::File& dir, const juce::Strin
     }
 
     std::unique_ptr<juce::AudioProcessorEditor> editor (proc.createEditor());
-    const char* names[] { "1-visualizers", "2-lfos-chaos", "3-mod-matrix", "4-fx-chain", "5-filters-envs" };
+    const char* names[] { "1-visualizers", "2-lfos-chaos", "3-mod-matrix", "4-fx-chain", "5-filters-envs", "6-arp-stutter" };
 
-    for (int page = 0; page < 5; ++page)
+    for (int page = 0; page < 6; ++page)
     {
         int index = 0;
         for (auto* child : editor->getChildren())
             if (auto* button = dynamic_cast<juce::TextButton*> (child))
-                if (button->onClick != nullptr && index++ == page)   // the editor's direct TextButton children are the five tabs
+                if (button->onClick != nullptr && index++ == page)   // the editor's direct TextButton children are the six tabs
                     button->onClick();
 
         const auto image = editor->createComponentSnapshot (editor->getLocalBounds(), true, 1.0f);

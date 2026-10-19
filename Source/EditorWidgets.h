@@ -5,6 +5,150 @@
 #include <deque>
 #include <functional>
 
+// Popup with every modulation route on one destination: depth, curve, polarity and removal, without a trip
+// to the matrix page. Opens automatically when a source chip is dropped on a knob, and on right-click.
+class ModRouteEditor final : public juce::Component
+{
+public:
+    ModRouteEditor (EmberlineProcessor& p, int destIndex) : proc (p), dest (destIndex)
+    {
+        title.setFont (juce::FontOptions (12.0f, juce::Font::bold).withKerningFactor (0.06f));
+        title.setColour (juce::Label::textColourId, ember::colours::magenta);
+        addAndMakeVisible (title);
+        rebuild();
+    }
+
+    int numRoutes() const noexcept { return (int) rows.size(); }
+
+    void resized() override
+    {
+        auto r = getLocalBounds().reduced (10, 8);
+        title.setBounds (r.removeFromTop (18));
+        r.removeFromTop (4);
+        for (auto& row : rows)
+            row->setBounds (r.removeFromTop (rowH));
+    }
+
+    void paint (juce::Graphics& g) override { g.fillAll (juce::Colour (0xff0c111a)); }
+
+private:
+    static constexpr int rowH = 58, width = 380;
+
+    class Row final : public juce::Component
+    {
+    public:
+        Row (EmberlineProcessor& p, int slotIndex, std::function<void()> onRemove)
+        {
+            using A = juce::AudioProcessorValueTreeState;
+            const int src = juce::roundToInt (p.modPtrs.slots[(size_t) slotIndex].src->load());
+            colour = ember::colours::sourceColour (src);
+
+            name.setText (ember::mod::sourceNames()[src], juce::dontSendNotification);
+            name.setColour (juce::Label::textColourId, colour);
+            name.setFont (juce::FontOptions (12.0f, juce::Font::bold));
+            for (auto* sl : { &depth, &curve })
+            {
+                sl->setSliderStyle (juce::Slider::LinearHorizontal);
+                sl->setTextBoxStyle (juce::Slider::TextBoxRight, false, 48, 18);
+                sl->setColour (juce::Slider::trackColourId, colour);
+                sl->setColour (juce::Slider::thumbColourId, colour);
+                sl->setColour (juce::Slider::textBoxOutlineColourId, colour.withAlpha (0.4f));
+            }
+            depthLabel.setText ("DEPTH", juce::dontSendNotification);
+            curveLabel.setText ("CURVE", juce::dontSendNotification);
+            for (auto* l : { &depthLabel, &curveLabel })
+            {
+                l->setFont (juce::FontOptions (9.5f, juce::Font::bold).withKerningFactor (0.06f));
+                l->setColour (juce::Label::textColourId, juce::Colours::white.withAlpha (0.55f));
+            }
+            bipolar.setButtonText ("BIPOLAR");
+            bipolar.setColour (juce::ToggleButton::tickColourId, colour);
+            bipolar.setColour (juce::ToggleButton::textColourId, juce::Colours::white.withAlpha (0.75f));
+            remove.setButtonText ("REMOVE");
+            remove.onClick = [&p, slotIndex, onRemove]
+            {
+                for (const char* what : { "src", "dst" })
+                    if (auto* prm = p.apvts.getParameter (ember::mod::slotId (slotIndex, what)))
+                        prm->setValueNotifyingHost (0.0f);
+                onRemove();
+            };
+
+            for (auto* c : std::initializer_list<juce::Component*> { &name, &depth, &curve, &depthLabel, &curveLabel, &bipolar, &remove })
+                addAndMakeVisible (c);
+
+            depthAtt = std::make_unique<A::SliderAttachment> (p.apvts, ember::mod::slotId (slotIndex, "depth"), depth);
+            curveAtt = std::make_unique<A::SliderAttachment> (p.apvts, ember::mod::slotId (slotIndex, "curve"), curve);
+            bipolarAtt = std::make_unique<A::ButtonAttachment> (p.apvts, ember::mod::slotId (slotIndex, "bipolar"), bipolar);
+        }
+
+        void paint (juce::Graphics& g) override
+        {
+            g.setColour (colour.withAlpha (0.08f));
+            g.fillRoundedRectangle (getLocalBounds().toFloat().reduced (0.0f, 1.0f), 5.0f);
+            g.setColour (colour);
+            g.fillRoundedRectangle (0.0f, 4.0f, 3.0f, (float) getHeight() - 8.0f, 1.5f);
+        }
+
+        void resized() override
+        {
+            auto r = getLocalBounds().reduced (8, 4);
+            auto top = r.removeFromTop (24);
+            name.setBounds (top.removeFromLeft (70));
+            remove.setBounds (top.removeFromRight (64).reduced (0, 1));
+            depthLabel.setBounds (top.removeFromLeft (42));
+            depth.setBounds (top);
+            auto bottom = r;
+            bipolar.setBounds (bottom.removeFromLeft (70));
+            bottom.removeFromLeft (4);
+            curveLabel.setBounds (bottom.removeFromLeft (42));
+            curve.setBounds (bottom);
+        }
+
+    private:
+        juce::Colour colour;
+        juce::Label name, depthLabel, curveLabel;
+        juce::Slider depth, curve;
+        juce::ToggleButton bipolar;
+        juce::TextButton remove;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> depthAtt, curveAtt;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bipolarAtt;
+    };
+
+    void rebuild()
+    {
+        rows.clear();
+        for (int s = 0; s < ember::mod::numSlots; ++s)
+        {
+            const auto& slot = proc.modPtrs.slots[(size_t) s];
+            if (juce::roundToInt (slot.src->load()) > 0 && juce::roundToInt (slot.dst->load()) - 1 == dest)
+            {
+                rows.push_back (std::make_unique<Row> (proc, s, [safe = juce::Component::SafePointer<ModRouteEditor> (this)]
+                {
+                    juce::MessageManager::callAsync ([safe] { if (safe != nullptr) safe->refreshAfterRemove(); });
+                }));
+                addAndMakeVisible (*rows.back());
+            }
+        }
+
+        title.setText ("MODULATING  " + ember::mod::destinations()[(size_t) dest].label.toUpperCase(), juce::dontSendNotification);
+        setSize (width, 18 + 8 + 8 + 4 + juce::jmax (1, (int) rows.size()) * rowH);
+    }
+
+    void refreshAfterRemove()
+    {
+        rebuild();
+        if (rows.empty())
+            if (auto* box = findParentComponentOfClass<juce::CallOutBox>())
+                box->dismiss();
+        resized();
+    }
+
+    EmberlineProcessor& proc;
+    int dest;
+    juce::Label title;
+    std::vector<std::unique_ptr<Row>> rows;
+};
+
 // Rotary knob that accepts modulation drops and paints the routed modulation ranges around itself.
 class ModKnob final : public juce::Slider,
                       public juce::DragAndDropTarget,
@@ -31,6 +175,31 @@ public:
         hover = false;
         proc.assignModulation (d.description.toString().fromFirstOccurrenceOf (":", false, false).getIntValue(), dest);
         repaint();
+        juce::MessageManager::callAsync ([safe = juce::Component::SafePointer<ModKnob> (this)] { if (safe != nullptr) safe->openRouteEditor(); });
+    }
+
+    // right-click a modulated knob to tune its routes in place
+    void mouseDown (const juce::MouseEvent& e) override
+    {
+        if (e.mods.isPopupMenu() && dest >= 0)
+        {
+            openRouteEditor();
+            return;
+        }
+        juce::Slider::mouseDown (e);
+    }
+
+    void openRouteEditor()
+    {
+        auto* top = getTopLevelComponent();
+        if (dest < 0 || top == nullptr)
+            return;
+
+        auto editor = std::make_unique<ModRouteEditor> (proc, dest);
+        if (editor->numRoutes() == 0)
+            return;
+
+        juce::CallOutBox::launchAsynchronously (std::move (editor), top->getLocalArea (this, getLocalBounds()), top);
     }
 
     void paintOverChildren (juce::Graphics& g) override
@@ -222,6 +391,18 @@ public:
         c.attachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.apvts, paramId, c.box);
     }
 
+    // an on/off button in the combo row
+    void addToggle (const juce::String& paramId, const juce::String& text)
+    {
+        auto& t = toggles.emplace_back();
+        t.button.setButtonText (text);
+        t.button.setColour (juce::ToggleButton::tickColourId, accent);
+        t.button.setColour (juce::ToggleButton::textColourId, juce::Colours::white.withAlpha (0.8f));
+        rowItems.push_back (&t.button);
+        addAndMakeVisible (t.button);
+        t.attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (proc.apvts, paramId, t.button);
+    }
+
     void addOnSwitch (const juce::String& paramId)
     {
         onButton.setButtonText ("ON");
@@ -377,6 +558,12 @@ private:
         bool compact = false;
     };
 
+    struct Toggle
+    {
+        juce::ToggleButton button;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachment;
+    };
+
     struct Combo
     {
         juce::ComboBox box;
@@ -392,6 +579,7 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> onAttachment;
     bool hasOn = false;
     std::deque<Combo> combos;
+    std::deque<Toggle> toggles;
     std::deque<Knob> knobs;
     juce::Component* widget = nullptr;
     std::vector<float> comboWeights;

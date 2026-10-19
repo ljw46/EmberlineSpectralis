@@ -5,7 +5,7 @@
     "tags": ["keys", "rhodes", "electric piano", "late night", "tremolo"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.0,
+        "master_volume": 0.2,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.3,

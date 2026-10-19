@@ -5,7 +5,7 @@
     "tags": ["lead", "supersaw", "anthemic", "euphoric", "wide"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.7,
+        "master_volume": 1.0,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.6,

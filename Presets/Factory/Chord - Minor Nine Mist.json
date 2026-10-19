@@ -5,7 +5,7 @@
     "tags": ["stab", "jazz", "soft", "piano", "minor", "misty"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.5,
+        "master_volume": 3.8,
         "osc1_on": true,
         "osc1_table": "Grand Piano",
         "osc1_frame": 0.35,

@@ -1,6 +1,8 @@
 #pragma once
 
+#include "ArpDisplays.h"
 #include "EditorWidgets.h"
+#include "FilterDisplay.h"
 #include "LfoEditor.h"
 #include "MatrixPanel.h"
 #include "MeshDisplay.h"
@@ -20,7 +22,7 @@ public:
     void resized() override;
 
 private:
-    enum Page { visualizers, lfosAndChaos, matrixPage, fxChain, filtersAndEnvs, numPages };
+    enum Page { visualizers, lfosAndChaos, matrixPage, fxChain, filtersAndEnvs, arpPage, numPages };
 
     Panel& addPanel (juce::Component& parent, const juce::String& title, juce::Colour accent, int columns = 0);
     void showPage (int page);
@@ -29,11 +31,13 @@ private:
     void buildLfosAndChaos();
     void buildFx();
     void buildFiltersAndEnvs();
+    void buildArp();
 
     void layoutVisualizers();
     void layoutLfosAndChaos();
     void layoutFx();
     void layoutFiltersAndEnvs();
+    void layoutArp();
     std::array<int, ember::fx::numEffects> readFxOrder() const;
     void fxDrag (Panel&, const juce::MouseEvent&);
     void timerCallback() override;
@@ -58,7 +62,11 @@ private:
     std::deque<ChaosDisplay> chaosDisplays;
     std::deque<TableSelector> tableSelectors;
     std::deque<EnvDisplay> envDisplays;
-    WavetableMesh mesh;
+    std::deque<ArpPatternDisplay> patternDisplays;
+    std::deque<StutterDisplay> stutterDisplays;
+    Panel *arpPanel = nullptr, *stutterPanel = nullptr;
+    std::deque<WavetableMesh> meshes;
+    FilterDisplay filterDisplay;
     PresetBar presetBar;
     MatrixPage matrix;
 
@@ -68,6 +76,18 @@ private:
     std::array<std::atomic<float>*, ember::fx::numEffects> fxSlot {};
     std::array<int, ember::fx::numEffects> lastFxOrder { 0, 1, 2, 3 };
     juce::Label fxHint;
+
+    struct HintText final : juce::Component
+    {
+        juce::String text;
+        void paint (juce::Graphics& g) override
+        {
+            g.setColour (juce::Colours::white.withAlpha (0.5f));
+            g.setFont (juce::FontOptions (11.5f));
+            g.drawFittedText (text, getLocalBounds(), juce::Justification::topLeft, 8, 1.0f);
+        }
+    } arpHint;
+
     juce::String shownMacroNames { "?" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EmberlineEditor)

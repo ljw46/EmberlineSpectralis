@@ -5,7 +5,7 @@
     "tags": ["stab", "dub", "techno", "echo", "deep"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.2,
+        "master_volume": 0.9,
         "osc1_on": true,
         "osc1_table": "Pluck Position",
         "osc1_frame": 0.4,

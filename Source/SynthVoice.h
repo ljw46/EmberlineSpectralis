@@ -57,6 +57,11 @@ namespace ember
             velocityGain = velocity;
             keyTrack = juce::jlimit (-1.0f, 1.0f, (float) (midiNote - 60) / 48.0f);
             noteRandom = random.nextFloat() * 2.0f - 1.0f;
+            notePitchTolerance = random.nextFloat() * 2.0f - 1.0f;
+            driftWander = random.nextFloat() * 2.0f - 1.0f;
+            driftTarget = driftWander;
+            driftCountdown = 0;
+            warmLp = {};
             bendSmoothed = ctx.pitchBend;
             snapNext = true;
 
@@ -142,6 +147,17 @@ namespace ember
                     {
                         l += noise[0].next (noiseType, (float) sr) * nl;
                         r += noise[1].next (noiseType, (float) sr) * nl;
+                    }
+
+                    if (warmAmt > 0.001f)
+                    {
+                        const float bias = std::tanh (warmBias);
+                        l = (std::tanh (l * warmDrive + warmBias) - bias) * warmNorm;
+                        r = (std::tanh (r * warmDrive + warmBias) - bias) * warmNorm;
+                        warmLp[0] += (l - warmLp[0]) * warmCoef;
+                        warmLp[1] += (r - warmLp[1]) * warmCoef;
+                        l = warmLp[0];
+                        r = warmLp[1];
                     }
 
                     if (parallel)
@@ -261,7 +277,17 @@ namespace ember
             const bool snap = snapNext;
             snapNext = false;
 
-            const float bendFactor = std::pow (2.0f, bendSmoothed * P.mod.bendRange->load() / 12.0f);
+            // analogue drift: a static per-note tolerance plus a slow random wander, both scaled by the Drift knob
+            const float driftAmt = P.drift->load();
+            if (--driftCountdown <= 0)
+            {
+                driftCountdown = (int) (sr * 0.35 / chunkSize) + random.nextInt (32);
+                driftTarget = random.nextFloat() * 2.0f - 1.0f;
+            }
+            driftWander += (driftTarget - driftWander) * 0.012f;
+            const float driftCents = driftAmt * (notePitchTolerance * 3.0f + driftWander * 7.0f);
+
+            const float bendFactor = std::pow (2.0f, bendSmoothed * P.mod.bendRange->load() / 12.0f + driftCents / 1200.0f);
             sub.setFrequency (sr, baseHz * bendFactor, 1 + juce::roundToInt (P.subOct->load()));
 
             // sources
@@ -336,11 +362,19 @@ namespace ember
             for (int f = 0; f < 2; ++f)
             {
                 const auto& fp = P.filter[(size_t) f];
-                filters[(size_t) f].setTargets ((FilterType) juce::roundToInt (fp.type->load()),
+                filters[(size_t) f].setTargets ((FilterType) juce::roundToInt (fp.type->load()), fp.slope->load() > 0.5f,
                                                 eff (mod::filterDest (f, 0), fp.cutoff->load()),
                                                 eff (mod::filterDest (f, 1), fp.res->load()),
                                                 eff (mod::filterDest (f, 2), fp.drive->load()), snap);
             }
+
+            // warmth: asymmetric soft saturation (even harmonics) and a one-pole roll-off that rounds off the top end
+            warmAmt = P.warmth->load();
+            warmDrive = 1.0f + 1.6f * warmAmt;
+            warmBias = 0.22f * warmAmt;
+            warmNorm = 1.0f / (warmDrive * (1.0f - std::tanh (warmBias) * std::tanh (warmBias)));
+            const float warmHz = 20000.0f * std::pow (0.2f, warmAmt);   // 20 kHz -> 4 kHz
+            warmCoef = 1.0f - std::exp (-juce::MathConstants<float>::twoPi * warmHz / (float) sr);
 
             aim (subLevelSm, eff (mod::subDest, P.subLevel->load()), snap);
             aim (noiseLevelSm, eff (mod::noiseDest, P.noiseLevel->load()), snap);
@@ -369,6 +403,10 @@ namespace ember
 
         std::uint64_t stamp = 0;
         bool snapNext = false;
+        int driftCountdown = 0;
+        float driftTarget = 0.0f, driftWander = 0.0f, notePitchTolerance = 0.0f;
+        float warmDrive = 1.0f, warmBias = 0.0f, warmNorm = 1.0f, warmCoef = 1.0f, warmAmt = 0.0f;
+        std::array<float, 2> warmLp {};
         float baseHz = 440.0f, velocityGain = 1.0f, keyTrack = 0.0f, noteRandom = 0.0f, bendSmoothed = 0.0f;
         juce::Random random { 0x51ed };
     };

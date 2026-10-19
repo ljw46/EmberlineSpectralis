@@ -5,7 +5,7 @@
     "tags": ["organic", "tribal", "drone", "hypnotic", "voice", "synced"],
     "macro_names": ["Vowel", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -3.4,
+        "master_volume": -3.0,
         "osc1_on": true,
         "osc1_table": "Human Voice",
         "osc1_frame": 0.15,

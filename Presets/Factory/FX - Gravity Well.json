@@ -5,7 +5,7 @@
     "tags": ["fx", "downlifter", "fall", "tail", "transition"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 4.5,
+        "master_volume": 6.0,
         "noise_level": 0.7,
         "noise_type": "White",
         "osc1_on": true,
