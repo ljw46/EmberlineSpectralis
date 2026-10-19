@@ -1,6 +1,8 @@
 {
     "name": "Shimmer Burst",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bright, fast burst of glass and bell partials that explodes into a long, glittering reverb and a dotted echo. A short, expensive-sounding transition hit.",
     "tags": ["fx", "shimmer", "burst", "glass", "transition"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

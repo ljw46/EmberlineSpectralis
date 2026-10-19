@@ -1,6 +1,8 @@
 {
     "name": "Basement Warmth",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Deep-house sub with a slow breathing filter. Pure and round, with a tube-warm edge that blooms when you push the mod wheel.",
     "tags": ["bass", "sub", "deep house", "warm"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

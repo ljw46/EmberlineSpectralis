@@ -1,6 +1,8 @@
 {
     "name": "Heliograph",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bright, cutting hard-sync arp: a sine restarts several times per cycle and the ratio collapses as each note decays, sending a flash of light off every step.",
     "tags": ["arp", "sync", "bright", "cutting", "retro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

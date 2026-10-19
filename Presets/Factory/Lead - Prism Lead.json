@@ -1,6 +1,8 @@
 {
     "name": "Prism Lead",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bright, many-faceted lead from overtone and hand-drawn tables: slightly irregular, glassy and animated by a slow drift on both oscillators. Distinctive and a little otherworldly.",
     "tags": ["lead", "overtone", "hand drawn", "shimmer", "unusual"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

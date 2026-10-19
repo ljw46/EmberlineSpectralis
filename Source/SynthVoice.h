@@ -54,6 +54,8 @@ namespace ember
         void startNote (int midiNote, float velocity, juce::SynthesiserSound*, int) override
         {
             baseHz = juce::MidiMessage::getMidiNoteInHertz (midiNote);
+            beginGlide (ctx.lastNoteHz, baseHz, ctx.legatoNow);
+            ctx.lastNoteHz = baseHz;
             velocityGain = velocity;
             keyTrack = juce::jlimit (-1.0f, 1.0f, (float) (midiNote - 60) / 48.0f);
             noteRandom = random.nextFloat() * 2.0f - 1.0f;
@@ -79,6 +81,28 @@ namespace ember
             loadEnvelopeParams();
             for (auto& e : envs)
                 e.noteOn();
+        }
+
+        // Mono / legato: move a note that is already sounding to a new pitch (gliding if enabled) instead of starting a new voice.
+        // With `retrigger` the envelopes restart from wherever they are (no click); without it the note just changes pitch.
+        void retarget (int midiNote, float velocity, bool retrigger, bool legato)
+        {
+            const float newHz = juce::MidiMessage::getMidiNoteInHertz (midiNote);
+            beginGlide (baseHz * std::pow (2.0f, glideOffset / 12.0f), newHz, legato);
+            ctx.lastNoteHz = newHz;
+            baseHz = newHz;
+            velocityGain = velocity;
+            keyTrack = juce::jlimit (-1.0f, 1.0f, (float) (midiNote - 60) / 48.0f);
+
+            if (retrigger)
+            {
+                noteRandom = random.nextFloat() * 2.0f - 1.0f;
+                stamp = ++ctx.stampCounter;
+                ctx.newestStamp.store (stamp);
+                loadEnvelopeParams();
+                for (auto& e : envs)
+                    e.noteOn();
+            }
         }
 
         void stopNote (float, bool allowTailOff) override
@@ -212,6 +236,14 @@ namespace ember
 
         struct OscSmoothing { juce::SmoothedValue<float> level, frame, warp, pan; };
 
+        void beginGlide (float fromHz, float toHz, bool legato)
+        {
+            const float time = P.glideTime->load();
+            const bool allowed = time > 0.001f && fromHz > 0.0f && (juce::roundToInt (P.glideMode->load()) == 0 || legato);
+            glideOffset = allowed ? juce::jlimit (-60.0f, 60.0f, 12.0f * std::log2 (fromHz / toHz)) : 0.0f;
+            glideRate = allowed ? std::abs (glideOffset) / (time * (float) getSampleRate()) : 0.0f;
+        }
+
         void finish()
         {
             if (stamp == ctx.newestStamp.load())
@@ -287,7 +319,12 @@ namespace ember
             driftWander += (driftTarget - driftWander) * 0.012f;
             const float driftCents = driftAmt * (notePitchTolerance * 3.0f + driftWander * 7.0f);
 
-            const float bendFactor = std::pow (2.0f, bendSmoothed * P.mod.bendRange->load() / 12.0f + driftCents / 1200.0f);
+            if (std::abs (glideOffset) > 0.0f)   // portamento: slide towards the played pitch at a constant rate (constant time for any interval)
+            {
+                const float step = glideRate * (float) n;
+                glideOffset = std::abs (glideOffset) <= step ? 0.0f : glideOffset - std::copysign (step, glideOffset);
+            }
+            const float bendFactor = std::pow (2.0f, bendSmoothed * P.mod.bendRange->load() / 12.0f + driftCents / 1200.0f + glideOffset / 12.0f);
             sub.setFrequency (sr, baseHz * bendFactor, 1 + juce::roundToInt (P.subOct->load()));
 
             // sources
@@ -407,6 +444,7 @@ namespace ember
         float driftTarget = 0.0f, driftWander = 0.0f, notePitchTolerance = 0.0f;
         float warmDrive = 1.0f, warmBias = 0.0f, warmNorm = 1.0f, warmCoef = 1.0f, warmAmt = 0.0f;
         std::array<float, 2> warmLp {};
+        float glideOffset = 0.0f, glideRate = 0.0f;   // semitones still to slide, and semitones per sample
         float baseHz = 440.0f, velocityGain = 1.0f, keyTrack = 0.0f, noteRandom = 0.0f, bendSmoothed = 0.0f;
         juce::Random random { 0x51ed };
     };

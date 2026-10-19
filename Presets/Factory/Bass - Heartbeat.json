@@ -1,6 +1,8 @@
 {
     "name": "Heartbeat",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A deep, thumping sub with a quick downward pitch drop on every note - half bass, half kick. Short notes make a pulse, long notes a boom.",
     "tags": ["bass", "sub", "thump", "808", "kick-like"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

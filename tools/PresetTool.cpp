@@ -11,6 +11,8 @@
 #include "PluginEditor.h"
 #include "Expression.h"
 #include "VoiceFilter.h"
+#include "Version.h"
+#include "ManualHelp.h"
 #include "WavetableBank.h"
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_audio_formats/juce_audio_formats.h>
@@ -319,6 +321,7 @@ namespace
             if (name.isEmpty())     notes.add ("missing name");
             if (category.isEmpty()) notes.add ("missing category");
             if (v.getProperty ("description", {}).toString().isEmpty()) notes.add ("no description");
+            if (v.getProperty ("author", {}).toString().isEmpty()) notes.add ("no author");
 
             auto result = presets::apply (proc, v);
             for (auto& w : result.warnings) notes.add ("WARN " + w);
@@ -502,12 +505,29 @@ namespace
             const auto b = presets::toJson (presets::capture (proc, "RT", "User", "round trip"));
             expect (a == b, "capture -> apply -> capture reproduces the same JSON");
 
+            {
+                juce::var future;
+                juce::String err;
+                presets::parse (R"({"schema":999,"name":"F","category":"User","parameters":{}})", future, err);
+                expect (! presets::apply (proc, future).warnings.isEmpty(), "a preset from a newer schema version warns");
+                juce::var cur;
+                presets::parse (presets::toJson (presets::capture (proc, "S", "User")), cur, err);
+                expect ((int) cur.getProperty ("schema", 0) == ember::version::presetSchema && presets::apply (proc, cur).warnings.isEmpty(),
+                        "saved presets carry the current schema and load without warnings");
+            }
+
             // user preset save + reload + cleanup
-            const bool saved = proc.saveUserPreset ("ZZ Selftest Preset", "User", "temporary");
+            const bool saved = proc.saveUserPreset ("ZZ Selftest Preset", "User", "temporary", { "test", "tmp" }, "Test Artist", "example.com/me");
             const int idx = lib.indexOf ("ZZ Selftest Preset");
             expect (saved && idx >= lib.numFactory(), "user preset saved to disk and found by the library");
+            expect (presets::cleanUrl ("example.com/me") == "https://example.com/me" && presets::cleanUrl ("javascript:alert(1)").isEmpty()
+                        && presets::cleanUrl ("ftp://x.y").isEmpty() && presets::cleanUrl ("http://a.b/c") == "http://a.b/c",
+                    "preset links are limited to http(s)");
             if (idx >= 0)
             {
+                const auto& got = lib.all()[(size_t) idx];
+                expect (got.author == "Test Artist" && got.url == "https://example.com/me" && got.tags.size() == 2,
+                        "author, link and tags are saved and read back");
                 proc.loadPresetByName ("Honeyed Keys");
                 proc.loadPreset (idx);
                 expect (proc.getCurrentPresetName() == "ZZ Selftest Preset", "user preset loads by index");
@@ -657,6 +677,269 @@ namespace
             expect (std::abs (arp::stutterFactor (1, 0.34f, true, 1.0f) - 2.0f) < 1.0e-4f, "stepped stutter snaps to doublings of the rate");
         }
 
+        std::printf ("arpeggiator under hostile transport\n");
+        {
+            // random block sizes, tempo changes, transport stops / jumps, held-note changes and settings flips
+            juce::Random rng (42);
+            arp::Arpeggiator a;
+            arp::Settings st;
+            st.on = true;
+            std::array<int, 128> open {};
+            std::array<bool, 128> held {};
+            bool badPosition = false;
+            double ppq = 0.0;
+            auto pump = [&] (int numSamples, double bpm, double hostPpq, juce::MidiBuffer& midi)
+            {
+                a.process (midi, numSamples, 44100.0, bpm, hostPpq, st);
+                for (const auto meta : midi)
+                {
+                    const auto m = meta.getMessage();
+                    if (meta.samplePosition < 0 || meta.samplePosition >= numSamples) badPosition = true;
+                    if (m.isNoteOnOrOff()) open[(size_t) m.getNoteNumber()] += m.isNoteOn() ? 1 : -1;
+                }
+            };
+
+            for (int i = 0; i < 4000; ++i)
+            {
+                const int n = 1 + rng.nextInt (2048);
+                juce::MidiBuffer midi;
+                if (rng.nextInt (6) == 0)
+                {
+                    const int note = 40 + rng.nextInt (30);
+                    if (held[(size_t) note]) midi.addEvent (juce::MidiMessage::noteOff (1, note), rng.nextInt (n));
+                    else                     midi.addEvent (juce::MidiMessage::noteOn (1, note, (juce::uint8) (1 + rng.nextInt (127))), rng.nextInt (n));
+                    held[(size_t) note] = ! held[(size_t) note];
+                }
+                if (rng.nextInt (25) == 0) { st.mode = rng.nextInt (arp::modeNames.size()); st.on = rng.nextInt (8) != 0; st.latch = rng.nextInt (4) == 0; }
+                if (rng.nextInt (25) == 0) { st.stutterMode = rng.nextInt (4); st.stutterDepth = rng.nextFloat(); st.stutterLen = rng.nextInt (4); st.octaves = 1 + rng.nextInt (4); }
+
+                const int transport = rng.nextInt (20);
+                const double bpm = 20.0 + rng.nextDouble() * 280.0;
+                double hostPpq = -1.0;                       // stopped: the arp free-runs
+                if (transport > 1)  { ppq += (double) n / 44100.0 * bpm / 60.0; hostPpq = ppq; }
+                else if (transport == 1) { ppq = rng.nextDouble() * 64.0; hostPpq = ppq; }   // the playhead jumps (loop / locate)
+                pump (n, bpm, hostPpq, midi);
+            }
+
+            // let go of everything and switch the arp off: nothing may be left sounding
+            st.on = false;
+            st.latch = false;
+            for (int note = 0; note < 128; ++note)
+                if (held[(size_t) note])
+                {
+                    juce::MidiBuffer midi;
+                    midi.addEvent (juce::MidiMessage::noteOff (1, note), 0);
+                    pump (64, 120.0, -1.0, midi);
+                }
+            for (int i = 0; i < 40; ++i) { juce::MidiBuffer none; pump (512, 120.0, -1.0, none); }
+
+            int stuck = 0;
+            for (int note = 0; note < 128; ++note) stuck += open[(size_t) note] != 0 ? 1 : 0;
+            expect (! badPosition, "every arp event lands inside its block");
+            expect (stuck == 0, "no stuck notes after 4000 random blocks of tempo / transport / settings changes (" + juce::String (stuck) + " stuck)");
+        }
+
+        std::printf ("saved state\n");
+        {
+            EmberlineProcessor a, b;
+            a.loadPresetByName ("Ball Drop");
+            setParam (a, "macro1", 0.73f);
+            setParam (a, "master_volume", -4.5f);
+            juce::MemoryBlock blob;
+            a.getStateInformation (blob);
+            b.setStateInformation (blob.getData(), (int) blob.getSize());
+            expect (presets::toJson (presets::capture (a, "S", "User")) == presets::toJson (presets::capture (b, "S", "User")),
+                    "a session saved and restored in a new instance is the same sound (parameters, modulation, LFO shapes)");
+
+            EmberlineProcessor c;
+            const auto before = presets::toJson (presets::capture (c, "S", "User"));
+            c.setStateInformation (blob.getData(), 0);
+            const char junk[] = "this is not a saved state";
+            c.setStateInformation (junk, (int) sizeof (junk));
+            c.setStateInformation (blob.getData(), (int) blob.getSize() / 2);   // truncated
+            const auto m = render (c, "Keys");
+            expect (m.finite, "empty, garbage and truncated states are survived without a crash and the plugin still renders");
+            (void) before;
+        }
+
+        std::printf ("every factory preset across sample rates and block sizes\n");
+        {
+            struct Config { double rate; int block; };
+            const Config configs[] { { 44100.0, 64 }, { 48000.0, 480 }, { 96000.0, 1024 }, { 44100.0, 1 } };
+            int bad = 0, loud = 0, tails = 0, tested = 0;
+            juce::String firstBad;
+            EmberlineProcessor p;
+            auto& lib = p.presetLibrary;
+            for (int i = 0; i < lib.numFactory(); ++i)
+            {
+                p.loadPreset (i);
+                const int numConfigs = i == 0 ? 4 : i % 4 == 0 ? 3 : 1;   // every preset at 44.1 kHz; the other rates / the 1-sample block on a spread of them (they are slow)
+                for (int c = 0; c < numConfigs; ++c)
+                {
+                    const auto cfg = configs[c];
+                    p.prepareToPlay (cfg.rate, cfg.block);
+                    juce::AudioBuffer<float> buf (2, cfg.block);
+                    const int blocks = juce::jmax (1, (int) (1.2 * cfg.rate / cfg.block)), releaseBlocks = juce::jmax (1, (int) (5.0 * cfg.rate / cfg.block));
+                    float peak = 0.0f, tail = 0.0f;
+                    bool finite = true;
+                    for (int b = 0; b < blocks + releaseBlocks; ++b)
+                    {
+                        juce::MidiBuffer midi;
+                        if (b == 0)
+                            for (int n : { 36, 48, 55, 60, 64, 67, 71, 74 }) midi.addEvent (juce::MidiMessage::noteOn (1, n, (juce::uint8) 127), 0);
+                        if (b == blocks)
+                            for (int n : { 36, 48, 55, 60, 64, 67, 71, 74 }) midi.addEvent (juce::MidiMessage::noteOff (1, n), 0);
+                        p.processBlock (buf, midi);
+                        for (int ch = 0; ch < 2; ++ch)
+                            for (int s = 0; s < cfg.block; ++s)
+                            {
+                                const float v = buf.getSample (ch, s);
+                                if (! std::isfinite (v)) finite = false;
+                                if (b < blocks) peak = juce::jmax (peak, std::abs (v));
+                                else if (b > blocks + releaseBlocks - 3) tail = juce::jmax (tail, std::abs (v));
+                            }
+                    }
+                    ++tested;
+                    const bool latched = p.apvts.getRawParameterValue ("arp_latch")->load() > 0.5f;   // latched arps keep playing by design
+                    if (! finite)            { ++bad;   if (firstBad.isEmpty()) firstBad = lib.all()[(size_t) i].name + " (not finite)"; }
+                    else if (peak > 4.0f)    { ++loud;  if (firstBad.isEmpty()) firstBad = lib.all()[(size_t) i].name + " (8-note chord peaks " + juce::String (juce::Decibels::gainToDecibels (peak), 1) + " dBFS)"; }
+                    else if (tail > 0.25f * peak && ! latched) { ++tails; if (firstBad.isEmpty()) firstBad = lib.all()[(size_t) i].name + " (hanging 5 s after note-off, at " + juce::String (juce::Decibels::gainToDecibels (tail / peak), 1) + " dB of its peak)"; }
+                }
+            }
+            p.prepareToPlay (sampleRate, blockSize);
+            expect (bad == 0, juce::String (tested) + " renders (8-note chords, 44.1 / 48 / 96 kHz, 1 to 1024 sample blocks) are all finite " + firstBad);
+            expect (loud == 0, "an 8-note full-velocity chord never goes beyond +12 dBFS " + (bad == 0 ? firstBad : juce::String()));
+            expect (tails == 0, "no note hangs after note-off: 5 s later every preset is at least 12 dB below its peak (latched arps excepted) " + (bad + loud == 0 ? firstBad : juce::String()));
+        }
+
+        std::printf ("mono, legato and glide\n");
+        {
+            // a sine sub on its own, so pitch can be read from zero crossings: windows of audio -> frequency in Hz
+            auto prep = [] (EmberlineProcessor& p, int mode, float glide, int glideMode)
+            {
+                presets::apply (p, [] { juce::var v; juce::String e; presets::parse (R"({"name":"t","category":"User","parameters":{"osc1_level":0,"sub_level":1,"sub_oct":"-1 Oct","filt1_type":"Off","analog_drift":0,"analog_warmth":0,"fx_reverb_on":false,"env1_attack":0.001,"env1_sustain":1,"env1_release":0.05}})", v, e); return v; }());
+                setParam (p, "voice_mode", (float) mode);
+                setParam (p, "glide_time", glide);
+                setParam (p, "glide_mode", (float) glideMode);
+                p.prepareToPlay (sampleRate, blockSize);
+            };
+            struct Ev { double at; int note; bool on; };
+            // plays the events, and returns the sub's frequency in each 50 ms window
+            auto pitches = [] (EmberlineProcessor& p, std::vector<Ev> evs, double seconds)
+            {
+                std::vector<double> hz;
+                juce::AudioBuffer<float> buf (2, blockSize);
+                const int blocksPerWindow = juce::jmax (1, (int) (0.05 * sampleRate / blockSize));
+                int crossings = 0, blocks = 0;
+                float prev = 0.0f;
+                const int total = (int) (seconds * sampleRate / blockSize);
+                for (int b = 0; b < total; ++b)
+                {
+                    juce::MidiBuffer midi;
+                    for (auto& e : evs)
+                        if ((int) (e.at * sampleRate / blockSize) == b)
+                            midi.addEvent (e.on ? juce::MidiMessage::noteOn (1, e.note, (juce::uint8) 100) : juce::MidiMessage::noteOff (1, e.note), 0);
+                    p.processBlock (buf, midi);
+                    for (int i = 0; i < blockSize; ++i)
+                    {
+                        const float v = buf.getSample (0, i);
+                        if (prev <= 0.0f && v > 0.0f) ++crossings;
+                        prev = v;
+                    }
+                    if (++blocks == blocksPerWindow)
+                    {
+                        hz.push_back ((double) crossings / (blocks * blockSize / sampleRate));
+                        crossings = 0;
+                        blocks = 0;
+                    }
+                }
+                return hz;
+            };
+            auto near = [] (double a, double b) { return std::abs (a / b - 1.0) < 0.06; };
+            const double f48 = juce::MidiMessage::getMidiNoteInHertz (48) / 2.0, f60 = juce::MidiMessage::getMidiNoteInHertz (60) / 2.0;
+
+            {
+                EmberlineProcessor p;
+                prep (p, 2, 0.5f, 0);   // legato, 0.5 s glide
+                auto hz = pitches (p, { { 0.0, 48, true }, { 1.0, 60, true } }, 2.4);   // windows are 50 ms: 1.0 s = window 20
+                expect (near (hz[10], f48), "legato: first note plays at its own pitch (" + juce::String (hz[10], 1) + " Hz)");
+                expect (hz[22] > f48 * 1.15 && hz[22] < f60 * 0.92, "legato: 100 ms into a 0.5 s glide the pitch is part-way (" + juce::String (hz[22], 1) + " Hz)");
+                expect (near (hz[44], f60), "legato: the glide arrives at the new note (" + juce::String (hz[44], 1) + " Hz)");
+            }
+            {
+                EmberlineProcessor p;
+                prep (p, 2, 0.0f, 0);   // no glide
+                auto hz = pitches (p, { { 0.0, 48, true }, { 1.0, 60, true } }, 1.6);
+                expect (near (hz[22], f60), "no glide: legato jumps straight to the new pitch");
+            }
+            {
+                EmberlineProcessor p;
+                prep (p, 1, 0.0f, 0);   // mono, three notes held: only the last is heard, and it is not louder than one note
+                juce::AudioBuffer<float> one (2, blockSize), three (2, blockSize);
+                EmberlineProcessor q;
+                prep (q, 1, 0.0f, 0);
+                juce::MidiBuffer a, b;
+                for (int n : { 48, 52, 55 }) a.addEvent (juce::MidiMessage::noteOn (1, n, (juce::uint8) 100), 0);
+                b.addEvent (juce::MidiMessage::noteOn (1, 55, (juce::uint8) 100), 0);
+                float rmsThree = 0.0f, rmsOne = 0.0f;
+                for (int i = 0; i < 40; ++i)
+                {
+                    p.processBlock (three, a); q.processBlock (one, b);
+                    a.clear(); b.clear();
+                    if (i > 20) { rmsThree += three.getRMSLevel (0, 0, blockSize); rmsOne += one.getRMSLevel (0, 0, blockSize); }
+                }
+                expect (std::abs (rmsThree / rmsOne - 1.0f) < 0.05f, "mono: a three-note chord is played as the single last note");
+            }
+            {
+                EmberlineProcessor p;
+                prep (p, 1, 0.0f, 0);   // last-note priority: release the top note and the held one returns
+                auto hz = pitches (p, { { 0.0, 48, true }, { 0.5, 60, true }, { 1.0, 60, false }, { 1.5, 48, false } }, 1.9);
+                expect (near (hz[15], f60) && near (hz[25], f48), "mono: letting go of the top note falls back to the one still held");
+                expect (hz.back() < f48 * 0.2, "mono: silence once every key is up");
+            }
+            {
+                EmberlineProcessor p;
+                prep (p, 2, 0.5f, 1);   // 'legato only' glide: a detached note must not slide, an overlapping one must
+                auto hz = pitches (p, { { 0.0, 48, true }, { 0.5, 48, false }, { 1.0, 60, true }, { 1.6, 60, false }, { 1.7, 48, true } }, 2.4);
+                expect (near (hz[24], f60), "legato-only glide: a note played after releasing the last one does not slide (" + juce::String (hz[24], 1) + " Hz)");
+                expect (hz[36] > 0.0 && near (hz[34], f60), "legato-only glide: sanity - still sounding");
+            }
+            {
+                EmberlineProcessor p;
+                prep (p, 1, 0.3f, 0);   // switching mode while holding a note leaves nothing stuck
+                juce::AudioBuffer<float> buf (2, blockSize);
+                juce::MidiBuffer m;
+                m.addEvent (juce::MidiMessage::noteOn (1, 60, (juce::uint8) 100), 0);
+                p.processBlock (buf, m);
+                setParam (p, "voice_mode", 0.0f);
+                setParam (p, "env1_release", 0.01f);
+                float tail = 0.0f;
+                for (int i = 0; i < 200; ++i) { juce::MidiBuffer none; p.processBlock (buf, none); if (i > 150) tail = juce::jmax (tail, buf.getMagnitude (0, blockSize)); }
+                expect (tail < 1.0e-3f, "switching the voice mode releases the held note (no hanging sound)");
+            }
+        }
+
+        std::printf ("manual\n");
+        {
+            const juce::String page = juce::String::fromUTF8 (ManualData::manual_html, ManualData::manual_htmlSize);
+            expect (page.contains ("Getting started") && page.contains ("Tidal Slide") && page.contains ("data:image/png;base64,"),
+                    "the manual is embedded (" + juce::String (ManualData::manual_htmlSize / 1024) + " KB) with its chapters and screenshots");
+            expect (page.contains (ember::version::full()), "the manual is stamped with the plugin's version (" + ember::version::full() + ") - rerun tools/build_manual.py after a version bump");
+
+            const auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("ember-manual-test");
+            dir.deleteRecursively();
+            const auto file = ember::manual::writeTo (dir);
+            expect (file.existsAsFile() && file.getSize() == (juce::int64) ManualData::manual_htmlSize, "the manual is written out as an .html file");
+            const auto stamp = file.getLastModificationTime();
+            juce::Thread::sleep (30);
+            ember::manual::writeTo (dir);
+            expect (file.getLastModificationTime() == stamp, "an up-to-date copy is left alone");
+            file.replaceWithText ("old version");
+            ember::manual::writeTo (dir);
+            expect (file.getSize() == (juce::int64) ManualData::manual_htmlSize, "a stale copy is replaced");
+            dir.deleteRecursively();
+        }
+
         std::printf ("default patch\n");
         {
             EmberlineProcessor fresh;
@@ -667,6 +950,88 @@ namespace
 
         std::printf ("\n%s (%d failure%s)\n", failures == 0 ? "ALL PASSED" : "FAILED", failures, failures == 1 ? "" : "s");
         return failures == 0 ? 0 : 1;
+    }
+}
+
+
+// ------------------------------------------------------------------ performance
+namespace
+{
+    // CPU use as a percentage of one core while rendering a held chord at 48 kHz / 256-sample blocks
+    double cpuPercent (EmberlineProcessor& p, const std::vector<int>& notes, double seconds = 4.0)
+    {
+        const double rate = 48000.0;
+        const int block = 256;
+        p.prepareToPlay (rate, block);
+        juce::AudioBuffer<float> buf (2, block);
+        const int warm = (int) (0.5 * rate / block), blocks = (int) (seconds * rate / block);
+        juce::int64 ticks = 0;
+        for (int b = 0; b < warm + blocks; ++b)
+        {
+            juce::MidiBuffer midi;
+            if (b == 0)
+                for (int n : notes) midi.addEvent (juce::MidiMessage::noteOn (1, n, (juce::uint8) 110), 0);
+            const auto t0 = juce::Time::getHighResolutionTicks();
+            p.processBlock (buf, midi);
+            if (b >= warm) ticks += juce::Time::getHighResolutionTicks() - t0;
+        }
+        return 100.0 * juce::Time::highResolutionTicksToSeconds (ticks) / ((double) blocks * block / rate);
+    }
+
+    bool applyJson (EmberlineProcessor& p, const char* text)
+    {
+        juce::var v;
+        juce::String error;
+        return presets::parse (text, v, error) && presets::apply (p, v).warnings.isEmpty();
+    }
+
+    int perf (EmberlineProcessor& proc)
+    {
+        const std::vector<int> one { 60 }, eight { 36, 48, 55, 60, 64, 67, 71, 74 };
+        std::printf ("CPU as %% of one core at 48 kHz, 256-sample blocks, Release build only is meaningful (8 voices max)\n\n");
+
+        struct Scenario { const char* name; const char* json; const std::vector<int>* notes; };
+        const char* const heavyCommon = R"("filt1_type":"Ladder","filt1_slope":"24 dB","filt1_res":0.6,"filt2_type":"Lowpass","filt2_slope":"24 dB","filt_routing":"Serial",
+            "analog_drift":0.5,"analog_warmth":0.6,"fx_dist_on":true,"fx_chorus_on":true,"fx_delay_on":true,"fx_reverb_on":true,"arp_on":false)";
+        const juce::String heavy8 = juce::String (R"({"name":"p","category":"User","parameters":{"osc1_on":true,"osc2_on":true,"osc3_on":true,"osc1_unison":8,"osc2_unison":8,"osc3_unison":8,)") + heavyCommon + "}}";
+        const juce::String worst = juce::String (R"({"name":"p","category":"User","parameters":{"osc1_on":true,"osc2_on":true,"osc3_on":true,"osc1_unison":16,"osc2_unison":16,"osc3_unison":16,"osc1_warp_mode":"Sync","osc1_warp_amt":0.5,)") + heavyCommon + "}}";
+        const juce::String arpHeavy = juce::String (R"({"name":"p","category":"User","parameters":{"osc1_on":true,"osc2_on":true,"osc1_unison":8,"osc2_unison":8,"arp_on":true,"arp_rate":"1/32","arp_gate":1.0,)") + R"("filt1_type":"Ladder","filt1_slope":"24 dB","fx_reverb_on":true,"fx_delay_on":true}})";
+
+        const juce::String fxOnly = R"({"name":"p","category":"User","parameters":{"fx_dist_on":true,"fx_chorus_on":true,"fx_delay_on":true,"fx_reverb_on":true}})";
+        const juce::String noFx = juce::String (heavy8).replace (R"("fx_dist_on":true,"fx_chorus_on":true,"fx_delay_on":true,"fx_reverb_on":true)", R"("fx_dist_on":false)");
+        const Scenario scenarios[] {
+            { "all four FX on, default patch, 1 voice",                            fxOnly.toRawUTF8(), &one },
+            { "3 osc x 8 unison, ladder + filter, warmth, NO FX, 1 voice",         noFx.toRawUTF8(), &one },
+            { "...same, 8 voices",                                                 noFx.toRawUTF8(), &eight },
+            { "default patch, 1 voice",                                            R"({"name":"p","category":"User","parameters":{}})", &one },
+            { "default patch, 8 voices",                                           R"({"name":"p","category":"User","parameters":{}})", &eight },
+            { "3 osc x 8 unison, 24 dB ladder + filter, warmth, all FX, 1 voice",    heavy8.toRawUTF8(), &one },
+            { "...same, 8 voices",                                                 heavy8.toRawUTF8(), &eight },
+            { "WORST CASE: 3 osc x 16 unison + warp, same filters/FX, 8 voices",   worst.toRawUTF8(), &eight },
+            { "arp 1/32, 2 osc x 8 unison, ladder, delay + reverb",    arpHeavy.toRawUTF8(), &eight },
+        };
+        for (auto& sc : scenarios)
+        {
+            EmberlineProcessor fresh;   // a new instance each time, so no notes left over from the last scenario
+            if (! applyJson (fresh, sc.json)) std::printf ("(scenario had warnings)\n");
+            std::printf ("%7.1f %%   %s\n", cpuPercent (fresh, *sc.notes), sc.name);
+        }
+
+        std::printf ("\nfactory presets, 8-note chord:\n");
+        std::vector<std::pair<double, juce::String>> results;
+        for (int i = 0; i < proc.presetLibrary.numFactory(); ++i)
+        {
+            EmberlineProcessor fresh;
+            fresh.loadPreset (i);
+            results.emplace_back (cpuPercent (fresh, eight, 2.0), proc.presetLibrary.all()[(size_t) i].name);
+        }
+        std::sort (results.begin(), results.end(), [] (auto& a, auto& b) { return a.first > b.first; });
+        double sum = 0.0;
+        for (auto& r : results) sum += r.first;
+        std::printf ("  median %.1f %%, mean %.1f %%, heaviest:\n", results[results.size() / 2].first, sum / (double) results.size());
+        for (size_t i = 0; i < 8 && i < results.size(); ++i)
+            std::printf ("  %7.1f %%   %s\n", results[i].first, results[i].second.toRawUTF8());
+        return 0;
     }
 }
 
@@ -1003,7 +1368,10 @@ int snapshot (EmberlineProcessor& proc, const juce::File& dir, const juce::Strin
         for (auto* child : editor->getChildren())
             if (auto* button = dynamic_cast<juce::TextButton*> (child))
                 if (button->onClick != nullptr && index++ == page)   // the editor's direct TextButton children are the six tabs
+                {
+                    button->setToggleState (true, juce::dontSendNotification);   // a real click would light the tab as well
                     button->onClick();
+                }
 
         const auto image = editor->createComponentSnapshot (editor->getLocalBounds(), true, 1.0f);
         const auto file = dir.getChildFile (juce::String (names[page]) + ".png");
@@ -1223,6 +1591,9 @@ int main (int argc, char** argv)
     if (args.size() >= 1 && args[0] == "audio-diag")
         return audioDiag (proc);
 
+    if (args.size() >= 1 && args[0] == "perf")
+        return perf (proc);
+
     if (args.size() >= 1 && args[0] == "selftest")
         return selftest (proc);
 
@@ -1262,6 +1633,7 @@ int main (int argc, char** argv)
                  "  EmberlineTools check-wavetables [dir]\n"
                  "  EmberlineTools export-wavetables [dir] <outdir>\n"
                  "  EmberlineTools selftest\n"
+                 "  EmberlineTools perf            (CPU use of heavy patches and every factory preset; use a Release build)\n"
                  "  EmberlineTools snapshot <outdir> [preset name]\n"
                  "  EmberlineTools audio-diag [--sweep | --ui-like]   (debug 'error opening audio device')\n");
     return 2;

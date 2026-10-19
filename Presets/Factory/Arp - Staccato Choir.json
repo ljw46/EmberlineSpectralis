@@ -1,6 +1,8 @@
 {
     "name": "Staccato Choir",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Short, rhythmic voice stabs for arpeggiating: a recorded human voice on a tight envelope with a vowel shift on every note. Sounds like a vocalist chopped to a metronome.",
     "tags": ["arp", "voice", "choir", "staccato", "vocal"],
     "macro_names": ["Brightness", "Vowel", "Space", "Width"],

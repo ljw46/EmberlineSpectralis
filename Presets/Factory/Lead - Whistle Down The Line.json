@@ -1,11 +1,13 @@
 {
     "name": "Whistle Down The Line",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A pure, wavering theremin-style lead that breathes in and out of vibrato under your fingers: aftertouch deepens the wobble, the mod wheel adds an eerie edge.",
     "tags": ["lead", "theremin", "eerie", "expressive", "vibrato"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -3.4,
+        "master_volume": -3.6,
         "osc1_on": true,
         "osc1_table": "Theremin",
         "osc1_frame": 0.3,

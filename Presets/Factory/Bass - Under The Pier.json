@@ -1,6 +1,8 @@
 {
     "name": "Under The Pier",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A hollow, whistling sub with an eerie theremin edge that drifts on a slow chaotic wander. Moody and spacious - great in a breakdown.",
     "tags": ["bass", "eerie", "theremin", "drifting"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

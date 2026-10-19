@@ -18,6 +18,8 @@ namespace ember::params
     inline const juce::StringArray subWaveNames    { "Sine", "Triangle" };
     inline const juce::StringArray subOctNames     { "-1 Oct", "-2 Oct" };
     inline const juce::StringArray routingNames    { "Serial", "Parallel" };
+    inline const juce::StringArray voiceModeNames  { "Poly", "Mono", "Legato" };      // Mono retriggers every note; Legato glides without retriggering
+    inline const juce::StringArray glideModeNames  { "Always", "Legato Only" };       // glide on every note, or only when notes overlap
 
     inline juce::String filt (int index, const char* name) { return "filt" + juce::String (index + 1) + "_" + name; }
 
@@ -42,6 +44,7 @@ namespace ember::params
         std::array<FilterParamPtrs, 2> filter;
         std::atomic<float>* routing;
         std::atomic<float> *drift, *warmth;   // analogue character (per-voice drift, saturation + high-end softening)
+        std::atomic<float> *voiceMode, *glideTime, *glideMode;   // poly / mono / legato, and portamento
         mod::ModPtrs mod;
     };
 
@@ -62,7 +65,8 @@ namespace ember::params
 
         return { { lookupOsc (apvts, 0), lookupOsc (apvts, 1), lookupOsc (apvts, 2) },
                  get ("sub_level"), get ("sub_wave"), get ("sub_oct"), get ("noise_level"), get ("noise_type"),
-                 { filterPtrs (0), filterPtrs (1) }, get ("filt_routing"), get ("analog_drift"), get ("analog_warmth"), mod::lookup (apvts) };
+                 { filterPtrs (0), filterPtrs (1) }, get ("filt_routing"), get ("analog_drift"), get ("analog_warmth"),
+                 get ("voice_mode"), get ("glide_time"), get ("glide_mode"), mod::lookup (apvts) };
     }
 
     inline juce::AudioProcessorValueTreeState::ParameterLayout createLayout()
@@ -93,6 +97,11 @@ namespace ember::params
         choice ("filt_routing", "Filter Routing", routingNames);
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_drift", 1 }, "Analog Drift", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.25f));
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_warmth", 1 }, "Analog Warmth", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.3f));
+
+        choice ("voice_mode", "Voice Mode", voiceModeNames);
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "glide_time", 1 }, "Glide Time", NormalisableRange<float> (0.0f, 3.0f, 0.001f, 0.4f), 0.0f,
+                                                            AudioParameterFloatAttributes().withLabel ("s")));
+        choice ("glide_mode", "Glide Mode", glideModeNames);
 
         for (int i = 0; i < 2; ++i)
         {

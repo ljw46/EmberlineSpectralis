@@ -1,6 +1,8 @@
 {
     "name": "Wind Up",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A tonal riser that winds up like a spring: a sharp spectral peak climbs through the harmonics as noise thickens underneath. Shorter and more musical than a noise sweep - sits inside the harmony.",
     "tags": ["fx", "riser", "tonal", "spectral", "build"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

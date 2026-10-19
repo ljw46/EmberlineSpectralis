@@ -1,6 +1,8 @@
 {
     "name": "Stage Left",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A layered piano and electric piano panned apart - the grand on the left, the Wurlitzer on the right - for a wide, played-in-a-room stereo image that glues itself together.",
     "tags": ["keys", "layered", "stereo", "piano", "wide"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

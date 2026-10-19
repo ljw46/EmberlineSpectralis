@@ -1,6 +1,8 @@
 {
     "name": "Velvet Rope",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A low bowed-cello bass: soft attack, woody and human. Plays beautifully under slow chords; lean on the wheel for more bow pressure.",
     "tags": ["bass", "cello", "bowed", "organic", "slow"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

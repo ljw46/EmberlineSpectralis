@@ -8,6 +8,7 @@
 #include "LfoShape.h"
 #include "Modulation.h"
 #include "Presets.h"
+#include "VoiceManager.h"
 #include "WavetableBank.h"
 
 class EmberlineProcessor final : public juce::AudioProcessor
@@ -51,7 +52,8 @@ public:
     // Presets (JSON, see docs/PRESETS.md). Message thread only.
     bool loadPreset (int libraryIndex);
     bool loadPresetByName (const juce::String& name);
-    bool saveUserPreset (const juce::String& name, const juce::String& category, const juce::String& description = {});
+    bool saveUserPreset (const juce::String& name, const juce::String& category, const juce::String& description = {},
+                         const juce::StringArray& tags = {}, const juce::String& author = {}, const juce::String& url = {});
     juce::String getCurrentPresetName() const { return apvts.state["presetName"].toString(); }
     juce::String getMacroNames() const { return apvts.state["macroNames"].toString(); }   // "a|b|c|d", from the preset's macro_names
     ember::presets::Library presetLibrary;
@@ -74,10 +76,11 @@ private:
     ember::ChaosEngine chaos;
     ember::arp::Arpeggiator arpeggiator;
     ember::arp::Ptrs arpPtrs;
+    ember::params::SynthParamPtrs voicePtrs {};
     ember::fx::Chain fxChain;
     ember::fx::Ptrs fxPtrs {};
     ember::WavetableBank& bank = ember::WavetableBank::shared();   // one per process; shared by every instance and voice
-    juce::Synthesiser synth;
+    ember::VoiceManager synth;
     juce::SmoothedValue<float> gain;
 
     static constexpr int numVoices = 8;

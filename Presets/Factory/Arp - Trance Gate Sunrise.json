@@ -1,6 +1,8 @@
 {
     "name": "Trance Gate Sunrise",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Hold a chord and a sixteen-step gate pattern, locked to the host tempo, chops it into a rolling rhythm - a trance-gate pad that needs no sequencer. The filter opens slowly like a sunrise.",
     "tags": ["arp", "gate", "trance gate", "rhythmic", "synced", "pad"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

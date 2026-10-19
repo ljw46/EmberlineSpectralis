@@ -1,6 +1,8 @@
 {
     "name": "Pulse Garden Stutter",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Chords in a gallop that periodically surge: the arp swells to a roll and settles back every two bars, snapping to musical subdivisions. Melodic house with a pulse that keeps changing.",
     "tags": ["arp", "built-in arp", "stutter", "gallop", "melodic house", "surge"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

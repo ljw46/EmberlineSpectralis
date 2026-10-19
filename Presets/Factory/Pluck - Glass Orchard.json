@@ -1,6 +1,8 @@
 {
     "name": "Glass Orchard",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Bright, bell-like FM pluck whose modulation index decays with each note, over a shimmer of sparse glass harmonics an octave up. Icy and expensive-sounding in a dotted echo.",
     "tags": ["pluck", "fm", "glass", "bright", "melodic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

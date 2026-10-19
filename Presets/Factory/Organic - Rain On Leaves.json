@@ -1,11 +1,13 @@
 {
     "name": "Rain On Leaves",
     "category": "Organic",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A fine, tactile patter of crackle-noise rain with a faint, high bell tone floating above it. Light, fresh and lo-fi - drop it under anything for instant atmosphere.",
     "tags": ["organic", "rain", "crackle", "lofi", "atmosphere"],
     "macro_names": ["Brightness", "Bell", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.6,
+        "master_volume": 0.8,
         "noise_level": 1.0,
         "noise_type": "Crackle",
         "osc1_on": true,

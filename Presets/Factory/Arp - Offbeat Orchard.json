@@ -1,6 +1,8 @@
 {
     "name": "Offbeat Orchard",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Chord stabs on the off-beat eighths: every held note at once, a warm electric piano with a marimba overtone, chorus and a slow echo. Deep-house chord rhythm without programming a thing.",
     "tags": ["arp", "built-in arp", "chord", "offbeat", "deep house", "stab"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,6 +1,8 @@
 {
     "name": "Satin Fold",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A buzzy West-Coast lead: a sine folded harder and harder by Macro 2, with a warm sub-octave under it so it never gets thin. Smooth when played soft, rich when pushed.",
     "tags": ["lead", "fold", "west coast", "buzzy"],
     "macro_names": ["Brightness", "Fold", "Space", "Width"],

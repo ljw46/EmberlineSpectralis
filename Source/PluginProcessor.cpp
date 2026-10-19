@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "SynthVoice.h"
+#include "Version.h"
 
 EmberlineProcessor::EmberlineProcessor()
     : AudioProcessor (BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
@@ -8,7 +9,8 @@ EmberlineProcessor::EmberlineProcessor()
 {
     volumeParam = apvts.getRawParameterValue (ember::params::masterVolume);
 
-    const auto ptrs = ember::params::lookupAll (apvts);
+    voicePtrs = ember::params::lookupAll (apvts);
+    const auto& ptrs = voicePtrs;
     modPtrs = ptrs.mod;
     fxPtrs = ember::fx::lookup (apvts);
     arpPtrs = ember::arp::lookup (apvts);
@@ -23,6 +25,7 @@ EmberlineProcessor::EmberlineProcessor()
     for (int i = 0; i < numVoices; ++i)
         synth.addVoice (new ember::SynthVoice (bank, ptrs, modCtx, (uint32_t) (i + 1)));
     synth.addSound (new ember::SynthSound());
+    synth.setup (voicePtrs, modCtx);
 
     presetLibrary.scanFactory();
     presetLibrary.scanUser();
@@ -103,6 +106,7 @@ void EmberlineProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
 
     arpeggiator.process (midi, buffer.getNumSamples(), currentSampleRate, modCtx.bpm, modCtx.hostPpq, arpPtrs.read());
 
+    synth.checkModeChange();
     synth.renderNextBlock (buffer, midi, 0, buffer.getNumSamples());
 
     // advance the free-running LFO clocks for the next block
@@ -165,6 +169,7 @@ juce::AudioProcessorEditor* EmberlineProcessor::createEditor() { return new Embe
 void EmberlineProcessor::getStateInformation (juce::MemoryBlock& dest)
 {
     auto state = apvts.copyState();
+    state.setProperty ("emberVersion", ember::version::number(), nullptr);   // lets a future build migrate old sessions
     for (int i = 0; i < ember::mod::numLfos; ++i)
         state.setProperty ("lfo" + juce::String (i + 1) + "_shape", lfoShapes.toString (i), nullptr);
 
@@ -209,14 +214,16 @@ bool EmberlineProcessor::loadPresetByName (const juce::String& name)
     return i >= 0 && loadPreset (i);
 }
 
-bool EmberlineProcessor::saveUserPreset (const juce::String& name, const juce::String& category, const juce::String& description)
+bool EmberlineProcessor::saveUserPreset (const juce::String& name, const juce::String& category, const juce::String& description,
+                                       const juce::StringArray& tags, const juce::String& author, const juce::String& url)
 {
     const auto dir = ember::presets::Library::userDirectory();
     if (! dir.createDirectory().wasOk())
         return false;
 
     const auto file = dir.getChildFile (ember::presets::safeFileName (name) + ".json");
-    const auto text = ember::presets::toJson (ember::presets::capture (*this, name, category.isEmpty() ? "User" : category, description));
+    const auto text = ember::presets::toJson (ember::presets::capture (*this, name, category.isEmpty() ? "User" : category, description,
+                                                                  tags, author, ember::presets::cleanUrl (url)));
     if (! file.replaceWithText (text, false, false, "\n"))   // LF everywhere, same on every platform
         return false;
 

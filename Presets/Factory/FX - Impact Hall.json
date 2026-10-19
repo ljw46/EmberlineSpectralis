@@ -1,6 +1,8 @@
 {
     "name": "Impact Hall",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A single, enormous hit: a burst of noise with a sub boom underneath, slamming into a huge hall reverb. Place it on the downbeat after a riser.",
     "tags": ["fx", "impact", "hit", "boom", "reverb"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

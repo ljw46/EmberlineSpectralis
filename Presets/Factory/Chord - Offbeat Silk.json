@@ -1,11 +1,13 @@
 {
     "name": "Offbeat Silk",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A sustained, silky chord that only speaks on the offbeats: a stepped pattern locked to the host tempo gates it into the classic house 'and' of every beat. Hold a chord and it grooves by itself.",
     "tags": ["stab", "offbeat", "rhythmic", "synced", "silky", "house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.2,
+        "master_volume": -1.3,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.5,

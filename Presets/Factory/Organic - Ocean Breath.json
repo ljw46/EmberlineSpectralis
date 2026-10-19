@@ -1,11 +1,13 @@
 {
     "name": "Ocean Breath",
     "category": "Organic",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A slow tide of filtered noise that swells and recedes, with a faint tuned hum buried underneath. A natural bed for intros and breakdowns that never loops.",
     "tags": ["organic", "ocean", "noise", "wash", "ambient"],
     "macro_names": ["Brightness", "-", "Space", "Width"],
     "parameters": {
-        "master_volume": 3.6,
+        "master_volume": 3.7,
         "noise_level": 1.0,
         "noise_type": "Pink",
         "osc1_on": true,

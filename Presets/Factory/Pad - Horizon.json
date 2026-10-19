@@ -1,11 +1,13 @@
 {
     "name": "Horizon",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A vast, rising pad for breakdowns: three oscillators of voice, strings and waves stacked wide, with the filter slowly opening over the whole length of the held chord.",
     "tags": ["pad", "huge", "rising", "cinematic", "wide", "breakdown"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.3,
+        "master_volume": 2.6,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.4,

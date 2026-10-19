@@ -1,11 +1,13 @@
 {
     "name": "Glitch Burst",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A short flurry of random stutters: sample-and-hold flicks the wave position, the filter and the pan across a chip-and-snippet table pair, then dissolves into a triplet echo. Instant fill material.",
     "tags": ["fx", "glitch", "stutter", "random", "fill"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 5.9,
+        "master_volume": 5.4,
         "osc1_on": true,
         "osc1_table": "Chip Oscillators",
         "osc1_frame": 0.5,

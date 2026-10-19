@@ -1,11 +1,13 @@
 {
     "name": "Copper Wire",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A taut, metallic string pluck: the pluck-position table with a fast filter pinch, fattened by a bright saw sweep. Percussive and slightly dangerous.",
     "tags": ["pluck", "metallic", "string", "tight"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.2,
+        "master_volume": 2.1,
         "osc1_on": true,
         "osc1_table": "Pluck Position",
         "osc1_frame": 0.55,

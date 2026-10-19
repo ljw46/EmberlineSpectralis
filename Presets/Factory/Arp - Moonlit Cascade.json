@@ -1,6 +1,8 @@
 {
     "name": "Moonlit Cascade",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A latched, drifting cascade: three octaves of triplet sixteenths converging towards the middle, long gates and a wide echo. Press a chord once and walk away - it keeps playing.",
     "tags": ["arp", "built-in arp", "latch", "ambient", "cascade", "converge"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

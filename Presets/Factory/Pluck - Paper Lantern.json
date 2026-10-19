@@ -1,11 +1,13 @@
 {
     "name": "Paper Lantern",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soft, felted piano-like pluck with a faint sine halo, drifting off into a long airy reverb. Quiet, delicate and a little melancholy.",
     "tags": ["pluck", "piano", "soft", "melancholy", "ambient"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 5.9,
+        "master_volume": 5.8,
         "osc1_on": true,
         "osc1_table": "Grand Piano",
         "osc1_frame": 0.3,

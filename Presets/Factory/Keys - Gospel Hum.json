@@ -1,6 +1,8 @@
 {
     "name": "Gospel Hum",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A full tonewheel organ with a percussive key-click transient from a marimba tone, tube-warmed and chorused. Church-basement soul in a plugin.",
     "tags": ["keys", "organ", "gospel", "soulful", "percussive"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

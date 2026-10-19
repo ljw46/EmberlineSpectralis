@@ -1,6 +1,8 @@
 {
     "name": "Ghost Choir",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "An eerie, half-heard choir: recorded voices drifting through vowel shapes on a very slow synced LFO, with a long shadowy reverb behind them. Wide, hollow and cinematic.",
     "tags": ["pad", "choir", "voice", "eerie", "cinematic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

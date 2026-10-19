@@ -1,10 +1,13 @@
 {
     "name": "Sunset Boulevard",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A singing electric-guitar lead with a touch of overdrive and a long, slow echo - cinematic and warm, built for wide-open melodies at golden hour.",
     "tags": ["lead", "guitar", "cinematic", "warm", "overdrive"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
+        "master_volume": -6.1,
         "osc1_on": true,
         "osc1_table": "Electric Guitar",
         "osc1_frame": 0.55,

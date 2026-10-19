@@ -1,6 +1,8 @@
 {
     "name": "Sunday Morning",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soft piano with a nylon-guitar shadow: the two recorded tones blend into something warm and homey, with a gentle echo. Slow breakfast, sunlight on the floor.",
     "tags": ["keys", "piano", "guitar", "warm", "acoustic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

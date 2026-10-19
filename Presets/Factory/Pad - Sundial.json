@@ -1,11 +1,13 @@
 {
     "name": "Sundial",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A calm, hollow pad built from overtone and hand-drawn tables whose waves slowly trade places over four-bar cycles. Meditative, with an almost organ-like stillness.",
     "tags": ["pad", "overtone", "hollow", "meditative", "synced"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 3.3,
+        "master_volume": 3.2,
         "osc1_on": true,
         "osc1_table": "Overtone Series",
         "osc1_frame": 0.3,

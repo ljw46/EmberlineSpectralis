@@ -1,6 +1,8 @@
 {
     "name": "Amberlight",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "The classic melodic-house pluck, done with character: detuned blended waves with a hard-sync sweep on every note, chorus, and a dotted echo with tape-style darkening.",
     "tags": ["pluck", "classic", "melodic house", "detuned", "sync"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,6 +1,8 @@
 {
     "name": "Silver Thread",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A taut, shimmering string-pluck arp: the pluck-position table with a bright FM edge and a fast filter pinch. Thin, precise and sparkly - the needle in the mix.",
     "tags": ["arp", "string", "pluck", "bright", "precise"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,6 +1,8 @@
 {
     "name": "Casio Heart",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A shimmering, digital phase-distortion lead with a pulse underneath, like a beloved keyboard from 1985: bright, slightly cheesy in the best way, and full of vibrato.",
     "tags": ["lead", "retro", "digital", "80s", "vibrato"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

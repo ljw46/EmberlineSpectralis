@@ -1,6 +1,8 @@
 {
     "name": "Minor Nine Mist",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soft, extended-chord stab: piano, electric piano and glass partials blurred into a misty bloom with a long tail. Made for jazzy minor-ninth voicings.",
     "tags": ["stab", "jazz", "soft", "piano", "minor", "misty"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

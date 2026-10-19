@@ -1,6 +1,8 @@
 {
     "name": "Bright Kodak",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bright, snappy electric piano with an almost glassy bark, tightened up by an envelope on the wave position. Sunny, sparkly and great for uptempo grooves.",
     "tags": ["keys", "electric piano", "bright", "snappy", "uptempo"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

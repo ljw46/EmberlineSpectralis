@@ -1,6 +1,8 @@
 {
     "name": "Coal Fire",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A snarling, harmonically dense bass built from a distorted-waveform table and a wavefolder. Gritty but controlled - the Grit macro takes it from smoulder to roar.",
     "tags": ["bass", "distorted", "gritty", "aggressive"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

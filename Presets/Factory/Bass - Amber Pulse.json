@@ -1,6 +1,8 @@
 {
     "name": "Amber Pulse",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Sidechain-pumped bass that ducks on every beat in time with the host. A warm electric-bass tone with the gaps built in, ready for a four-on-the-floor kick.",
     "tags": ["bass", "sidechain", "pump", "house"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

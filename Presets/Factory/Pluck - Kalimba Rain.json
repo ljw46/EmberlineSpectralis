@@ -1,11 +1,13 @@
 {
     "name": "Kalimba Rain",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A thumb-piano pluck that scatters into a long, cascading echo like rain on a tin roof. A recorded-mallet body with a bright metallic ping layered on top.",
     "tags": ["pluck", "kalimba", "mallet", "echo", "organic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.9,
+        "master_volume": 1.0,
         "osc1_on": true,
         "osc1_table": "Mallet",
         "osc1_frame": 0.55,

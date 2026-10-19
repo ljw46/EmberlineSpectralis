@@ -1,6 +1,8 @@
 {
     "name": "Pillow Stab",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soft, rounded stab from flute and electric piano - warm, forgiving and impossible to make harsh. Sits low in a mix and fills the middle without fighting anything.",
     "tags": ["stab", "soft", "flute", "warm", "gentle"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

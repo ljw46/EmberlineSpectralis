@@ -1,6 +1,8 @@
 {
     "name": "Firefly",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A small, bright, plucky lead: FM and glass tones with a fast envelope and a triplet echo that makes every note flicker. Cute, quick and very easy to play.",
     "tags": ["lead", "pluck lead", "fm", "bright", "playful"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,6 +1,8 @@
 {
     "name": "Electric Orchard",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A shimmering, metallic orchard: two FM tables whose modulation indices rise and fall independently, turning slow chords into a glittering, fruit-bearing canopy of overtones.",
     "tags": ["texture", "fm", "metallic", "shimmer", "evolving"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

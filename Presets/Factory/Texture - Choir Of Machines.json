@@ -1,11 +1,13 @@
 {
     "name": "Choir Of Machines",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A choir that is half human and half circuit: recorded voices intertwined with chip oscillators and a vowel sweep, the machines singing slightly out of tune with the humans.",
     "tags": ["texture", "choir", "digital", "voice", "uncanny"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 3.5,
+        "master_volume": 3.3,
         "osc1_on": true,
         "osc1_table": "Human Voice",
         "osc1_frame": 0.45,

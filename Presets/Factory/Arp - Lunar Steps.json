@@ -1,6 +1,8 @@
 {
     "name": "Lunar Steps",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A staccato electric-piano arp with a tremolo shimmer and a long triplet echo - dreamy and a little melancholic, like footsteps in low gravity.",
     "tags": ["arp", "electric piano", "dreamy", "tremolo", "triplet"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

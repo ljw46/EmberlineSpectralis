@@ -1,11 +1,13 @@
 {
     "name": "Aurora Drift",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A slowly shifting wash of recorded voice, detuned waves and a thin glitter of glass harmonics. Three different movements run at once - filter, wave position and stereo drift - so it never repeats.",
     "tags": ["pad", "voice", "evolving", "wide", "melodic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.4,
+        "master_volume": 2.6,
         "osc1_on": true,
         "osc1_table": "Human Voice",
         "osc1_frame": 0.3,

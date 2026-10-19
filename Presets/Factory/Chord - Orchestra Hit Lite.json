@@ -1,6 +1,8 @@
 {
     "name": "Orchestra Hit Lite",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A compact orchestral hit: brass, cello and voice layered in a single thick stab with a long hall tail. Dramatic, a bit old-school, and very big.",
     "tags": ["stab", "orchestral", "brass", "cello", "voice", "dramatic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

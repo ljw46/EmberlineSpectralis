@@ -1,11 +1,13 @@
 {
     "name": "Opal",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A milky, hollow-glassy pad from the FM 1:2 table, with a second FM layer a fifth up, rippling very slowly. Soft pastel colours and a faint metallic sheen.",
     "tags": ["pad", "fm", "hollow", "pastel", "glassy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.2,
+        "master_volume": 0.0,
         "osc1_on": true,
         "osc1_table": "FM 1:2",
         "osc1_frame": 0.2,

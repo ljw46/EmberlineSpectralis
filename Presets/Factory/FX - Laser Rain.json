@@ -1,6 +1,8 @@
 {
     "name": "Laser Rain",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A shower of fast hard-sync zaps with a long, regenerating triplet echo: each note fires a laser that rains down through the stereo field.",
     "tags": ["fx", "laser", "zap", "sci-fi", "echo"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

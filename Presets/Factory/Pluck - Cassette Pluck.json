@@ -1,6 +1,8 @@
 {
     "name": "Cassette Pluck",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "An electric-guitar pluck that sounds like it was bounced to tape and played back on a worn machine: tube warmth, a slow pitch wobble and rolled-off highs.",
     "tags": ["pluck", "lofi", "tape", "guitar", "warm"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

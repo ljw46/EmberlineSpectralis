@@ -1,11 +1,13 @@
 {
     "name": "Violet Hour",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bowed lead with the warmth of a violin and the depth of a cello under it, swelling in on a soft attack. Romantic, a little sad, and very human.",
     "tags": ["lead", "violin", "cello", "bowed", "romantic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.1,
+        "master_volume": 1.4,
         "osc1_on": true,
         "osc1_table": "Violin",
         "osc1_frame": 0.4,

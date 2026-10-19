@@ -1,6 +1,8 @@
 {
     "name": "Static Garden",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A gritty granular layer and crackling noise blooming into soft, detuned pads: lo-fi, tactile and alive, like a transistor radio left on in an overgrown greenhouse.",
     "tags": ["texture", "granular", "lofi", "crackle", "organic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,6 +1,8 @@
 {
     "name": "Choir Of One",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A single sung voice for a lead: a recorded human-voice table with a formant filter that shapes the vowel. Macro 2 morphs the vowel; aftertouch adds a breath of vibrato.",
     "tags": ["lead", "vocal", "voice", "vowel", "expressive"],
     "macro_names": ["Brightness", "Vowel", "Space", "Width"],

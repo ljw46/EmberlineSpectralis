@@ -1,6 +1,8 @@
 {
     "name": "Gravity Well",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "The opposite of a riser: noise and a detuned stack that collapse downward as the filter closes, falling into a deep reverb. Drops onto the downbeat as a tail or a breakdown pull.",
     "tags": ["fx", "downlifter", "fall", "tail", "transition"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

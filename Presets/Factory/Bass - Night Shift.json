@@ -1,6 +1,8 @@
 {
     "name": "Night Shift",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Played-in electric bass that responds to touch: soft notes stay dark and round, hard notes get bright and growly. Very organic under a vocal or a pad.",
     "tags": ["bass", "electric", "dynamic", "organic"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

@@ -1,11 +1,13 @@
 {
     "name": "Neon Rain",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Droplets of glitter falling at random: sparse glass harmonics and a bird-call table, with sample-and-hold steering the wave position and the stereo image, caught in a dotted echo and a bright reverb.",
     "tags": ["texture", "glitter", "random", "cinematic", "rain"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.7,
+        "master_volume": 1.6,
         "osc1_on": true,
         "osc1_table": "Glass Harmonics",
         "osc1_frame": 0.4,

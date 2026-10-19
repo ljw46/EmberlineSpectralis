@@ -1,11 +1,13 @@
 {
     "name": "Silk Road",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A harp-like plucked pair: two recorded guitar tones an octave apart, panned wide, with chorus and a warm dotted echo. Flowing, exotic and hand-played in feel.",
     "tags": ["pluck", "harp", "guitar", "exotic", "organic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 3.0,
+        "master_volume": 2.9,
         "osc1_on": true,
         "osc1_table": "Acoustic Guitar",
         "osc1_frame": 0.4,

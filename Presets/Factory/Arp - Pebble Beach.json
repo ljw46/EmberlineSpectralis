@@ -1,6 +1,8 @@
 {
     "name": "Pebble Beach",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A smooth, wooden marimba arp with a stereo-spread pair of tones an octave apart - round and rhythmic, like pebbles dropped one at a time into still water.",
     "tags": ["arp", "marimba", "wooden", "organic house", "round"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

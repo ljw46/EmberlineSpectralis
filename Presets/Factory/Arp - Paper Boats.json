@@ -1,6 +1,8 @@
 {
     "name": "Paper Boats",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A gentle acoustic-guitar arp with a soft piano glow: warm, rounded and unhurried. Sits comfortably behind a vocal or a sparse pad.",
     "tags": ["arp", "guitar", "acoustic", "warm", "gentle"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

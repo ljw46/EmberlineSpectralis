@@ -1,6 +1,8 @@
 {
     "name": "Honeyed Keys",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A warm electric-piano body with a marimba overtone floating above it, wrapped in chorus and a slow dotted echo. Golden, sweet and slightly nostalgic.",
     "tags": ["keys", "electric piano", "warm", "sweet", "mallet"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

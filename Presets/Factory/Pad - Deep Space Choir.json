@@ -1,11 +1,13 @@
 {
     "name": "Deep Space Choir",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A huge, low choir with a theremin whistle floating above it and a sub underneath, in a ten-second reverb. The sound of something very large, very far away, singing.",
     "tags": ["pad", "choir", "deep", "space", "cinematic", "theremin"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.1,
+        "master_volume": -0.3,
         "osc1_on": true,
         "osc1_table": "Human Voice",
         "osc1_frame": 0.2,

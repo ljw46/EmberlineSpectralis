@@ -1,6 +1,8 @@
 {
     "name": "Pocket Piano",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A tiny, lo-fi toy piano: marimba and piano cycles pushed through a touch of tube grit with a wonky pitch drift. Charming, plinky and perfect for quirky hooks.",
     "tags": ["keys", "toy", "lofi", "quirky", "mallet"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

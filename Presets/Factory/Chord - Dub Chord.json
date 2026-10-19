@@ -1,6 +1,8 @@
 {
     "name": "Dub Chord",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soft, filtered chord thrown into a huge feedback echo and a deep reverb, the echo darkening with every repeat. Play one chord and let it dissolve - pure dub techno.",
     "tags": ["stab", "dub", "techno", "echo", "deep"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,11 +1,13 @@
 {
     "name": "Kora Dreams",
     "category": "Organic",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A cascading harp-lute voice: two recorded guitar tones panned apart with a pluck-position shimmer, letting notes ring together into a blurry arpeggio. Flowing, exotic and delicate.",
     "tags": ["organic", "kora", "harp", "plucked", "flowing", "exotic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.5,
+        "master_volume": 1.4,
         "osc1_on": true,
         "osc1_table": "Acoustic Guitar",
         "osc1_frame": 0.45,

@@ -68,6 +68,10 @@ private:
     std::deque<WavetableMesh> meshes;
     FilterDisplay filterDisplay;
     PresetBar presetBar;
+    juce::TextButton helpButton { "?" };
+    PresetCredit presetCredit;
+    SupportLink supportLink;
+    juce::TooltipWindow tooltips { this, 600 };
     MatrixPage matrix;
 
     std::vector<Panel*> lfoPanels, envPanels, filterRow;

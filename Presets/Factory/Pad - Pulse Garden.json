@@ -1,6 +1,8 @@
 {
     "name": "Pulse Garden",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A pumping pad with a built-in rhythm: a stepped pattern locked to the host tempo ducks the chord into an eighth-note groove, no sidechain needed. Press and hold for instant movement.",
     "tags": ["pad", "sidechain", "rhythmic", "pump", "synced", "house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,6 +1,8 @@
 {
     "name": "Lasers In The Fog",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A cutting hard-sync lead whose sweep is slowly steered by a synced LFO, wrapped in a dotted echo and a hazy reverb - bright lasers seen through mist.",
     "tags": ["lead", "sync", "bright", "synced", "retro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

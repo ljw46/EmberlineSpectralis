@@ -1,6 +1,8 @@
 {
     "name": "Velvet Dusk",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Warm string-section pad: recorded cello and violin cycles blended and widened, with a slow bow-like swell and a shimmer of vibrato. Plush, dark and romantic.",
     "tags": ["pad", "strings", "cello", "violin", "warm", "slow"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

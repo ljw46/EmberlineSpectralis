@@ -1,6 +1,8 @@
 {
     "name": "Rolling Gold",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Hold a chord and it rolls upward over two octaves in sixteenths, the downbeats accented: a bright FM pluck with a glassy overtone and a dotted echo. The classic melodic-house top line, ready to play.",
     "tags": ["arp", "built-in arp", "rolling", "melodic house", "pluck"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

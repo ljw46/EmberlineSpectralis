@@ -1,6 +1,8 @@
 {
     "name": "Velvet Pick",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A mellow, rounded guitar pluck with a gentle tube glow: the lowpass sits low so the pick attack stays soft. Intimate and easy on the ears.",
     "tags": ["pluck", "guitar", "mellow", "soft", "deep house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -18,6 +18,8 @@ The same format is used for the factory library, for user presets, and for prese
 {
     "name": "Amber Hour",
     "category": "Pad",
+    "author": "Your Name",
+    "url": "https://example.com/your-socials",
     "description": "One or two sentences: what it sounds like and when to use it.",
     "tags": ["pad", "warm", "melodic house"],
     "macro_names": ["Brightness", "Morph", "Resonance", "Width"],
@@ -42,6 +44,8 @@ Strict JSON: no comments, no trailing commas. Only `name` and `category` are req
 | field | meaning |
 |---|---|
 | `name`, `category` | shown in the preset browser. Categories: `Init Bass Pluck Lead Pad Keys Chord Arp Organic Texture FX` (anything else appears after them; saved user presets use `User`). |
+| `schema` | written by the plugin when saving (currently `1`); optional in hand-written files. A preset with a newer schema than the plugin loads with a warning. |
+| `author`, `url` | optional credit shown under **Preset info...**. `url` must be `http(s)`; it is opened only when the user clicks *Open link*. Factory presets use `"author": "EmberlineSky"`. |
 | `description`, `tags` | free text, for humans and search. |
 | `macro_names` | labels for Macro 1-4 under the knobs (use `"-"` for an unused macro). |
 | `parameters` | **only the values that differ from the defaults**. Everything not listed resets to its default - a preset never inherits from the previous sound. |
@@ -208,6 +212,12 @@ Give the model `docs/parameters.md` and this file, then something like:
 
 Save the result as `Presets/Factory/<Category> - <Name>.json` (or into the user preset folder), run
 `EmberlineTools check ... --fix-levels`, and listen.
+
+## Voice mode and glide
+
+`voice_mode`: `Poly` (default), `Mono` (one voice, last note wins, every note retriggers) or `Legato` (one voice, overlapping notes only change pitch).
+`glide_time`: portamento in seconds (0 = off, up to 3 s); the slide takes the same time for any interval.
+`glide_mode`: `Always` or `Legato Only` (slide only when the previous key is still held). In `Poly`, a new note slides from the previous note's pitch.
 
 ## Filters, analogue character and the built-in arpeggiator
 

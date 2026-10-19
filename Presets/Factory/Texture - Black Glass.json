@@ -1,11 +1,13 @@
 {
     "name": "Black Glass",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A dark, tense texture: distorted waves and glass harmonics under a closed filter that creeps open and shut, ending in a long, dark reverb. Menacing, sleek and glossy.",
     "tags": ["texture", "dark", "tense", "glass", "cinematic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -6.5,
+        "master_volume": -6.6,
         "osc1_on": true,
         "osc1_table": "Distorted",
         "osc1_frame": 0.3,

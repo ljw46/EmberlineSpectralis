@@ -1,11 +1,13 @@
 {
     "name": "Nocturne",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A felted, intimate piano with the highs rolled well back - close-miked, quiet and a little sad. Plays beautifully in sparse, slow voicings.",
     "tags": ["keys", "piano", "felt", "intimate", "melancholy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.0,
+        "master_volume": 0.2,
         "osc1_on": true,
         "osc1_table": "Grand Piano",
         "osc1_frame": 0.15,

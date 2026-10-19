@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.22)
 
 project(EmberlineSpectralis VERSION 0.1.0 LANGUAGES C CXX)
 
+# Release stage shown next to the version in the UI ("pre-beta", "beta", or "" for a final release).
+set(EMBER_VERSION_LABEL "pre-beta" CACHE STRING "Release stage label")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -36,6 +39,9 @@ juce_add_plugin(EmberlineSpectralis
 )
 
 juce_add_binary_data(EmberlineAssets HEADER_NAME AssetData.h NAMESPACE AssetData SOURCES Assets/phoenix.png)
+
+# the user manual as one self-contained page (built by tools/build_manual.py from docs/manual), opened by the ? button
+juce_add_binary_data(EmberlineManual HEADER_NAME ManualData.h NAMESPACE ManualData SOURCES docs/manual/manual.html)
 
 # factory presets are plain JSON files in Presets/Factory, embedded at build time
 file(GLOB EMBERLINE_FACTORY_PRESETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Presets/Factory/*.json")
@@ -84,11 +90,14 @@ target_compile_definitions(EmberlineSpectralis PUBLIC
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_REPORT_APP_USAGE=0
+    EMBER_VERSION="${PROJECT_VERSION}"
+    EMBER_VERSION_LABEL="${EMBER_VERSION_LABEL}"
 )
 
 target_link_libraries(EmberlineSpectralis
     PRIVATE
         EmberlineAssets
+        EmberlineManual
         EmberlinePresets
         EmberlineWavetables
         juce::juce_audio_utils
@@ -115,12 +124,15 @@ target_sources(EmberlineTools PRIVATE
 )
 target_compile_definitions(EmberlineTools PRIVATE
     JucePlugin_Name="Emberline Spectralis"
+    EMBER_VERSION="${PROJECT_VERSION}"
+    EMBER_VERSION_LABEL="${EMBER_VERSION_LABEL}"
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
 )
 target_link_libraries(EmberlineTools
     PRIVATE
         EmberlineAssets
+        EmberlineManual
         EmberlinePresets
         EmberlineWavetables
         juce::juce_audio_utils

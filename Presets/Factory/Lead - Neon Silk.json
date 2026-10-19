@@ -1,11 +1,13 @@
 {
     "name": "Neon Silk",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A smooth melodic-house topline: detuned blended waves with a recorded voice breathing through the top, gentle vibrato, chorus and a dotted echo. Sings without sounding like a synth preset.",
     "tags": ["lead", "melodic house", "vocal", "silky"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.5,
+        "master_volume": 1.6,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.55,

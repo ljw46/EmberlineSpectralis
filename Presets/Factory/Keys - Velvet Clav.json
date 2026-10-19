@@ -1,6 +1,8 @@
 {
     "name": "Velvet Clav",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A funky clavinet with a recorded pluck and a wah-like filter that snaps open with velocity: play softly for a muted chick, hard for a biting slap.",
     "tags": ["keys", "clavinet", "funk", "wah", "dynamic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

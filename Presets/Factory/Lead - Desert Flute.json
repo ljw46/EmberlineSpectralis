@@ -1,11 +1,13 @@
 {
     "name": "Desert Flute",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A breathy flute lead with a hint of clarinet and a dusting of air. The mod wheel brightens the tone and pushes it toward overblown; aftertouch adds expressive vibrato.",
     "tags": ["lead", "flute", "breathy", "organic house", "expressive"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -2.5,
+        "master_volume": -2.0,
         "osc1_on": true,
         "osc1_table": "Flute",
         "osc1_frame": 0.35,

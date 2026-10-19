@@ -6,7 +6,7 @@
 class EmberlineProcessor;
 
 // JSON presets. The format is documented in docs/PRESETS.md; in short:
-//   { "name", "category", "description", "tags": [...],
+//   { "name", "category", "author", "url", "description", "tags": [...],
 //     "parameters": { "<param id>": value, ... },            // real units; choices by name; only non-defaults needed
 //     "modulation": [ { "source", "destination", "depth", "curve", "bipolar" }, ... ],
 //     "lfo_shapes": { "lfo1": "sine" | [ { "x", "y", "curve" }, ... ] } }
@@ -14,7 +14,7 @@ namespace ember::presets
 {
     struct Info
     {
-        juce::String name, category, description;
+        juce::String name, category, description, author, url;
         juce::StringArray tags;
         bool factory = false;
         juce::String json;   // the preset text itself (factory presets are embedded in the binary)
@@ -40,6 +40,10 @@ namespace ember::presets
 
         static juce::File userDirectory();
 
+        // Who the user's own presets are credited to (remembered between saves in a small settings file).
+        static void loadAuthor (juce::String& author, juce::String& url);
+        static void saveAuthor (const juce::String& author, const juce::String& url);
+
     private:
         std::vector<Info> items;
         int factoryCount = 0;
@@ -53,7 +57,11 @@ namespace ember::presets
 
     // Snapshot of the current sound as a preset (only non-default parameters are written).
     juce::var capture (EmberlineProcessor&, const juce::String& name, const juce::String& category,
-                       const juce::String& description = {}, const juce::StringArray& tags = {});
+                       const juce::String& description = {}, const juce::StringArray& tags = {},
+                       const juce::String& author = {}, const juce::String& url = {});
+
+    // Only http(s) links are ever opened; a bare "example.com/me" gets https:// added. Empty if unusable.
+    juce::String cleanUrl (const juce::String& text);
 
     juce::String safeFileName (const juce::String& name);
 }

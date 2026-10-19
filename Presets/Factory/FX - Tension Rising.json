@@ -1,6 +1,8 @@
 {
     "name": "Tension Rising",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "The classic build: white noise and a wide supersaw rise together over eight seconds as the high-pass opens and a pitch-like sweep climbs. Hold a note into the drop.",
     "tags": ["fx", "riser", "build", "tension", "drop"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

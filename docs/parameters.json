@@ -84,6 +84,37 @@
       "default": 0.3
     },
     {
+      "id": "voice_mode",
+      "name": "Voice Mode",
+      "type": "choice",
+      "choices": [
+        "Poly",
+        "Mono",
+        "Legato"
+      ],
+      "default": "Poly"
+    },
+    {
+      "id": "glide_time",
+      "name": "Glide Time",
+      "type": "float",
+      "min": 0.0,
+      "max": 3.0,
+      "default": 0.0,
+      "unit": "s",
+      "skew": 0.4
+    },
+    {
+      "id": "glide_mode",
+      "name": "Glide Mode",
+      "type": "choice",
+      "choices": [
+        "Always",
+        "Legato Only"
+      ],
+      "default": "Always"
+    },
+    {
       "id": "filt1_type",
       "name": "Filter 1 Type",
       "type": "choice",

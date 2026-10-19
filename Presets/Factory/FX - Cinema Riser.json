@@ -1,6 +1,8 @@
 {
     "name": "Cinema Riser",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A strings-and-voice riser that opens slowly over eight seconds: recorded violin and cello with a choir behind them, the filter swelling from dark to blazing. Emotional and grand.",
     "tags": ["fx", "riser", "strings", "cinematic", "emotional"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

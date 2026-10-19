@@ -1,6 +1,8 @@
 {
     "name": "Oboe At Dawn",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A reedy, vocal oboe lead that sits somewhere between an instrument and a voice. Nasal and bright at the attack, softening into a warm sustain as the vowel layer fades in.",
     "tags": ["lead", "oboe", "reed", "vocal", "organic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

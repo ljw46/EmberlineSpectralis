@@ -1,4 +1,7 @@
 #include "PluginEditor.h"
+#include "Links.h"
+#include "ManualHelp.h"
+#include "Version.h"
 #include "PhoenixLogo.h"
 
 using namespace ember;
@@ -10,7 +13,7 @@ namespace
 }
 
 EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), phoenix (ember::loadPhoenix()), filterDisplay (p), presetBar (p), matrix (p)
+    : AudioProcessorEditor (&p), processor (p), phoenix (ember::loadPhoenix()), filterDisplay (p), presetBar (p), presetCredit (p), matrix (p)
 {
     setLookAndFeel (&lnf);
 
@@ -28,6 +31,21 @@ EmberlineEditor::EmberlineEditor (EmberlineProcessor& p)
         fxSlot[(size_t) i] = processor.apvts.getRawParameterValue ("fx_slot" + juce::String (i + 1));
 
     addAndMakeVisible (presetBar);
+    addAndMakeVisible (presetCredit);
+    addAndMakeVisible (supportLink);
+    addAndMakeVisible (helpButton);
+    helpButton.setTooltip ("Help: open the manual, or support the developer");
+    helpButton.onClick = [this]
+    {
+        juce::PopupMenu menu;
+        menu.addItem (1, "Open the manual (in your browser)");
+        menu.addItem (2, "Support EmberlineSky - buy me a coffee");
+        menu.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (&helpButton), [] (int id)
+        {
+            if (id == 1)      ember::manual::open();
+            else if (id == 2) juce::URL (ember::links::support).launchInDefaultBrowser();
+        });
+    };
     buildTop();
     buildVisualizers();
     buildLfosAndChaos();
@@ -99,6 +117,7 @@ void EmberlineEditor::buildTop()
     masterPanel->addKnob (params::masterVolume, "VOLUME");
     masterPanel->addKnob ("analog_drift", "DRIFT");
     masterPanel->addKnob ("analog_warmth", "WARMTH");
+    masterPanel->addKnob ("glide_time", "GLIDE");
 
     macroPanel = &addPanel (*this, "PERFORMANCE MACROS", colours::amber, 2);
     macroPanel->setCentredTitle (true);
@@ -298,9 +317,12 @@ void EmberlineEditor::buildFiltersAndEnvs()
         filterRow.push_back (&panel);
     }
 
-    auto& routing = addPanel (page, "ROUTING / TEMPO", colours::steel);
+    auto& routing = addPanel (page, "VOICE / ROUTING", colours::amber);
+    routing.addCombo ("voice_mode", params::voiceModeNames);
+    routing.addCombo ("glide_mode", params::glideModeNames);
     routing.addCombo ("filt_routing", params::routingNames);
-    routing.addKnob ("global_tempo", "TEMPO (NO HOST)");
+    routing.addKnob ("glide_time", "GLIDE");
+    routing.addKnob ("global_tempo", "TEMPO");
     filterRow.push_back (&routing);
 
     const char* envIds[]   { "attack", "decay", "sustain", "release", "acurve", "dcurve" };
@@ -322,7 +344,7 @@ void EmberlineEditor::layoutFiltersAndEnvs()
     auto row1 = b.removeFromTop (168);
     b.removeFromTop (8);
 
-    const float weights[] { 1.15f, 1.3f, 1.3f, 0.75f };
+    const float weights[] { 1.15f, 1.15f, 1.15f, 1.2f };
     float total = 0.0f;
     for (auto v : weights) total += v;
     const int fullW = row1.getWidth();
@@ -429,6 +451,10 @@ void EmberlineEditor::paint (juce::Graphics& g)
     g.setGradientFill (grad);
     g.fillPath (text);
 
+    g.setColour (juce::Colours::white.withAlpha (0.4f));
+    g.setFont (juce::FontOptions (10.5f));
+    g.drawText (ember::version::full(), juce::Rectangle<int> (66, 40, 222, 13), juce::Justification::centredLeft);
+
     ember::drawPhoenix (g, phoenix, juce::Rectangle<float> (16.0f, 6.0f, 42.0f, 42.0f), 0.55f);
     ember::drawPhoenix (g, phoenix, juce::Rectangle<float> ((float) getWidth() - 58.0f, 6.0f, 42.0f, 42.0f), 0.55f);
 
@@ -452,7 +478,10 @@ void EmberlineEditor::paint (juce::Graphics& g)
 
 void EmberlineEditor::resized()
 {
-    presetBar.setBounds (66, 13, 222, 28);
+    presetBar.setBounds (66, 13, 194, 28);
+    helpButton.setBounds (264, 13, 26, 28);
+    presetCredit.setBounds (getWidth() - 66 - 230, 9, 230, 32);
+    supportLink.setBounds (getWidth() - 66 - 230, 41, 230, 12);
 
     auto area = getLocalBounds().reduced (14, 0);
     area.removeFromTop (headerH);

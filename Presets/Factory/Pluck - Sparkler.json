@@ -1,11 +1,13 @@
 {
     "name": "Sparkler",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A high, fizzing bell pluck: FM and Fibonacci partials stacked for a glittering burst that dies fast. A lovely topline over deep, dark chords.",
     "tags": ["pluck", "bell", "glitter", "high", "melodic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.7,
+        "master_volume": 2.8,
         "osc1_on": true,
         "osc1_table": "FM 1:5 Bell",
         "osc1_frame": 0.3,

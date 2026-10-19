@@ -1,6 +1,8 @@
 {
     "name": "Bouncer",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A playful, elastic bass: an eighth-note downward LFO makes the level bounce, with a resonant filter that squelches on the way up.",
     "tags": ["bass", "bounce", "synced", "groovy", "squelch"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

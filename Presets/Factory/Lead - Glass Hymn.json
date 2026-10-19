@@ -1,11 +1,13 @@
 {
     "name": "Glass Hymn",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "An ethereal, bell-like lead: sparse glass harmonics and a pure FM tone that shimmer together, with a slow Perlin drift on the wave position so it never sits still.",
     "tags": ["lead", "glass", "ethereal", "bell", "ambient"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.3,
+        "master_volume": 2.4,
         "osc1_on": true,
         "osc1_table": "Glass Harmonics",
         "osc1_frame": 0.45,

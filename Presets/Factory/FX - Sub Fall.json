@@ -1,6 +1,8 @@
 {
     "name": "Sub Fall",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A huge falling sub: a pure sine whose pitch drops steadily for the length of the note and a long exponential decay, for breakdown drops and cinematic impacts.",
     "tags": ["fx", "sub", "drop", "fall", "impact"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

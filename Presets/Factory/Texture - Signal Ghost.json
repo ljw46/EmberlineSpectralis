@@ -1,6 +1,8 @@
 {
     "name": "Signal Ghost",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A haunted digital whisper: video-game and chip-oscillator tones smeared through a long, feedback-heavy echo until only the ghosts of the notes remain, drifting across the field.",
     "tags": ["texture", "digital", "ghostly", "echo", "retro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

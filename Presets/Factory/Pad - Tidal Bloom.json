@@ -1,11 +1,13 @@
 {
     "name": "Tidal Bloom",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A pad that is built harmonic by harmonic: the additive table fills in as a slow LFO swells, while a comb-filtered layer ripples through the stereo field like a flanger frozen in water.",
     "tags": ["pad", "additive", "evolving", "flanger", "breathing"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.8,
+        "master_volume": 1.9,
         "osc1_on": true,
         "osc1_table": "Additive Build",
         "osc1_frame": 0.2,

@@ -1,6 +1,8 @@
 {
     "name": "Rolling Thunder",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bass that carries its own filter: the table opens along with the envelope, so every note has a built-in growl with no filter needed. Warm and punchy.",
     "tags": ["bass", "saw", "sweep", "punchy"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

@@ -1,6 +1,8 @@
 {
     "name": "Stutter Rise",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A build in one patch: the arp starts at eighths and accelerates through sixteenths to thirty-seconds over a bar, then snaps back. Hold a chord into the drop; louder as it speeds up.",
     "tags": ["arp", "built-in arp", "stutter", "build", "riser", "fill"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

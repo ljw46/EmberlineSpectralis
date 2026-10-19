@@ -1,11 +1,13 @@
 {
     "name": "Amber Hour",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A classic warm analogue pad with a pulsing heart: pulse-width modulation locked to the bar gives that breathing, slightly hollow shimmer. Golden-hour house at its finest.",
     "tags": ["pad", "analog", "pwm", "warm", "synced", "deep house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.0,
+        "master_volume": 0.0,
         "osc1_on": true,
         "osc1_table": "Pulse Width",
         "osc1_frame": 0.1,

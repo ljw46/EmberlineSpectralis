@@ -1,11 +1,13 @@
 {
     "name": "Vocal Chop Chord",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A chord of 'ooh's: recorded voices on a snappy envelope with a formant sweep that opens on every hit. Sounds like a sampled vocal stab without a sample in sight.",
     "tags": ["stab", "vocal", "voice", "chop", "house"],
     "macro_names": ["Brightness", "Vowel", "Space", "Width"],
     "parameters": {
-        "master_volume": 5.5,
+        "master_volume": 5.4,
         "osc1_on": true,
         "osc1_table": "Human Voice",
         "osc1_frame": 0.3,

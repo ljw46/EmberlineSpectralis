@@ -1,6 +1,8 @@
 {
     "name": "Back Alley Reese",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A classic dark reese: two blended-wave oscillators detuned against each other so the low end phases and growls, with the filter creeping slowly.",
     "tags": ["bass", "reese", "dark", "detuned"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

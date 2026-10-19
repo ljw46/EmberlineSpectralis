@@ -1,6 +1,8 @@
 {
     "name": "Basic Saw",
     "category": "Init",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Plain single saw through a lowpass. The blank canvas - every parameter at its default.",
     "tags": ["init", "basic"],
     "parameters": {

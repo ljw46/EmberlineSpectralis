@@ -1,6 +1,8 @@
 {
     "name": "Whale Song",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A slow, mournful call from the deep: a theremin and a low recorded voice gliding upward by a few cents with every note, wavering in vibrato and lost in a gigantic reverb.",
     "tags": ["fx", "whale", "eerie", "voice", "ambient"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

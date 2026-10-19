@@ -1,6 +1,8 @@
 {
     "name": "Afterglow Stab",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A wide brass-and-voice stab that swells open on the attack and glows down afterwards. Cinematic, a little triumphant, and big enough to lead a chorus section.",
     "tags": ["stab", "brass", "voice", "wide", "cinematic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

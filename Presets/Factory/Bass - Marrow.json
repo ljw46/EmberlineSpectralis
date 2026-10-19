@@ -1,6 +1,8 @@
 {
     "name": "Marrow",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A plucked acoustic-guitar tone dropped into the bass register: woody, staccato and very organic. Lovely for syncopated lines in organic house.",
     "tags": ["bass", "plucked", "guitar", "organic", "staccato"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

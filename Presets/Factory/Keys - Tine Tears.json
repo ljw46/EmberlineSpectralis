@@ -1,6 +1,8 @@
 {
     "name": "Tine Tears",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Pure, singing tines: an FM tone and a recorded electric piano blended so the sine-like fundamental rings clean. A slow tremolo makes it weep.",
     "tags": ["keys", "tines", "fm", "tremolo", "melancholy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

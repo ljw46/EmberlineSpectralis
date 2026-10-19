@@ -1,6 +1,8 @@
 {
     "name": "Glass Staircase",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bright, fast-decaying FM pluck made for arpeggiators: each note starts glassy and rounds off, answered by a triplet echo that fills the gaps between steps.",
     "tags": ["arp", "fm", "glass", "bright", "triplet"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

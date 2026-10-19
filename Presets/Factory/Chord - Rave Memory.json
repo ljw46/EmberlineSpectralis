@@ -1,6 +1,8 @@
 {
     "name": "Rave Memory",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A raw, nostalgic rave stab: detuned waves, a video-game table for grit, and a hard-sync snap, pushed into saturation. Sounds like a warehouse in 1992.",
     "tags": ["stab", "rave", "nostalgic", "gritty", "hard"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

@@ -1,6 +1,8 @@
 {
     "name": "Cello Fog",
     "category": "Organic",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A low, bowed-cello drone-pad that rolls in like fog: slow attack, subtle vibrato, a sub-octave of warmth underneath. Sombre, woody and a little haunted.",
     "tags": ["organic", "cello", "bowed", "drone", "sombre"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

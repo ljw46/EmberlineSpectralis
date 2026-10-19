@@ -1,6 +1,8 @@
 {
     "name": "Sonar",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Slow pings in a dark ocean: a sparse pattern locked to the host tempo strikes a bell-tone every few beats, and each ping falls away into a deep dotted echo and a vast reverb. Hold a note and it pings by itself.",
     "tags": ["texture", "sonar", "ping", "bell", "synced", "ambient"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

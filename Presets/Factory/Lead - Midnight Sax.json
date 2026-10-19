@@ -1,11 +1,13 @@
 {
     "name": "Midnight Sax",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A smoky, breathy alto-sax lead with a warm tube glow. Soft touches stay velvety, hard touches growl. Wonderful for slow, soulful melodies.",
     "tags": ["lead", "sax", "smoky", "soulful", "warm"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -3.6,
+        "master_volume": -3.3,
         "osc1_on": true,
         "osc1_table": "Alto Sax",
         "osc1_frame": 0.35,

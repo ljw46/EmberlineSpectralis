@@ -1,6 +1,8 @@
 {
     "name": "Wishing Well",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A single pluck dropped into a very deep, echoing space: Fibonacci-bell partials under an FM sine, with a long reverb and a slow dotted echo. Plays like a coin falling into water.",
     "tags": ["pluck", "ethereal", "bell", "reverb", "ambient"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

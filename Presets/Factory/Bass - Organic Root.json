@@ -1,6 +1,8 @@
 {
     "name": "Organic Root",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A warm, played-in bass built from a real electric-bass recording with a marimba-like overtone an octave up. Round, woody and very natural.",
     "tags": ["bass", "organic", "warm", "natural"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

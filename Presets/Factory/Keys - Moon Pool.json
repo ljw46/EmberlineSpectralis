@@ -1,6 +1,8 @@
 {
     "name": "Moon Pool",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A dreamy electric piano floating on a bed of breathy flute, deep in echo and chorus. Weightless, hazy and slow - like keys heard from the bottom of a swimming pool.",
     "tags": ["keys", "dreamy", "electric piano", "flute", "hazy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

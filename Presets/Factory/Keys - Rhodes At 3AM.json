@@ -1,6 +1,8 @@
 {
     "name": "Rhodes At 3AM",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A recorded electric-piano tone with a bell-like FM tine that fades after each strike, a gentle tremolo, and a worn chorus. The sound of the last chord of the night.",
     "tags": ["keys", "rhodes", "electric piano", "late night", "tremolo"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

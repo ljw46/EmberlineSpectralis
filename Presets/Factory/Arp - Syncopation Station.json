@@ -1,6 +1,8 @@
 {
     "name": "Syncopation Station",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A sustained chord chopped into a syncopated sixteen-step pattern (a classic 3-3-2 feel) that locks to the host tempo. Instant groove from a single held chord.",
     "tags": ["arp", "gate", "syncopated", "rhythmic", "synced", "house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

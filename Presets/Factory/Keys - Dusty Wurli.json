@@ -1,11 +1,13 @@
 {
     "name": "Dusty Wurli",
     "category": "Keys",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A gritty, bright electric piano with a hint of clavinet snap on top, warmed by tube saturation and a sweep of slow phasing. Crunchy, funky and full of character.",
     "tags": ["keys", "wurlitzer", "electric piano", "gritty", "funky"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.9,
+        "master_volume": 1.0,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.6,

@@ -1,6 +1,8 @@
 {
     "name": "Moss Garden",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soft, breathy flute-and-mallet arp: hollow and organic with a gentle Perlin sway on the stereo image, as if the notes were drifting between leaves.",
     "tags": ["arp", "flute", "mallet", "organic house", "breathy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

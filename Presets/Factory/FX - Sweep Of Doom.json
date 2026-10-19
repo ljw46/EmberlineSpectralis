@@ -1,6 +1,8 @@
 {
     "name": "Sweep Of Doom",
     "category": "FX",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A long, resonant filter sweep over a dark saw stack, driven by a four-bar triangle LFO locked to the host. Automate Macro 1 by hand to ride it.",
     "tags": ["fx", "sweep", "filter", "synced", "dark"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

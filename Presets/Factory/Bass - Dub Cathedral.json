@@ -1,6 +1,8 @@
 {
     "name": "Dub Cathedral",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A short, round bass note thrown into a huge dotted echo and a long reverb - play one note and let the room do the rest. Pure dub-techno weight.",
     "tags": ["bass", "dub", "echo", "deep house"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

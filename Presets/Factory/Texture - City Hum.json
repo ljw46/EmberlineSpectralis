@@ -1,6 +1,8 @@
 {
     "name": "City Hum",
     "category": "Texture",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "The low drone of a city at night: a digital bass table and a tonewheel organ with a faint noise floor and slow, chaotic movement. Subtle, ominous and surprisingly musical.",
     "tags": ["texture", "drone", "city", "dark", "ambient"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

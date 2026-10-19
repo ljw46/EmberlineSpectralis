@@ -1,6 +1,8 @@
 {
     "name": "Tarmac",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "Metallic FM growl with an eighth-note synced sweep of the modulation index - the sound of a bassline chewing on gravel. Tight and aggressive.",
     "tags": ["bass", "fm", "growl", "synced", "aggressive"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

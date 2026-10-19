@@ -1,6 +1,8 @@
 {
     "name": "Wooden Heart",
     "category": "Organic",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A tuned, hollow wood-block heartbeat: a pitched mallet with a short noise knock, tight and dry. Plays as a rhythmic, melodic percussion layer.",
     "tags": ["organic", "percussion", "wood", "tuned", "dry"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

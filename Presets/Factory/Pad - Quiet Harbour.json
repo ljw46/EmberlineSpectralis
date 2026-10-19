@@ -1,11 +1,13 @@
 {
     "name": "Quiet Harbour",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soft, safe-feeling pad from electric-piano and flute cycles: gentle, rounded and unhurried, like boats at rest. Beautiful under a sparse melody.",
     "tags": ["pad", "soft", "electric piano", "flute", "calm", "organic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.3,
+        "master_volume": 0.2,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.25,

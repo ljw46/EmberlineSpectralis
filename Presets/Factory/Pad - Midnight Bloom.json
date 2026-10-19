@@ -1,11 +1,13 @@
 {
     "name": "Midnight Bloom",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A pad that opens like a flower: it starts dark and muffled and the table and filter swell open over four seconds. Hold a chord and let it unfold.",
     "tags": ["pad", "swell", "opening", "dark to bright", "intro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.3,
+        "master_volume": -0.7,
         "osc1_on": true,
         "osc1_table": "Saw Sweep",
         "osc1_frame": 0.05,

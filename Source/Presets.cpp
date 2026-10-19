@@ -1,5 +1,6 @@
 #include "Presets.h"
 #include "PluginProcessor.h"
+#include "Version.h"
 #include "WavetableBank.h"
 #include <PresetData.h>
 
@@ -92,11 +93,15 @@ namespace ember::presets
 
         std::vector<mod::LfoNode> defaultShape (int lfo) { return mod::LfoShapes::presetNodes (lfo == 0 ? 0 : lfo == 1 ? 1 : 5); }
 
-        juce::var makeInfoObject (const juce::String& name, const juce::String& category, const juce::String& description, const juce::StringArray& tags)
+        juce::var makeInfoObject (const juce::String& name, const juce::String& category, const juce::String& description, const juce::StringArray& tags,
+                                      const juce::String& author, const juce::String& url)
         {
             auto* o = new juce::DynamicObject();
+            o->setProperty ("schema", ember::version::presetSchema);
             o->setProperty ("name", name);
             o->setProperty ("category", category);
+            if (author.isNotEmpty()) o->setProperty ("author", author);
+            if (url.isNotEmpty())    o->setProperty ("url", url);
             o->setProperty ("description", description);
             juce::Array<juce::var> t;
             for (auto& s : tags) t.add (s);
@@ -108,6 +113,8 @@ namespace ember::presets
         {
             info.name = v.getProperty ("name", {}).toString();
             info.category = v.getProperty ("category", "User").toString();
+            info.author = v.getProperty ("author", {}).toString();
+            info.url = cleanUrl (v.getProperty ("url", {}).toString());
             info.description = v.getProperty ("description", {}).toString();
             if (auto* arr = v.getProperty ("tags", {}).getArray())
                 for (auto& t : *arr) info.tags.add (t.toString());
@@ -122,6 +129,18 @@ namespace ember::presets
         return true;
     }
 
+    juce::String cleanUrl (const juce::String& text)
+    {
+        auto t = text.trim();
+        if (t.isEmpty() || t.containsAnyOf (" \t\r\n\"<>")) return {};
+        if (! t.startsWithIgnoreCase ("http://") && ! t.startsWithIgnoreCase ("https://"))
+        {
+            if (t.contains ("://") || ! t.contains (".")) return {};
+            t = "https://" + t;
+        }
+        return t;
+    }
+
     juce::String toJson (const juce::var& preset) { return juce::JSON::toString (preset, false, 4); }
 
     juce::String safeFileName (const juce::String& name)
@@ -134,6 +153,27 @@ namespace ember::presets
     {
         return juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory)
                    .getChildFile ("Emberline").getChildFile ("Spectralis").getChildFile ("Presets");
+    }
+
+    static juce::File settingsFile() { return Library::userDirectory().getSiblingFile ("settings.json"); }
+
+    void Library::loadAuthor (juce::String& author, juce::String& url)
+    {
+        juce::var v;
+        if (juce::JSON::parse (settingsFile().loadFileAsString(), v).wasOk())
+        {
+            author = v.getProperty ("author", {}).toString();
+            url = v.getProperty ("url", {}).toString();
+        }
+    }
+
+    void Library::saveAuthor (const juce::String& author, const juce::String& url)
+    {
+        auto* o = new juce::DynamicObject();
+        o->setProperty ("author", author);
+        o->setProperty ("url", url);
+        settingsFile().getParentDirectory().createDirectory();
+        settingsFile().replaceWithText (toJson (juce::var (o)), false, false, "\n");
     }
 
     static int categoryRank (const juce::String& c)
@@ -231,6 +271,8 @@ namespace ember::presets
             result.warnings.add ("preset is not a JSON object");
             return result;
         }
+        if ((int) preset.getProperty ("schema", 1) > ember::version::presetSchema)
+            result.warnings.add ("preset was made with a newer version of Emberline Spectralis; some settings may be ignored");
 
         auto& apvts = proc.apvts;
 
@@ -335,9 +377,10 @@ namespace ember::presets
 
     // ------------------------------------------------------------------ capture
     juce::var capture (EmberlineProcessor& proc, const juce::String& name, const juce::String& category,
-                       const juce::String& description, const juce::StringArray& tags)
+                       const juce::String& description, const juce::StringArray& tags,
+                       const juce::String& author, const juce::String& url)
     {
-        auto info = makeInfoObject (name, category, description, tags);
+        auto info = makeInfoObject (name, category, description, tags, author, url);
         auto* root = info.getDynamicObject();
         auto& apvts = proc.apvts;
 

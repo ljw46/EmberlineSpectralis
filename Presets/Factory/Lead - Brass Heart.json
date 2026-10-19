@@ -1,6 +1,8 @@
 {
     "name": "Brass Heart",
     "category": "Lead",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A soulful synth-brass lead: the table opens with a swell on every note and an alto-sax layer adds breathy body. Punchy attack, warm sustain, perfect for stabbing melodies.",
     "tags": ["lead", "brass", "sax", "soulful", "swell"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

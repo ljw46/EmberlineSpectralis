@@ -1,6 +1,8 @@
 {
     "name": "Cinder",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A crunchy, lo-fi chip-tune arp: video-game and oscillator-chip tables with a gritty edge and a quick decay, saturated just enough to sound like it came from a vintage console.",
     "tags": ["arp", "chiptune", "lofi", "gritty", "retro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

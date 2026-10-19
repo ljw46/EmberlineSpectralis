@@ -1,11 +1,13 @@
 {
     "name": "Warm Static",
     "category": "Pad",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A lo-fi, tape-saturated pad with a gritty granular layer and a bed of soft noise, like a memory played back on a broken cassette. Fuzzy, nostalgic and slightly wobbly.",
     "tags": ["pad", "lofi", "tape", "gritty", "nostalgic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.2,
+        "master_volume": -1.3,
         "osc1_on": true,
         "osc1_table": "Granular Grit",
         "osc1_frame": 0.3,

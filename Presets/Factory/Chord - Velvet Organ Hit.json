@@ -1,6 +1,8 @@
 {
     "name": "Velvet Organ Hit",
     "category": "Chord",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A short organ hit with a whirling Leslie-style shimmer, tube-warmed and bright on top. Big club-organ energy for syncopated stabs.",
     "tags": ["stab", "organ", "leslie", "club", "short"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

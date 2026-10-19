@@ -1,6 +1,8 @@
 {
     "name": "Low Tide",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A hollow, swaying bass: a pulse wave and a digital bass table, with a half-note LFO that lets the filter wash in and out like water.",
     "tags": ["bass", "hollow", "synced", "groove"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

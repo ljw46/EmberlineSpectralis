@@ -1,6 +1,8 @@
 {
     "name": "Acid Lamp",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A resonant, squelchy acid bass that reacts to velocity: soft notes purr, hard notes scream. Short, snappy filter envelope in the 303 tradition.",
     "tags": ["bass", "acid", "squelch", "resonant"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

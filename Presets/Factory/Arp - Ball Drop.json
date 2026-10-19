@@ -1,6 +1,8 @@
 {
     "name": "Ball Drop",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A bouncing-ball arp: it starts as a rapid flutter of sixty-fourth-note blips and relaxes down to a lazy eighth over one bar, smoothly. Great as a breakdown pickup or a trailing fill.",
     "tags": ["arp", "built-in arp", "stutter", "bounce", "fill", "slow down"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

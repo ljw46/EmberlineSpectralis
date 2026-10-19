@@ -1,6 +1,8 @@
 {
     "name": "Warm Machine",
     "category": "Bass",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A digital bass table under a square an octave down, with a gentle envelope sweep - analogue-flavoured warmth from a very digital recipe.",
     "tags": ["bass", "digital", "warm", "machine"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],

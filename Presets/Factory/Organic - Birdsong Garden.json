@@ -1,11 +1,13 @@
 {
     "name": "Birdsong Garden",
     "category": "Organic",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A morning garden: recorded bird-call cycles whistling and chirping high above a quiet flute bed, in a bright, airy space. Use sparingly for organic sparkle.",
     "tags": ["organic", "birds", "nature", "garden", "airy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.8,
+        "master_volume": -1.6,
         "osc1_on": true,
         "osc1_table": "Bird Song",
         "osc1_frame": 0.4,

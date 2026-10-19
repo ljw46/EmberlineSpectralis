@@ -1,6 +1,8 @@
 {
     "name": "Heartbeat Sway",
     "category": "Arp",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A swung, syncopated arp that breathes: up-and-down over a dotted-eighth feel with a loose, humanised touch. Organic, soft-edged and warm - a deep-house bedroom groove.",
     "tags": ["arp", "built-in arp", "swing", "syncopated", "organic", "deep house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],

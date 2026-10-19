@@ -238,6 +238,8 @@ namespace ember::mod
         std::array<std::atomic<float>, numDests> liveOffset {};        // newest voice's modulation, for the knob arcs
         ChaosEngine::Frame chaosPrev {}, chaosNext {};                 // chaos outputs at the start / end of the current block
         int blockLength = 512;
+        float lastNoteHz = 0.0f;                                       // pitch of the previous note, for glide (audio thread)
+        bool legatoNow = false;                                        // the note being started overlaps one that is still held
         float pitchBend = 0.0f, modWheel = 0.0f, aftertouch = 0.0f;     // channel state from MIDI (audio thread); pitch bend -1..1
         std::array<float, numFxDests> fxOffset {};                     // modulation of the global FX parameters this block
         double bpm = 120.0;                                            // host tempo (or the standalone tempo knob)

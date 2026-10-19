@@ -1,11 +1,13 @@
 {
     "name": "Dew Drop",
     "category": "Pluck",
+    "author": "EmberlineSky",
+    "url": "https://www.instagram.com/emberlinesky/",
     "description": "A tiny, delicate pluck: pure sine-harmonic tone with an FM sparkle on top, high in the register and drenched in reverb. Beautiful for sparse, intimate toplines.",
     "tags": ["pluck", "delicate", "high", "ambient", "organic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.9,
+        "master_volume": 1.8,
         "osc1_on": true,
         "osc1_table": "Sine Harmonics",
         "osc1_frame": 0.3,
