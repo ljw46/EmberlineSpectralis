@@ -1,5 +1,12 @@
 # Emberline Spectralis
 
+[![build](https://github.com/ljw46/EmberlineSpectralis/actions/workflows/build.yml/badge.svg)](https://github.com/ljw46/EmberlineSpectralis/actions/workflows/build.yml)
+[![release](https://img.shields.io/github/v/release/ljw46/EmberlineSpectralis?include_prereleases&label=release)](https://github.com/ljw46/EmberlineSpectralis/releases/latest)
+[![licence: AGPL-3.0](https://img.shields.io/badge/licence-AGPL--3.0-blue)](LICENSE)
+![platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-lightgrey)
+![formats](https://img.shields.io/badge/formats-VST3%20%7C%20Standalone-555)
+[![Buy me a coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-emberlinesky-ffdd00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/emberlinesky)
+
 A wavetable synthesizer for melodic, deep and organic house. VST3 plugin and Standalone app, built with
 [JUCE](https://juce.com) 8.
 
