@@ -93,6 +93,15 @@ jobs:
           curl -fsSL -o pluginval.zip https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_macOS.zip
           unzip -q pluginval.zip -d pluginval
           pluginval/pluginval.app/Contents/MacOS/pluginval --strictness-level 5 --skip-gui-tests --validate-in-process "build/EmberlineSpectralis_artefacts/Release/VST3/Emberline Spectralis.vst3"
+      # last step that touches the bundles: changing anything after this breaks the seal
+      - name: Ad-hoc sign
+        run: |
+          a=build/EmberlineSpectralis_artefacts/Release
+          for b in "$a/VST3/Emberline Spectralis.vst3" "$a/Standalone/Emberline Spectralis.app"; do
+            codesign --force --deep --sign - "$b"
+            codesign --verify --deep --strict --verbose=2 "$b"
+            lipo -archs "$b/Contents/MacOS/Emberline Spectralis"
+          done
       - name: Package
         run: |
           a=build/EmberlineSpectralis_artefacts/Release
@@ -100,6 +109,9 @@ jobs:
           mkdir -p "$stage" dist
           cp -R "$a/VST3/Emberline Spectralis.vst3" "$stage/"
           cp -R "$a/Standalone/Emberline Spectralis.app" "$stage/"
+          for b in "$stage/Emberline Spectralis.vst3" "$stage/Emberline Spectralis.app"; do
+            codesign --verify --deep --strict --verbose=2 "$b"
+          done
           cp docs/install-macos.txt "$stage/INSTALL.txt"
           cp LICENSE LICENSE-CONTENT.md "$stage/"
           ditto -c -k --keepParent "$stage" dist/EmberlineSpectralis-macos.zip

@@ -11,6 +11,9 @@ PLUGIN (VST3)
          /Library/Audio/Plug-Ins/VST3
      (or ~/Library/Audio/Plug-Ins/VST3 for just your user).
   2. Open your DAW and rescan plugins. It appears as "Emberline Spectralis", an instrument.
+     Ableton: go to Preferences > Plug-Ins, make sure "Use VST3 Plug-In System Folders" is On, then hold
+     Option and click Rescan for a full rescan (or restart Live). The plugin shows up under
+     Plug-Ins > VST3 in the browser.
 
 STANDALONE
   Drag "Emberline Spectralis.app" into your Applications folder and open it.
