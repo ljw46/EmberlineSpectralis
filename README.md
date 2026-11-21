@@ -3,19 +3,32 @@
 [![build](https://github.com/ljw46/EmberlineSpectralis/actions/workflows/build.yml/badge.svg)](https://github.com/ljw46/EmberlineSpectralis/actions/workflows/build.yml)
 [![release](https://img.shields.io/github/v/release/ljw46/EmberlineSpectralis?include_prereleases&label=release)](https://github.com/ljw46/EmberlineSpectralis/releases/latest)
 [![licence: AGPL-3.0](https://img.shields.io/badge/licence-AGPL--3.0-blue)](LICENSE)
-![platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-lightgrey)
+![platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 ![formats](https://img.shields.io/badge/formats-VST3%20%7C%20Standalone-555)
 [![Buy me a coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-emberlinesky-ffdd00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/emberlinesky)
 
 A wavetable synthesizer for melodic, deep and organic house. VST3 plugin and Standalone app, built with
 [JUCE](https://juce.com) 8.
 
-> **Status:** pre-beta. Expect changes, and please report anything odd.
+> **Status:** 1.0. Windows, macOS and Linux. Please report anything odd.
 
 ## Download
 
 Grab the latest build from the [**Releases page**](https://github.com/ljw46/EmberlineSpectralis/releases/latest): download the zip for your
-computer (**Windows** or **Mac**), unzip it and follow `INSTALL.txt` inside. It's a free beta, so please tell me what breaks.
+computer and run it:
+
+| You have | Download |
+|---|---|
+| **Windows** | `EmberlineSpectralis-<version>-windows-setup.exe` (or the zip) |
+| **Mac** (Apple Silicon or Intel) | `EmberlineSpectralis-<version>-macos.pkg` (or the zip) |
+| **Linux** (x86_64) | `emberline-spectralis_<version>_amd64.deb`, or `EmberlineSpectralis-linux.tar.gz` for any distro |
+
+The zips and tar.gz contain an `INSTALL.txt` with manual steps. It's free; please tell me what breaks.
+
+**Code signing:** Windows builds are planned to be signed for free through the
+[SignPath Foundation](https://signpath.org) (signing by [SignPath.io](https://signpath.io)) once the project qualifies.
+Until then, downloads are unsigned and Windows may show a SmartScreen warning (More info, then Run anyway). See the
+[code signing policy](CODE_SIGNING_POLICY.md).
 
 ## Features
 
@@ -39,13 +52,13 @@ Requires CMake 3.22+ and a C++20 compiler. JUCE is fetched automatically.
 
     scripts\build-windows.bat
 
-**Linux / macOS:**
+**Linux / macOS** (on Linux install `libasound2-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxext-dev libfreetype-dev libfontconfig1-dev libgl1-mesa-dev` first):
 
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
     cmake --build build --target EmberlineSpectralis_Standalone EmberlineSpectralis_VST3
 
 The VST3 ends up in `build/EmberlineSpectralis_artefacts/Release/VST3/`; copy it to your VST3 folder
-(Windows: `C:\Program Files\Common Files\VST3`).
+(Windows: `C:\Program Files\Common Files\VST3`, Linux: `~/.vst3`). Installers: see `installer/`.
 
 `EmberlineTools` is a command-line helper (`check`, `render`, `selftest`, `snapshot`, `dump-params`) used for
 development.
@@ -66,3 +79,7 @@ development.
   don't redistribute them.
 
 Copyright (c) 2026 Liam Walsh.
+
+<!-- Uncomment once SignPath approves the project and signing is live in CI (see CODE_SIGNING_POLICY.md):
+Windows builds: free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org). See the [code signing policy](CODE_SIGNING_POLICY.md).
+-->
