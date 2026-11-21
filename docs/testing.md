@@ -2,7 +2,7 @@
 
 Automated checks (`EmberlineTools selftest`, `check`, `perf`, CI, pluginval) cover the DSP, presets, saved state and arp logic.
 This list covers what only a person with a real host, mouse and ears can check. Work through it on each platform / host
-before a beta tag, and note the build (`vX.Y.Z pre-beta`, shown under the preset bar) and OS at the top of your results.
+before a release tag, and note the build (`vX.Y.Z`, shown under the preset bar) and OS at the top of your results.
 
 Mark each line **P**ass, **F**ail (add a note) or **-** not applicable. File failures as issues with the host, OS and steps.
 
@@ -15,20 +15,31 @@ Mark each line **P**ass, **F**ail (add a note) or **-** not applicable. File fai
 ## 1. Hosts (repeat the core list per host)
 
 Hosts to cover: Reaper, Ableton Live, FL Studio (Windows); Ableton Live, Logic or Reaper (Mac, Logic needs AU so check
-the VST3 hosts first); plus the Standalone.
+the VST3 hosts first); Reaper, Ardour or Bitwig (Linux); plus the Standalone on each OS.
 
-| check | Reaper | Ableton | FL Studio | Mac host | Standalone |
-|---|---|---|---|---|---|
-| plugin scans and appears as an instrument | | | | | |
-| opens GUI at the right size, no blank/garbled drawing | | | | | |
-| plays MIDI, correct pitch, no stuck notes on stop | | | | | |
-| 8 voices, no crackle at 64 / 256 / 1024 buffers | | | | | |
-| save project, close, reopen: sound and preset name restored | | | | | |
-| automate a knob from the host (and it moves on screen) | | | | | |
-| two instances at once, independent sounds | | | | | |
-| change sample rate (44.1 / 48 / 96 kHz): no pitch change, no glitches | | | | | |
-| close the GUI with notes playing, reopen: fine | | | | | |
-| remove the plugin from the track: no crash | | | | | |
+| check | Reaper | Ableton | FL Studio | Mac host | Linux host | Standalone |
+|---|---|---|---|---|---|---|
+| plugin scans and appears as an instrument | | | | | | |
+| opens GUI at the right size, no blank/garbled drawing | | | | | | |
+| plays MIDI, correct pitch, no stuck notes on stop | | | | | | |
+| 8 voices, no crackle at 64 / 256 / 1024 buffers | | | | | | |
+| save project, close, reopen: sound and preset name restored | | | | | | |
+| automate a knob from the host (and it moves on screen) | | | | | | |
+| two instances at once, independent sounds | | | | | | |
+| change sample rate (44.1 / 48 / 96 kHz): no pitch change, no glitches | | | | | | |
+| close the GUI with notes playing, reopen: fine | | | | | | |
+| remove the plugin from the track: no crash | | | | | | |
+
+## 1b. Installers (new for 1.0)
+
+Test each on a machine (or VM) that has never had the plugin. Check the box when the plugin is found by a host and the Standalone runs.
+
+- [ ] **Windows setup.exe**: installs VST3 to `C:\Program Files\Common Files\VST3` and the Standalone with a Start menu entry; "Plugin only" skips the Standalone; uninstall (Settings > Apps) removes both; installing over an older version works.
+- [ ] **macOS .pkg**: installer opens (right-click > Open if Gatekeeper complains), both choices install to `/Library/Audio/Plug-Ins/VST3` and `/Applications`; plugin shows in Ableton / Reaper after a full rescan; works on Apple Silicon and Intel.
+- [ ] **Linux .deb** (Ubuntu 22.04 / 24.04 or newer, Debian): `sudo apt install ./file.deb` pulls its dependencies, plugin loads in a host, menu entry launches the Standalone, `apt remove` leaves nothing behind.
+- [ ] **Linux tar.gz**: `./install.sh` works without root on a non-Debian distro (Fedora / Arch); `./install.sh --uninstall` removes it.
+- [ ] Linux Standalone: audio device picker works (ALSA / PipeWire / JACK); the **?** manual and the coffee/author links open the browser; user presets and wavetables land in `~/.config/Emberline/Spectralis`.
+- [ ] Linux GUI: fonts readable, mouse drag/drop of mod chips works, HiDPI (2x) scaling is sane, no crash on open/close in Reaper.
 
 ## 2. Sound
 

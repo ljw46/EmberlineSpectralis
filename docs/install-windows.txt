@@ -16,7 +16,7 @@ STANDALONE
   Double-click "Emberline Spectralis.exe". Pick your audio device when asked.
 
 "Windows protected your PC" warning?
-  The beta isn't code-signed yet, so Windows is cautious. Click "More info", then "Run anyway".
+  It isn't code-signed yet, so Windows is cautious. Click "More info", then "Run anyway".
 
 Manual: click the ? button next to the preset bar inside the plugin.
 Licence: see LICENSE (code) and LICENSE-CONTENT.md (presets and wavetables).

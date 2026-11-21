@@ -35,3 +35,5 @@ CLAUDE.local.md
 tools/generate_presets.py
 tools/presets/
 __pycache__/
+dist/
+stage/

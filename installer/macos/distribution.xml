@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+    <title>Emberline Spectralis</title>
+    <license file="LICENSE" mime-type="text/plain"/>
+    <options customize="allow" require-scripts="false" hostArchitectures="arm64,x86_64"/>
+    <domains enable_anywhere="false" enable_localSystem="true"/>
+    <choices-outline>
+        <line choice="vst3"/>
+        <line choice="standalone"/>
+    </choices-outline>
+    <choice id="vst3" title="VST3 plugin" description="Installs to /Library/Audio/Plug-Ins/VST3 for your DAW." start_selected="true">
+        <pkg-ref id="com.emberline.spectralis.vst3"/>
+    </choice>
+    <choice id="standalone" title="Standalone app" description="Installs to /Applications." start_selected="true">
+        <pkg-ref id="com.emberline.spectralis.app"/>
+    </choice>
+    <pkg-ref id="com.emberline.spectralis.vst3" version="@VERSION@">vst3.pkg</pkg-ref>
+    <pkg-ref id="com.emberline.spectralis.app" version="@VERSION@">app.pkg</pkg-ref>
+</installer-gui-script>

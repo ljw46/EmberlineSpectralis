@@ -29,7 +29,7 @@ footer{color:var(--dim);font-size:14px}
 code,pre,th,td,img{border-color:#bbb}code,pre,th{background:#f3f3f3;color:#111}section{page-break-before:always;border:0}}
 </style></head><body>
 <div class="wrap">
-<nav><div class="brand">EMBERLINE SPECTRALIS</div><div class="ver">Manual &middot; v0.1.0 pre-beta</div>
+<nav><div class="brand">EMBERLINE SPECTRALIS</div><div class="ver">Manual &middot; v1.0.0</div>
 <a class="top" href="#ch-README">Welcome</a>
 <a class="top" href="#ch-01-getting-started">Getting started</a>
 <a class="sub" href="#01-getting-started-installing">Installing</a>
@@ -119,15 +119,17 @@ and the odd stutter-y lead. You don't need to know synth theory to get going. If
 <li><a href="#ch-10-troubleshooting">Troubleshooting</a> - when something's not right</li>
 <li><a href="#ch-reference">Knob reference</a> - every control, its range and default</li>
 </ol>
-<p><em>Version: 0.1.0 pre-beta. Things may move around a bit before 1.0.</em></p>
+<p><em>Version: 1.0.0. Things may still move around a bit in later versions.</em></p>
 </section>
 <section id="ch-01-getting-started">
 <h1 id="01-getting-started-getting-started">Getting started</h1>
 <h2 id="01-getting-started-installing">Installing</h2>
-<p><strong>Windows:</strong> unzip the release and copy <code>Emberline Spectralis.vst3</code> into <code>C:\Program Files\Common Files\VST3</code>.
+<p><strong>Windows:</strong> run the setup <code>.exe</code>, or unzip the release and copy <code>Emberline Spectralis.vst3</code> into <code>C:\Program Files\Common Files\VST3</code>.
 Rescan plugins in your DAW. There's also a Standalone app (<code>Emberline Spectralis.exe</code>) you can just double-click.</p>
-<p><strong>Mac:</strong> copy <code>Emberline Spectralis.vst3</code> into <code>/Library/Audio/Plug-Ins/VST3</code> (or the same folder inside your
-user Library). The beta builds aren't signed yet, so macOS may grumble the first time. Right-click the file and choose
+<p><strong>Linux:</strong> install the <code>.deb</code> (<code>sudo apt install ./emberline-spectralis_*.deb</code>) or run <code>install.sh</code> from the tar.gz, which puts the
+plugin in <code>~/.vst3</code>. Rescan plugins in your host. The Standalone is in your applications menu as "Emberline Spectralis".</p>
+<p><strong>Mac:</strong> run the <code>.pkg</code>, or copy <code>Emberline Spectralis.vst3</code> into <code>/Library/Audio/Plug-Ins/VST3</code> (or the same folder inside your
+user Library). The builds aren't signed yet, so macOS may grumble the first time. Right-click the file and choose
 <strong>Open</strong>, or if it still won't load, run this in Terminal on the plugin:
 <code>xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/VST3/Emberline Spectralis.vst3"</code>.
 On Windows you might see a SmartScreen warning for the same reason: click <strong>More info &gt; Run anyway</strong>.</p>
@@ -875,10 +877,10 @@ Make sure you've got the rights to share any samples you didn't make yourself.</
 <section id="ch-10-troubleshooting">
 <h1 id="10-troubleshooting-troubleshooting">Troubleshooting</h1>
 <p><strong>My DAW doesn't see the plugin.</strong>
-Check that <code>Emberline Spectralis.vst3</code> is in your VST3 folder (Windows: <code>C:\Program Files\Common Files\VST3</code>) and rescan plugins.
+Check that <code>Emberline Spectralis.vst3</code> is in your VST3 folder (Windows: <code>C:\Program Files\Common Files\VST3</code>, Linux: <code>~/.vst3</code> or <code>/usr/lib/vst3</code>) and rescan plugins.
 Some DAWs only rescan if you tell them to. In Ableton, open Preferences &gt; Plug-Ins, check "Use VST3 Plug-In System Folders" is On, then hold Option (Mac) or Alt (Windows) and click <strong>Rescan</strong> for a full rescan.</p>
 <p><strong>Mac says it can't be opened / is from an unidentified developer.</strong>
-The beta isn't signed yet. Right-click the plugin, choose <strong>Open</strong>, or in Terminal:
+It isn't signed yet. Right-click the plugin, choose <strong>Open</strong>, or in Terminal:
 <code>xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/VST3/Emberline Spectralis.vst3"</code> (change the path if you put it elsewhere).</p>
 <p><strong>Windows shows a SmartScreen warning.</strong>
 Same reason. Click <strong>More info</strong>, then <strong>Run anyway</strong>.</p>
@@ -1551,6 +1553,6 @@ and what you did.</p>
 <h2 id="reference-things-you-can-modulate">Things you can modulate</h2>
 <p>Osc1 Frame, Osc1 Warp, Osc1 Level, Osc1 Detune, Osc1 Spread, Osc1 Fine, Osc1 Pan, Osc2 Frame, Osc2 Warp, Osc2 Level, Osc2 Detune, Osc2 Spread, Osc2 Fine, Osc2 Pan, Osc3 Frame, Osc3 Warp, Osc3 Level, Osc3 Detune, Osc3 Spread, Osc3 Fine, Osc3 Pan, Filt1 Cutoff, Filt1 Res, Filt1 Drive, Filt2 Cutoff, Filt2 Res, Filt2 Drive, Sub Level, Noise Level, Dist Drive, Dist Mix, Chorus Depth, Chorus Mix, Delay Feedback, Delay Mix, Reverb Size, Reverb Mix</p>
 </section>
-<footer>Emberline Spectralis v0.1.0 pre-beta &middot; presets by <a target="_blank" rel="noopener" href="https://www.instagram.com/emberlinesky/">EmberlineSky</a>
+<footer>Emberline Spectralis v1.0.0 &middot; presets by <a target="_blank" rel="noopener" href="https://www.instagram.com/emberlinesky/">EmberlineSky</a>
 &middot; enjoying it? <a target="_blank" rel="noopener" href="https://buymeacoffee.com/emberlinesky">Buy me a coffee</a></footer>
 </main></div></body></html>

@@ -1,9 +1,16 @@
 # Changelog
 
 Versions follow `MAJOR.MINOR.PATCH`. The number lives in one place: `project(... VERSION x.y.z)` in `CMakeLists.txt`
-(the release stage label is `EMBER_VERSION_LABEL`). Release tags look like `v0.1.0-beta.1`.
+(the release stage label is `EMBER_VERSION_LABEL`). Release tags look like `v1.0.0` (or `v1.1.0-beta.1` for a pre-release).
 
-## Unreleased (0.1.0 pre-beta)
+## 1.0.0
+
+* **First stable release.** Windows, macOS and now **Linux** (VST3 and Standalone, x86_64).
+* **Installers:** a Windows setup `.exe`, a macOS `.pkg` and a Linux `.deb` plus a no-root `tar.gz`. Plain zips are still available.
+* Everything from the betas, below.
+
+
+### Added during the betas
 
 * Analogue **Drift** and **Warmth** controls.
 * Filters: 12 / 24 dB slope, plus Notch and Ladder types.

@@ -2,11 +2,14 @@
 
 ## Installing
 
-**Windows:** unzip the release and copy `Emberline Spectralis.vst3` into `C:\Program Files\Common Files\VST3`.
+**Windows:** run the setup `.exe`, or unzip the release and copy `Emberline Spectralis.vst3` into `C:\Program Files\Common Files\VST3`.
 Rescan plugins in your DAW. There's also a Standalone app (`Emberline Spectralis.exe`) you can just double-click.
 
-**Mac:** copy `Emberline Spectralis.vst3` into `/Library/Audio/Plug-Ins/VST3` (or the same folder inside your
-user Library). The beta builds aren't signed yet, so macOS may grumble the first time. Right-click the file and choose
+**Linux:** install the `.deb` (`sudo apt install ./emberline-spectralis_*.deb`) or run `install.sh` from the tar.gz, which puts the
+plugin in `~/.vst3`. Rescan plugins in your host. The Standalone is in your applications menu as "Emberline Spectralis".
+
+**Mac:** run the `.pkg`, or copy `Emberline Spectralis.vst3` into `/Library/Audio/Plug-Ins/VST3` (or the same folder inside your
+user Library). The builds aren't signed yet, so macOS may grumble the first time. Right-click the file and choose
 **Open**, or if it still won't load, run this in Terminal on the plugin:
 `xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/VST3/Emberline Spectralis.vst3"`.
 On Windows you might see a SmartScreen warning for the same reason: click **More info > Run anyway**.

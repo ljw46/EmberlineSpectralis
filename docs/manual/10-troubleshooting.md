@@ -1,11 +1,11 @@
 # Troubleshooting
 
 **My DAW doesn't see the plugin.**
-Check that `Emberline Spectralis.vst3` is in your VST3 folder (Windows: `C:\Program Files\Common Files\VST3`) and rescan plugins.
+Check that `Emberline Spectralis.vst3` is in your VST3 folder (Windows: `C:\Program Files\Common Files\VST3`, Linux: `~/.vst3` or `/usr/lib/vst3`) and rescan plugins.
 Some DAWs only rescan if you tell them to. In Ableton, open Preferences > Plug-Ins, check "Use VST3 Plug-In System Folders" is On, then hold Option (Mac) or Alt (Windows) and click **Rescan** for a full rescan.
 
 **Mac says it can't be opened / is from an unidentified developer.**
-The beta isn't signed yet. Right-click the plugin, choose **Open**, or in Terminal:
+It isn't signed yet. Right-click the plugin, choose **Open**, or in Terminal:
 `xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/VST3/Emberline Spectralis.vst3"` (change the path if you put it elsewhere).
 
 **Windows shows a SmartScreen warning.**

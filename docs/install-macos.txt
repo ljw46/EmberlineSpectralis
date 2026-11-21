@@ -19,7 +19,7 @@ STANDALONE
   Drag "Emberline Spectralis.app" into your Applications folder and open it.
 
 "Can't be opened because the developer cannot be verified"?
-  The beta isn't signed or notarised yet, so macOS blocks it the first time. Either:
+  It isn't signed or notarised yet, so macOS blocks it the first time. Either:
     - Right-click (or Control-click) the file and choose Open, then click Open again, or
     - open Terminal and run this on the file you installed (change the path if needed):
         xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/VST3/Emberline Spectralis.vst3"

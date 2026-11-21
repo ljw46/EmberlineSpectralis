@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Emberline Spectralis
+Comment=Wavetable synthesizer (Standalone)
+Exec=emberline-spectralis
+Icon=emberline-spectralis
+Categories=AudioVideo;Audio;Midi;Music;
+Terminal=false

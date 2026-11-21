@@ -1,0 +1,25 @@
+EMBERLINE SPECTRALIS - Linux install
+====================================
+
+Easiest: the .deb (Debian, Ubuntu, Mint, Pop!_OS...)
+  sudo apt install ./emberline-spectralis_<version>_amd64.deb
+  This puts the plugin in /usr/lib/vst3 and adds "Emberline Spectralis" to your applications menu.
+  Remove it with:  sudo apt remove emberline-spectralis
+
+Any distro: the tar.gz (no root needed)
+  tar xzf EmberlineSpectralis-linux.tar.gz
+  cd EmberlineSpectralis-linux
+  ./install.sh
+  This puts the plugin in ~/.vst3 and the Standalone in ~/.local/bin. Undo with:  ./install.sh --uninstall
+
+Then open your DAW (Reaper, Ardour, Bitwig, Carla...) and rescan plugins. It appears as "Emberline Spectralis", an instrument.
+Most Linux hosts look in ~/.vst3 and /usr/lib/vst3 by default. If yours doesn't, add the folder in its plugin settings.
+
+Needs: 64-bit x86 Linux with ALSA (any desktop distro), X11 or XWayland, and OpenGL libraries. The .deb installs these for you;
+with the tar.gz you need libasound2, libfreetype6, libfontconfig1, libx11-6, libxext6, libxrandr2, libxinerama1, libxcursor1.
+
+Standalone: run "emberline-spectralis" (or use the menu entry) and pick your audio device (ALSA / JACK / PipeWire).
+
+Manual: click the ? button next to the preset bar inside the plugin. It opens in your default browser (needs xdg-utils).
+Your own presets and wavetables live under ~/.config/Emberline/Spectralis.
+Licence: see LICENSE (code) and LICENSE-CONTENT.md (presets and wavetables).

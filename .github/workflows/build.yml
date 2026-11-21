@@ -73,10 +73,19 @@ jobs:
           Copy-Item docs/install-windows.txt "$stage/INSTALL.txt"
           Copy-Item LICENSE, LICENSE-CONTENT.md $stage
           Compress-Archive -Path $stage -DestinationPath dist/EmberlineSpectralis-windows.zip
+      - name: Installer (Inno Setup)
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) { choco install innosetup -y --no-progress }
+          $iscc = (Get-Command iscc -ErrorAction SilentlyContinue).Source
+          if (-not $iscc) { $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          $ver = (Select-String -Path CMakeLists.txt -Pattern '^project\(\w+ VERSION ([0-9.]+)').Matches[0].Groups[1].Value
+          & $iscc "/DAppVersion=$ver" "/DArtefacts=$PWD\build\EmberlineSpectralis_artefacts\Release" installer\windows\EmberlineSpectralis.iss
+          if ($LASTEXITCODE -ne 0) { exit 1 }
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: dist/*.zip
+          path: dist/*
           retention-days: 14
 
   macos:
@@ -115,16 +124,59 @@ jobs:
           cp docs/install-macos.txt "$stage/INSTALL.txt"
           cp LICENSE LICENSE-CONTENT.md "$stage/"
           ditto -c -k --keepParent "$stage" dist/EmberlineSpectralis-macos.zip
+      - name: Installer (.pkg)
+        run: |
+          ver=$(sed -n 's/^project([A-Za-z]* VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt)
+          installer/macos/make-pkg.sh "$ver" build/EmberlineSpectralis_artefacts/Release
+          pkgutil --check-signature dist/*.pkg || true
+          pkgutil --payload-files dist/*.pkg | grep -c "Emberline Spectralis" 
       - uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: dist/*.zip
+          path: dist/*
           retention-days: 14
 
-  # Pushing a tag like v0.1.0-beta.1 publishes the builds as a GitHub release.
+  # ubuntu-22.04 on purpose: binaries built here run on most distros released since (glibc 2.35 or newer).
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build xvfb libasound2-dev libx11-dev libxrandr-dev libxinerama-dev \
+            libxcursor-dev libxext-dev libfreetype-dev libfontconfig1-dev libgl1-mesa-dev
+      - name: Build
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --target EmberlineSpectralis_Standalone EmberlineSpectralis_VST3
+      - name: pluginval
+        run: |
+          curl -fsSL -o pluginval.zip https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_Linux.zip
+          unzip -q pluginval.zip -d pluginval
+          chmod +x pluginval/pluginval
+          xvfb-run -a pluginval/pluginval --strictness-level 5 --skip-gui-tests --validate-in-process "build/EmberlineSpectralis_artefacts/Release/VST3/Emberline Spectralis.vst3"
+      - name: Package (.deb and tar.gz)
+        run: |
+          ver=$(sed -n 's/^project([A-Za-z]* VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt)
+          installer/linux/make-packages.sh "$ver"
+      - name: Test the .deb installs and removes cleanly
+        run: |
+          sudo apt-get install -y ./dist/*.deb
+          test -f "/usr/lib/vst3/Emberline Spectralis.vst3/Contents/x86_64-linux/Emberline Spectralis.so"
+          test -x /usr/bin/emberline-spectralis
+          sudo apt-get remove -y emberline-spectralis
+          test ! -e "/usr/lib/vst3/Emberline Spectralis.vst3"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/*
+          retention-days: 14
+
+  # Pushing a tag like v1.0.0 (or v1.1.0-beta.1 for a pre-release) publishes the builds as a GitHub release.
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [checks, windows, macos]
+    needs: [checks, windows, macos, linux]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -142,5 +194,7 @@ jobs:
           cp .github/release-notes.md notes.md
           printf '## What is in this version\n\n' >> notes.md
           awk '/^## /{n++} n==1 && !/^## /' CHANGELOG.md >> notes.md
-          gh release create "${{ github.ref_name }}" dist/*.zip --repo "${{ github.repository }}" \
-            --title "${{ github.ref_name }}" --notes-file notes.md --prerelease
+          # a tag with a suffix (v1.1.0-beta.1) is a pre-release; a plain v1.0.0 is a normal release
+          pre=""; case "${{ github.ref_name }}" in *-*) pre="--prerelease" ;; esac
+          gh release create "${{ github.ref_name }}" dist/* --repo "${{ github.repository }}" \
+            --title "${{ github.ref_name }}" --notes-file notes.md $pre
