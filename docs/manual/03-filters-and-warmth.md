@@ -59,7 +59,7 @@ Turn it up for a softer, darker, fatter sound.
 
 Try this: play a pad, then slowly turn Warmth up. Hear the fizzy top end relax? That's the sweet spot for a deep house chord.
 
-Both are **on a little by default** (Drift 0.25, Warmth 0.3), so everything sounds a bit warmer out of the box.
+Both are **on a little by default** (Drift 25 %, Warmth 30 %), so everything sounds a bit warmer out of the box.
 Too dull? Back off Warmth. Want it totally clean and crisp? Set both to **0**.
 
 Presets remember their own Drift and Warmth settings, so you'll notice some sounds are clean and some are dirtier.

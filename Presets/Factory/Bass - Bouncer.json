@@ -7,7 +7,7 @@
     "tags": ["bass", "bounce", "synced", "groovy", "squelch"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],
     "parameters": {
-        "master_volume": -1.4,
+        "master_volume": -1.3,
         "osc1_on": true,
         "osc1_table": "Electric Bass",
         "osc1_frame": 0.45,
@@ -35,7 +35,9 @@
         "fx_dist_type": "Soft",
         "fx_dist_drive": 0.25,
         "fx_dist_tone": 0.5,
-        "fx_dist_mix": 0.35
+        "fx_dist_mix": 0.35,
+        "analog_drift": 0.13,
+        "analog_warmth": 0.44
     },
     "modulation": [
         {"source": "LFO 3", "destination": "Osc1 Level", "depth": 0.44},

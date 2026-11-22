@@ -40,7 +40,9 @@
         "fx_chorus_on": true,
         "fx_chorus_mix": 0.12,
         "fx_chorus_rate": 0.35,
-        "fx_chorus_depth": 0.35
+        "fx_chorus_depth": 0.35,
+        "analog_drift": 0.17,
+        "analog_warmth": 0.36
     },
     "modulation": [
         {"source": "Perlin", "destination": "Osc1 Frame", "depth": 0.15},

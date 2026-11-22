@@ -7,7 +7,7 @@
     "tags": ["pluck", "kalimba", "mallet", "echo", "organic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.0,
+        "master_volume": 1.7,
         "osc1_on": true,
         "osc1_table": "Mallet",
         "osc1_frame": 0.55,
@@ -44,7 +44,9 @@
         "fx_slot1": "Delay",
         "fx_slot2": "Reverb",
         "fx_slot3": "Distortion",
-        "fx_slot4": "Chorus/Flanger"
+        "fx_slot4": "Chorus/Flanger",
+        "analog_drift": 0.16,
+        "analog_warmth": 0.58
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc2 Frame", "depth": 0.3},

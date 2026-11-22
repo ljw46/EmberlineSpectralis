@@ -7,7 +7,7 @@
     "tags": ["stab", "gritty", "distorted", "hard", "techno"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.2,
+        "master_volume": -0.1,
         "osc1_on": true,
         "osc1_table": "Distorted",
         "osc1_frame": 0.35,
@@ -52,7 +52,9 @@
         "fx_reverb_mix": 0.14,
         "fx_reverb_size": 0.4,
         "fx_reverb_decay": 1.8,
-        "fx_reverb_damp": 0.5
+        "fx_reverb_damp": 0.5,
+        "analog_drift": 0.35,
+        "analog_warmth": 0.49
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc2 Frame", "depth": 0.5},

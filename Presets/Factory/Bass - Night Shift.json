@@ -7,7 +7,7 @@
     "tags": ["bass", "electric", "dynamic", "organic"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],
     "parameters": {
-        "master_volume": 0.5,
+        "master_volume": 0.6,
         "osc1_on": true,
         "osc1_table": "Electric Bass",
         "osc1_frame": 0.2,
@@ -36,7 +36,9 @@
         "fx_dist_type": "Soft",
         "fx_dist_drive": 0.15,
         "fx_dist_tone": 0.5,
-        "fx_dist_mix": 0.3
+        "fx_dist_mix": 0.3,
+        "analog_drift": 0.1,
+        "analog_warmth": 0.45
     },
     "modulation": [
         {"source": "Velocity", "destination": "Filt1 Cutoff", "depth": 0.38},

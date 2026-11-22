@@ -47,7 +47,9 @@
         "fx_chorus_rate": 0.3,
         "fx_chorus_depth": 0.5,
         "fx_chorus_mode": "Flanger",
-        "fx_chorus_feedback": 0.3
+        "fx_chorus_feedback": 0.3,
+        "analog_drift": 0.55,
+        "analog_warmth": 0.4
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Frame", "depth": 0.6},

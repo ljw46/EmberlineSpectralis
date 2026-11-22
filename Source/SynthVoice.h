@@ -317,7 +317,7 @@ namespace ember
                 driftTarget = random.nextFloat() * 2.0f - 1.0f;
             }
             driftWander += (driftTarget - driftWander) * 0.012f;
-            const float driftCents = driftAmt * (notePitchTolerance * 3.0f + driftWander * 7.0f);
+            const float driftCents = driftAmt * (notePitchTolerance * 6.0f + driftWander * 14.0f);
 
             if (std::abs (glideOffset) > 0.0f)   // portamento: slide towards the played pitch at a constant rate (constant time for any interval)
             {

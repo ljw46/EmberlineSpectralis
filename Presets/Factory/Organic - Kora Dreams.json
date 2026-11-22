@@ -7,7 +7,7 @@
     "tags": ["organic", "kora", "harp", "plucked", "flowing", "exotic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.4,
+        "master_volume": 2.2,
         "osc1_on": true,
         "osc1_table": "Acoustic Guitar",
         "osc1_frame": 0.45,
@@ -52,7 +52,9 @@
         "fx_slot1": "Chorus/Flanger",
         "fx_slot2": "Delay",
         "fx_slot3": "Reverb",
-        "fx_slot4": "Distortion"
+        "fx_slot4": "Distortion",
+        "analog_drift": 0.46,
+        "analog_warmth": 0.51
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc3 Level", "depth": 0.4},

@@ -7,7 +7,7 @@
     "tags": ["bass", "glide", "portamento", "mono", "legato", "melodic house"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],
     "parameters": {
-        "master_volume": -1.6,
+        "master_volume": -1.5,
         "osc1_on": true,
         "osc1_table": "Bass Weight",
         "osc1_frame": 0.3,
@@ -47,7 +47,9 @@
         "fx_reverb_mix": 0.06,
         "fx_reverb_size": 0.35,
         "fx_reverb_decay": 1.2,
-        "fx_reverb_damp": 0.6
+        "fx_reverb_damp": 0.6,
+        "analog_drift": 0.18,
+        "analog_warmth": 0.42
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.17},

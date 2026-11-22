@@ -44,7 +44,9 @@
         "fx_chorus_on": true,
         "fx_chorus_mix": 0.2,
         "fx_chorus_rate": 0.3,
-        "fx_chorus_depth": 0.5
+        "fx_chorus_depth": 0.5,
+        "analog_drift": 0.24,
+        "analog_warmth": 0.33
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": -0.536},

@@ -7,7 +7,7 @@
     "tags": ["pluck", "harp", "guitar", "exotic", "organic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.9,
+        "master_volume": 3.4,
         "osc1_on": true,
         "osc1_table": "Acoustic Guitar",
         "osc1_frame": 0.4,
@@ -44,7 +44,9 @@
         "fx_reverb_mix": 0.28,
         "fx_reverb_size": 0.65,
         "fx_reverb_decay": 3.4,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.21,
+        "analog_warmth": 0.49
     },
     "modulation": [
         {"source": "Velocity", "destination": "Osc2 Level", "depth": 0.3},

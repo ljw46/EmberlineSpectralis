@@ -7,7 +7,7 @@
     "tags": ["pad", "analog", "pwm", "warm", "synced", "deep house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.0,
+        "master_volume": 0.7,
         "osc1_on": true,
         "osc1_table": "Pulse Width",
         "osc1_frame": 0.1,
@@ -49,7 +49,9 @@
         "fx_reverb_mix": 0.3,
         "fx_reverb_size": 0.7,
         "fx_reverb_decay": 4.0,
-        "fx_reverb_damp": 0.5
+        "fx_reverb_damp": 0.5,
+        "analog_drift": 0.46,
+        "analog_warmth": 0.49
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Frame", "depth": 0.45, "bipolar": false},

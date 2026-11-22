@@ -7,7 +7,7 @@
     "tags": ["arp", "gate", "trance gate", "rhythmic", "synced", "pad"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.7,
+        "master_volume": 1.4,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.5,
@@ -52,7 +52,9 @@
         "fx_reverb_mix": 0.3,
         "fx_reverb_size": 0.65,
         "fx_reverb_decay": 3.2,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.19,
+        "analog_warmth": 0.41
     },
     "modulation": [
         {"source": "LFO 3", "destination": "Osc1 Level", "depth": 0.42},

@@ -44,7 +44,9 @@
         "fx_chorus_on": true,
         "fx_chorus_mix": 0.15,
         "fx_chorus_rate": 0.35,
-        "fx_chorus_depth": 0.35
+        "fx_chorus_depth": 0.35,
+        "analog_drift": 0.23,
+        "analog_warmth": 0.15
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc1 Frame", "depth": 0.4},

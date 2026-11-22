@@ -3,10 +3,16 @@
     "category": "Init",
     "author": "EmberlineSky",
     "url": "https://www.instagram.com/emberlinesky/",
-    "description": "Plain single saw through a lowpass. The blank canvas - every parameter at its default.",
+    "description": "A soft starting point: one saw-style oscillator through a gentle lowpass with a little drift and warmth. Open the filter for brightness, or reset knobs to taste.",
     "tags": ["init", "basic"],
     "parameters": {
-        "master_volume": -2.1
+        "master_volume": -1.6,
+        "filt1_cutoff": 3200.0,
+        "filt1_res": 0.1,
+        "analog_drift": 0.3,
+        "analog_warmth": 0.5,
+        "env1_attack": 0.005,
+        "env1_release": 0.3
     },
     "modulation": []
 }

@@ -7,7 +7,7 @@
     "tags": ["stab", "dub", "techno", "echo", "deep"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.9,
+        "master_volume": 1.3,
         "osc1_on": true,
         "osc1_table": "Pluck Position",
         "osc1_frame": 0.4,
@@ -51,7 +51,9 @@
         "fx_slot1": "Delay",
         "fx_slot2": "Reverb",
         "fx_slot3": "Distortion",
-        "fx_slot4": "Chorus/Flanger"
+        "fx_slot4": "Chorus/Flanger",
+        "analog_drift": 0.36,
+        "analog_warmth": 0.4
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.164},

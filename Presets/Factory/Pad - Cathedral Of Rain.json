@@ -7,7 +7,7 @@
     "tags": ["pad", "organ", "rain", "reverb", "ambient"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.4,
+        "master_volume": 2.0,
         "osc1_on": true,
         "osc1_table": "Tonewheel Organ",
         "osc1_frame": 0.4,
@@ -54,7 +54,9 @@
         "fx_delay_feedback": 0.45,
         "fx_delay_tone": 3000,
         "fx_delay_mix": 0.15,
-        "fx_delay_sync": "1/2"
+        "fx_delay_sync": "1/2",
+        "analog_drift": 0.4,
+        "analog_warmth": 0.5
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.1},

@@ -7,7 +7,7 @@
     "tags": ["organic", "tribal", "drone", "hypnotic", "voice", "synced"],
     "macro_names": ["Vowel", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -3.5,
+        "master_volume": -3.2,
         "osc1_on": true,
         "osc1_table": "Human Voice",
         "osc1_frame": 0.15,
@@ -41,7 +41,9 @@
         "fx_reverb_mix": 0.32,
         "fx_reverb_size": 0.7,
         "fx_reverb_decay": 3.8,
-        "fx_reverb_damp": 0.55
+        "fx_reverb_damp": 0.55,
+        "analog_drift": 0.49,
+        "analog_warmth": 0.48
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.18},

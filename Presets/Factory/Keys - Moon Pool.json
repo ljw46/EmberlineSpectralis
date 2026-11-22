@@ -7,7 +7,7 @@
     "tags": ["keys", "dreamy", "electric piano", "flute", "hazy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.7,
+        "master_volume": 3.2,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.25,
@@ -49,7 +49,9 @@
         "fx_reverb_mix": 0.4,
         "fx_reverb_size": 0.8,
         "fx_reverb_decay": 5.5,
-        "fx_reverb_damp": 0.45
+        "fx_reverb_damp": 0.45,
+        "analog_drift": 0.31,
+        "analog_warmth": 0.47
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.1},

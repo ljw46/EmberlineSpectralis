@@ -7,7 +7,7 @@
     "tags": ["pad", "tape", "dreamy", "lofi", "warm", "nostalgic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.2,
+        "master_volume": 0.0,
         "osc1_on": true,
         "osc1_table": "Tonewheel Organ",
         "osc1_frame": 0.3,
@@ -59,7 +59,9 @@
         "fx_delay_feedback": 0.4,
         "fx_delay_tone": 3000,
         "fx_delay_mix": 0.18,
-        "fx_delay_sync": "1/4"
+        "fx_delay_sync": "1/4",
+        "analog_drift": 0.49,
+        "analog_warmth": 0.5
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Fine", "depth": 0.04},

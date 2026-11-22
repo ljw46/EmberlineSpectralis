@@ -7,7 +7,7 @@
     "tags": ["stab", "offbeat", "rhythmic", "synced", "silky", "house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.3,
+        "master_volume": -0.9,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.5,
@@ -52,7 +52,9 @@
         "fx_reverb_mix": 0.2,
         "fx_reverb_size": 0.55,
         "fx_reverb_decay": 2.6,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.35,
+        "analog_warmth": 0.41
     },
     "modulation": [
         {"source": "LFO 3", "destination": "Osc1 Level", "depth": 0.45},

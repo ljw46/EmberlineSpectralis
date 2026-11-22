@@ -7,7 +7,7 @@
     "tags": ["pluck", "marimba", "mallet", "wooden", "organic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.6,
+        "master_volume": 3.2,
         "osc1_on": true,
         "osc1_table": "Mallet",
         "osc1_frame": 0.7,
@@ -44,7 +44,9 @@
         "fx_chorus_on": true,
         "fx_chorus_mix": 0.12,
         "fx_chorus_rate": 0.3,
-        "fx_chorus_depth": 0.3
+        "fx_chorus_depth": 0.3,
+        "analog_drift": 0.17,
+        "analog_warmth": 0.53
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc1 Frame", "depth": -0.25, "bipolar": false},

@@ -7,7 +7,7 @@
     "tags": ["texture", "vinyl", "piano", "lofi", "nostalgic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.3,
+        "master_volume": 0.9,
         "osc1_on": true,
         "osc1_table": "Grand Piano",
         "osc1_frame": 0.25,
@@ -51,7 +51,9 @@
         "fx_reverb_mix": 0.36,
         "fx_reverb_size": 0.75,
         "fx_reverb_decay": 4.6,
-        "fx_reverb_damp": 0.6
+        "fx_reverb_damp": 0.6,
+        "analog_drift": 0.49,
+        "analog_warmth": 0.38
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Fine", "depth": 0.04},

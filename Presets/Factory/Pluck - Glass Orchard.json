@@ -7,7 +7,7 @@
     "tags": ["pluck", "fm", "glass", "bright", "melodic house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.4,
+        "master_volume": 3.2,
         "osc1_on": true,
         "osc1_table": "FM 1:3",
         "osc1_frame": 0.2,
@@ -48,7 +48,9 @@
         "fx_reverb_mix": 0.26,
         "fx_reverb_size": 0.6,
         "fx_reverb_decay": 3.2,
-        "fx_reverb_damp": 0.3
+        "fx_reverb_damp": 0.3,
+        "analog_drift": 0.24,
+        "analog_warmth": 0.56
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc1 Frame", "depth": 0.32, "bipolar": false},

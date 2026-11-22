@@ -46,7 +46,9 @@
         "arp_rate": "1/8",
         "arp_octaves": 1,
         "arp_gate": 0.4,
-        "arp_pattern": "Offbeat"
+        "arp_pattern": "Offbeat",
+        "analog_drift": 0.18,
+        "analog_warmth": 0.42
     },
     "modulation": [
         {"source": "Perlin", "destination": "Osc1 Frame", "depth": 0.15},

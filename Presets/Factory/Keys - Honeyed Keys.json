@@ -42,7 +42,9 @@
         "fx_reverb_mix": 0.26,
         "fx_reverb_size": 0.6,
         "fx_reverb_decay": 3.0,
-        "fx_reverb_damp": 0.45
+        "fx_reverb_damp": 0.45,
+        "analog_drift": 0.32,
+        "analog_warmth": 0.54
     },
     "modulation": [
         {"source": "Velocity", "destination": "Osc2 Level", "depth": 0.3},

@@ -7,7 +7,7 @@
     "tags": ["lead", "sync", "bright", "synced", "retro"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.6,
+        "master_volume": 2.6,
         "osc1_on": true,
         "osc1_table": "Saw Sync",
         "osc1_frame": 0.3,
@@ -23,7 +23,7 @@
         "osc2_semi": 12,
         "osc2_pan": 0.14,
         "filt1_type": "Lowpass",
-        "filt1_cutoff": 6000,
+        "filt1_cutoff": 3600,
         "filt1_res": 0.2,
         "env1_attack": 0.006,
         "env1_decay": 0.3,
@@ -46,7 +46,9 @@
         "fx_chorus_on": true,
         "fx_chorus_mix": 0.15,
         "fx_chorus_rate": 0.4,
-        "fx_chorus_depth": 0.4
+        "fx_chorus_depth": 0.4,
+        "analog_drift": 0.35,
+        "analog_warmth": 0.7
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Frame", "depth": 0.28},

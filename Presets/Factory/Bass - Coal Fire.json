@@ -36,7 +36,9 @@
         "fx_dist_type": "Fold",
         "fx_dist_drive": 0.35,
         "fx_dist_tone": 0.5,
-        "fx_dist_mix": 0.5
+        "fx_dist_mix": 0.5,
+        "analog_drift": 0.16,
+        "analog_warmth": 0.41
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc2 Frame", "depth": 0.5},

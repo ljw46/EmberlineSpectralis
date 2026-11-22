@@ -7,7 +7,7 @@
     "tags": ["organic", "wind", "reeds", "noise", "spooky"],
     "macro_names": ["Brightness", "-", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.4,
+        "master_volume": 2.6,
         "noise_level": 0.8,
         "noise_type": "White",
         "osc1_on": true,
@@ -37,7 +37,9 @@
         "fx_delay_feedback": 0.4,
         "fx_delay_tone": 3000,
         "fx_delay_mix": 0.16,
-        "fx_delay_sync": "1/4"
+        "fx_delay_sync": "1/4",
+        "analog_drift": 0.39,
+        "analog_warmth": 0.48
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.18},

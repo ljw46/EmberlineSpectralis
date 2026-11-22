@@ -7,8 +7,8 @@
     "tags": ["organic", "fire", "crackle", "guitar", "cosy"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.7,
-        "noise_level": 0.8,
+        "master_volume": 2.8,
+        "noise_level": 0.3,
         "noise_type": "Crackle",
         "osc1_on": true,
         "osc1_table": "Acoustic Guitar",
@@ -25,7 +25,7 @@
         "osc2_semi": -12,
         "osc2_pan": 0.14,
         "filt1_type": "Lowpass",
-        "filt1_cutoff": 2400,
+        "filt1_cutoff": 1800,
         "filt1_res": 0.2,
         "env1_attack": 1.0,
         "env1_decay": 1.0,
@@ -41,7 +41,9 @@
         "fx_chorus_on": true,
         "fx_chorus_mix": 0.15,
         "fx_chorus_rate": 0.3,
-        "fx_chorus_depth": 0.4
+        "fx_chorus_depth": 0.4,
+        "analog_drift": 0.48,
+        "analog_warmth": 0.54
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.12},

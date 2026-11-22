@@ -7,7 +7,7 @@
     "tags": ["bass", "dub", "echo", "deep house"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],
     "parameters": {
-        "master_volume": 2.4,
+        "master_volume": 2.8,
         "osc1_on": true,
         "osc1_table": "Bass Weight",
         "osc1_frame": 0.3,
@@ -50,7 +50,9 @@
         "fx_slot1": "Distortion",
         "fx_slot2": "Delay",
         "fx_slot3": "Reverb",
-        "fx_slot4": "Chorus/Flanger"
+        "fx_slot4": "Chorus/Flanger",
+        "analog_drift": 0.15,
+        "analog_warmth": 0.42
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.136},

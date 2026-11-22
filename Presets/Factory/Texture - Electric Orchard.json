@@ -7,7 +7,7 @@
     "tags": ["texture", "fm", "metallic", "shimmer", "evolving"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -0.2,
+        "master_volume": 1.3,
         "osc1_on": true,
         "osc1_table": "FM 1:2",
         "osc1_frame": 0.3,
@@ -31,7 +31,7 @@
         "osc3_level": 0.2,
         "osc3_semi": 12,
         "filt1_type": "Lowpass",
-        "filt1_cutoff": 6500,
+        "filt1_cutoff": 4400,
         "filt1_res": 0.15,
         "env1_attack": 1.2,
         "env1_decay": 1.0,
@@ -54,7 +54,9 @@
         "fx_reverb_mix": 0.4,
         "fx_reverb_size": 0.8,
         "fx_reverb_decay": 5.5,
-        "fx_reverb_damp": 0.3
+        "fx_reverb_damp": 0.3,
+        "analog_drift": 0.5,
+        "analog_warmth": 0.6
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Frame", "depth": 0.4, "bipolar": false},

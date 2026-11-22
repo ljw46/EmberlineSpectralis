@@ -45,7 +45,8 @@
         "fx_reverb_mix": 0.3,
         "fx_reverb_size": 0.65,
         "fx_reverb_decay": 3.4,
-        "fx_reverb_damp": 0.3
+        "fx_reverb_damp": 0.3,
+        "analog_drift": 0.27
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc1 Frame", "depth": -0.7},

@@ -7,7 +7,7 @@
     "tags": ["keys", "rhodes", "electric piano", "late night", "tremolo"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.2,
+        "master_volume": 1.0,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.3,
@@ -53,7 +53,9 @@
         "fx_dist_type": "Tube",
         "fx_dist_drive": 0.15,
         "fx_dist_tone": 0.4,
-        "fx_dist_mix": 0.3
+        "fx_dist_mix": 0.3,
+        "analog_drift": 0.3,
+        "analog_warmth": 0.52
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc2 Frame", "depth": 0.3},

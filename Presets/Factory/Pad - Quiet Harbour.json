@@ -7,7 +7,7 @@
     "tags": ["pad", "soft", "electric piano", "flute", "calm", "organic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 0.2,
+        "master_volume": 0.5,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.25,
@@ -47,7 +47,9 @@
         "fx_reverb_mix": 0.38,
         "fx_reverb_size": 0.75,
         "fx_reverb_decay": 5.0,
-        "fx_reverb_damp": 0.5
+        "fx_reverb_damp": 0.5,
+        "analog_drift": 0.46,
+        "analog_warmth": 0.47
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.1},

@@ -7,7 +7,7 @@
     "tags": ["arp", "gate", "syncopated", "rhythmic", "synced", "house"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 2.2,
+        "master_volume": 2.5,
         "osc1_on": true,
         "osc1_table": "Electric Piano",
         "osc1_frame": 0.5,
@@ -52,7 +52,9 @@
         "fx_reverb_mix": 0.22,
         "fx_reverb_size": 0.55,
         "fx_reverb_decay": 2.8,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.16,
+        "analog_warmth": 0.41
     },
     "modulation": [
         {"source": "LFO 3", "destination": "Osc1 Level", "depth": 0.42},

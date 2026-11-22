@@ -7,7 +7,7 @@
     "tags": ["pad", "additive", "evolving", "flanger", "breathing"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 1.9,
+        "master_volume": 2.2,
         "osc1_on": true,
         "osc1_table": "Additive Build",
         "osc1_frame": 0.2,
@@ -46,7 +46,9 @@
         "fx_reverb_mix": 0.4,
         "fx_reverb_size": 0.8,
         "fx_reverb_decay": 6.0,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.44,
+        "analog_warmth": 0.49
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Frame", "depth": 0.5, "bipolar": false},

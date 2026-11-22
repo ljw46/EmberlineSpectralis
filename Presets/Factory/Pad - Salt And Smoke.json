@@ -52,7 +52,9 @@
         "fx_reverb_mix": 0.34,
         "fx_reverb_size": 0.75,
         "fx_reverb_decay": 5.0,
-        "fx_reverb_damp": 0.6
+        "fx_reverb_damp": 0.6,
+        "analog_drift": 0.47,
+        "analog_warmth": 0.44
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.12},

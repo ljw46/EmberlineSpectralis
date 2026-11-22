@@ -48,7 +48,9 @@
         "arp_gate": 0.55,
         "arp_swing": 0.2,
         "arp_pattern": "Syncopated",
-        "arp_humanize": 0.35
+        "arp_humanize": 0.35,
+        "analog_drift": 0.23,
+        "analog_warmth": 0.38
     },
     "modulation": [
         {"source": "Perlin", "destination": "Osc1 Frame", "depth": 0.15},

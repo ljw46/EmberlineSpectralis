@@ -7,7 +7,7 @@
     "tags": ["pad", "overtone", "hollow", "meditative", "synced"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 3.2,
+        "master_volume": 3.9,
         "osc1_on": true,
         "osc1_table": "Overtone Series",
         "osc1_frame": 0.3,
@@ -44,7 +44,9 @@
         "fx_reverb_mix": 0.4,
         "fx_reverb_size": 0.8,
         "fx_reverb_decay": 5.5,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.51,
+        "analog_warmth": 0.43
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Osc1 Frame", "depth": 0.5},

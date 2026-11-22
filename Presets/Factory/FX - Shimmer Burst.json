@@ -53,7 +53,9 @@
         "fx_slot1": "Delay",
         "fx_slot2": "Reverb",
         "fx_slot3": "Distortion",
-        "fx_slot4": "Chorus/Flanger"
+        "fx_slot4": "Chorus/Flanger",
+        "analog_drift": 0.19,
+        "analog_warmth": 0.27
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc2 Frame", "depth": 0.4},

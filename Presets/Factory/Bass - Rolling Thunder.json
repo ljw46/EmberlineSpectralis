@@ -7,7 +7,7 @@
     "tags": ["bass", "saw", "sweep", "punchy"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],
     "parameters": {
-        "master_volume": -2.0,
+        "master_volume": -1.7,
         "osc1_on": true,
         "osc1_table": "Saw Sweep",
         "osc1_frame": 0.1,
@@ -37,7 +37,9 @@
         "fx_dist_type": "Soft",
         "fx_dist_drive": 0.25,
         "fx_dist_tone": 0.55,
-        "fx_dist_mix": 0.4
+        "fx_dist_mix": 0.4,
+        "analog_drift": 0.13,
+        "analog_warmth": 0.42
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc1 Frame", "depth": 0.6},

@@ -7,7 +7,7 @@
     "tags": ["stab", "rave", "nostalgic", "gritty", "hard"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.8,
+        "master_volume": -1.6,
         "osc1_on": true,
         "osc1_table": "Blended Waves",
         "osc1_frame": 0.6,
@@ -56,7 +56,9 @@
         "fx_reverb_mix": 0.16,
         "fx_reverb_size": 0.45,
         "fx_reverb_decay": 2.0,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.34,
+        "analog_warmth": 0.44
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc3 Frame", "depth": 0.5},

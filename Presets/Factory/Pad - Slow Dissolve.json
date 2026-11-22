@@ -7,7 +7,7 @@
     "tags": ["pad", "random", "evolving", "organic", "generative"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 4.0,
+        "master_volume": 4.2,
         "osc1_on": true,
         "osc1_table": "Noise Morph",
         "osc1_frame": 0.3,
@@ -40,7 +40,9 @@
         "fx_reverb_mix": 0.45,
         "fx_reverb_size": 0.85,
         "fx_reverb_decay": 6.5,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.44,
+        "analog_warmth": 0.42
     },
     "modulation": [
         {"source": "Perlin", "destination": "Osc1 Frame", "depth": 0.45},

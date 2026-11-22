@@ -594,6 +594,13 @@ namespace
             };
             const float dry = bright (0.0f), warm = bright (1.0f);
             expect (warm < dry - 1.0f && warm > dry - 18.0f, "warmth softens the sound without killing it (" + juce::String (dry, 1) + " -> " + juce::String (warm, 1) + " dB rms)");
+
+            // Drift and Warmth read as whole percentages, and typing "30", "30%" or "0.3" all mean 30 %
+            EmberlineProcessor q;
+            auto* drift = q.apvts.getParameter ("analog_drift");
+            expect (drift != nullptr && drift->getText (0.25f, 0) == "25 %" && drift->getText (1.0f, 0) == "100 %", "drift is shown as a percentage");
+            expect (drift != nullptr && std::abs (drift->getValueForText ("30") - 0.3f) < 0.002f && std::abs (drift->getValueForText ("30%") - 0.3f) < 0.002f
+                        && std::abs (drift->getValueForText ("0.3") - 0.3f) < 0.002f, "a typed drift value of 30, 30% or 0.3 means 30 %");
         }
 
         std::printf ("arpeggiator\n");

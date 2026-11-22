@@ -7,7 +7,7 @@
     "tags": ["bass", "sub", "deep house", "warm"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],
     "parameters": {
-        "master_volume": -3.6,
+        "master_volume": -3.3,
         "osc1_on": true,
         "osc1_table": "Bass Weight",
         "osc1_frame": 0.35,
@@ -33,7 +33,9 @@
         "fx_dist_type": "Tube",
         "fx_dist_drive": 0.3,
         "fx_dist_tone": 0.4,
-        "fx_dist_mix": 0.5
+        "fx_dist_mix": 0.5,
+        "analog_drift": 0.16,
+        "analog_warmth": 0.47
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.09},

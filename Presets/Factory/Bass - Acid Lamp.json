@@ -7,7 +7,7 @@
     "tags": ["bass", "acid", "squelch", "resonant"],
     "macro_names": ["Brightness", "Morph", "Grit", "Sub"],
     "parameters": {
-        "master_volume": -1.0,
+        "master_volume": -0.9,
         "osc1_on": true,
         "osc1_table": "Classic Morph",
         "osc1_frame": 0.5,
@@ -34,7 +34,9 @@
         "fx_dist_type": "Hard",
         "fx_dist_drive": 0.2,
         "fx_dist_tone": 0.55,
-        "fx_dist_mix": 0.45
+        "fx_dist_mix": 0.45,
+        "analog_drift": 0.13,
+        "analog_warmth": 0.41
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Filt1 Cutoff", "depth": 0.261},

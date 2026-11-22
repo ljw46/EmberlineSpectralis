@@ -95,8 +95,17 @@ namespace ember::params
         level ("noise_level", "Noise Level");
         choice ("noise_type", "Noise Type", noiseTypeNames);
         choice ("filt_routing", "Filter Routing", routingNames);
-        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_drift", 1 }, "Analog Drift", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.25f));
-        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_warmth", 1 }, "Analog Warmth", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.3f));
+        // shown as a whole percentage ("25 %"); typing "30", "30%" or "0.3" all mean 30 %. The stored value stays 0..1.
+        const auto percentAttr = AudioParameterFloatAttributes()
+            .withStringFromValueFunction ([] (float v, int) { return String (roundToInt (v * 100.0f)) + " %"; })
+            .withValueFromStringFunction ([] (const String& t)
+            {
+                const bool hasPercent = t.containsChar ('%');
+                const float v = t.retainCharacters ("0123456789.").getFloatValue();
+                return jlimit (0.0f, 1.0f, (hasPercent || v > 1.0f) ? v / 100.0f : v);
+            });
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_drift", 1 }, "Analog Drift", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.25f, percentAttr));
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "analog_warmth", 1 }, "Analog Warmth", NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.3f, percentAttr));
 
         choice ("voice_mode", "Voice Mode", voiceModeNames);
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { "glide_time", 1 }, "Glide Time", NormalisableRange<float> (0.0f, 3.0f, 0.001f, 0.4f), 0.0f,

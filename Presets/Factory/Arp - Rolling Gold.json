@@ -23,7 +23,7 @@
         "osc2_semi": 12,
         "osc2_pan": 0.18,
         "filt1_type": "Lowpass",
-        "filt1_cutoff": 6000,
+        "filt1_cutoff": 4000,
         "filt1_res": 0.15,
         "env1_attack": 0.001,
         "env1_decay": 0.28,
@@ -50,7 +50,9 @@
         "arp_octaves": 2,
         "arp_gate": 0.5,
         "arp_pattern": "Rolling",
-        "arp_accent": 0.6
+        "arp_accent": 0.6,
+        "analog_drift": 0.14,
+        "analog_warmth": 0.55
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc1 Frame", "depth": 0.35},

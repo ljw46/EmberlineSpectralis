@@ -7,7 +7,7 @@
     "tags": ["organic", "cello", "bowed", "drone", "sombre"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": -1.0,
+        "master_volume": -0.3,
         "osc1_on": true,
         "osc1_table": "Cello",
         "osc1_frame": 0.2,
@@ -50,7 +50,9 @@
         "fx_chorus_on": true,
         "fx_chorus_mix": 0.18,
         "fx_chorus_rate": 0.3,
-        "fx_chorus_depth": 0.4
+        "fx_chorus_depth": 0.4,
+        "analog_drift": 0.45,
+        "analog_warmth": 0.46
     },
     "modulation": [
         {"source": "LFO 1", "destination": "Filt1 Cutoff", "depth": 0.12},

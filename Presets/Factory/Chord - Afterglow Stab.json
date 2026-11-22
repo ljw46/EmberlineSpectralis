@@ -7,7 +7,7 @@
     "tags": ["stab", "brass", "voice", "wide", "cinematic"],
     "macro_names": ["Brightness", "Morph", "Space", "Width"],
     "parameters": {
-        "master_volume": 4.3,
+        "master_volume": 4.9,
         "osc1_on": true,
         "osc1_table": "Brass Swell",
         "osc1_frame": 0.15,
@@ -49,7 +49,9 @@
         "fx_reverb_mix": 0.32,
         "fx_reverb_size": 0.7,
         "fx_reverb_decay": 3.6,
-        "fx_reverb_damp": 0.4
+        "fx_reverb_damp": 0.4,
+        "analog_drift": 0.36,
+        "analog_warmth": 0.45
     },
     "modulation": [
         {"source": "ENV 2", "destination": "Osc1 Frame", "depth": 0.7},

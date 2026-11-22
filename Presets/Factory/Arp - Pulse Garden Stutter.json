@@ -53,7 +53,9 @@
         "arp_stutter_mode": "Up & Down",
         "arp_stutter_depth": 0.5,
         "arp_stutter_length": "2 bars",
-        "arp_stutter_curve": "Stepped"
+        "arp_stutter_curve": "Stepped",
+        "analog_drift": 0.16,
+        "analog_warmth": 0.44
     },
     "modulation": [
         {"source": "Perlin", "destination": "Osc2 Frame", "depth": 0.2},
